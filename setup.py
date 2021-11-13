@@ -14,7 +14,7 @@ setup(
     description="A python library for manipulating a stash database",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/7dJx1qP",
+    url="https://github.com/7dJx1qP/pystashlib",
     author="7dJx1qP",
     author_email="38586902+7dJx1qP@users.noreply.github.com",
     license="MIT",
