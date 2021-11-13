@@ -1,0 +1,5 @@
+build
+dist
+pystashlib.egg-info
+venv
+__pycache__
