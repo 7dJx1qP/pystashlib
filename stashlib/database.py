@@ -1,3 +1,4 @@
+import os
 import re
 import sqlite3
 from . import sqlite_wrapper as sq
@@ -15,13 +16,15 @@ class Database(object):
 
     def __init__(self, db_path):
         try:
+            if not os.path.isfile(db_path):
+                raise Exception(f'database file missing {db_path}')
             self._conn = sqlite3.connect(db_path)
             self._conn.row_factory = sqlite3.Row
             self._conn.execute("PRAGMA foreign_keys = 1")
             self._conn.create_function("REGEXP", 2, regexp)
             self._conn.create_function("STUDIOMATCHER", 2, studio_matcher)
         except sqlite3.Error as e:
-            log.LogError("Error connecting to database!")
+            raise Exception("error connecting to database!")
         self._tables = sq.db_tables(self._conn)
 
     @property
