@@ -1,7 +1,8 @@
 import re
 import sqlite3
-from . import sqlite_wrapper as sq, log
+from . import sqlite_wrapper as sq
 from .common import alphanum_chars
+from .logger import logger as log
 
 def regexp(expr, item):
     reg = re.compile(expr)

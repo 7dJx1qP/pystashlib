@@ -1,7 +1,7 @@
 import os
 import re
-from . import log
 from .common import get_checksum, get_timestamp, image_to_base64, parse_part, optional_nonalphanum_regex
+from .logger import logger as log
 from .stash_database_base import StashDatabaseBase
 from .stash_tables import *
 from .stash_models import *

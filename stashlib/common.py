@@ -5,13 +5,12 @@ import json
 import math
 import os
 import re
-import sys
 import time
 import yaml
-from . import log
 from datetime import date, datetime, timedelta
 from lxml import html
 from dateutil.tz import tzoffset
+from .logger import logger as log
 
 def alpha_chars(s):
     return ''.join([c for c in s if c.isalpha()])

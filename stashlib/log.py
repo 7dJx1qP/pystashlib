@@ -20,7 +20,7 @@ def __prefix(level_char):
 	return ret.decode()
 
 
-def __log(level_char, s):
+def log(level_char, s):
 	if level_char == "":
 		return
 
@@ -28,25 +28,25 @@ def __log(level_char, s):
 
 
 def LogTrace(s):
-	__log(b't', s)
+	log(b't', s)
 
 
 def LogDebug(s):
-	__log(b'd', s)
+	log(b'd', s)
 
 
 def LogInfo(s):
-	__log(b'i', s)
+	log(b'i', s)
 
 
 def LogWarning(s):
-	__log(b'w', s)
+	log(b'w', s)
 
 
 def LogError(s):
-	__log(b'e', s)
+	log(b'e', s)
 
 
 def LogProgress(p):
 	progress = min(max(0, p), 1)
-	__log(b'p', str(progress))
+	log(b'p', str(progress))

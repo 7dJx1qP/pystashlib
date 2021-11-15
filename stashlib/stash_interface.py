@@ -1,8 +1,7 @@
 import requests
-import time
 import sys
-from . import log
 from urllib.parse import urlparse
+from .logger import logger as log
 
 class StashInterface:
     port = ""
@@ -16,24 +15,30 @@ class StashInterface:
     }
     cookies = {}
 
-    def __init__(self, conn):
-        self.port = conn['Port']
-        scheme = conn['Scheme']
+    def __init__(self, conn=None, api_key=None, server_url=None):
+        if conn:
+            self.port = conn['Port']
+            scheme = conn['Scheme']
 
-        # Session cookie for authentication
-        self.cookies = {
-            'session': conn.get('SessionCookie').get('Value')
-        }
+            # Session cookie for authentication
+            self.cookies = {
+                'session': conn.get('SessionCookie').get('Value')
+            }
 
-        try:
-            # If stash does not accept connections from all interfaces use the host specified in the config
-            host = conn.get('Host') if '0.0.0.0' not in conn.get('Host') or '' else 'localhost'
-        except TypeError:
-            # Pre stable 0.8
-            host = 'localhost'
+            try:
+                # If stash does not accept connections from all interfaces use the host specified in the config
+                host = conn.get('Host') if '0.0.0.0' not in conn.get('Host') or '' else 'localhost'
+            except TypeError:
+                # Pre stable 0.8
+                host = 'localhost'
 
-        # Stash GraphQL endpoint
-        self.url = scheme + "://" + host + ":" + str(self.port) + "/graphql"
+            # Stash GraphQL endpoint
+            self.url = scheme + "://" + host + ":" + str(self.port) + "/graphql"
+        if api_key:
+            self.headers['ApiKey'] = api_key
+        if server_url:
+            self.url = server_url
+
         log.LogDebug(f"Using stash GraphQl endpoint at {self.url}")
 
     def __callGraphQL(self, query, variables=None):
@@ -45,8 +50,8 @@ class StashInterface:
 
         if response.status_code == 200:
             result = response.json()
-            if result.get("error", None):
-                for error in result["error"]["errors"]:
+            if result.get("errors", None):
+                for error in result["errors"]:
                     raise Exception("GraphQL error: {}".format(error))
             if result.get("data", None):
                 return result.get("data")
@@ -235,6 +240,19 @@ class StashInterface:
         variables = {'input': image_data}
 
         self.__callGraphQL(query, variables)
+
+    def updatePerformer(self, performer_data):
+        query = """
+            mutation performerUpdate($input: PerformerUpdateInput!) {
+                performerUpdate(input: $input) {
+                    id
+                }
+            }
+        """
+
+        variables = {'input': performer_data}
+
+        return self.__callGraphQL(query, variables)
 
     # Returns all scenes for the given regex
     def findScenesByPathRegex(self, regex):
@@ -714,7 +732,7 @@ fragment PerformerData on Performer {
 
     def findPerformerByName(self, name):
         for performer in self.findPerformersByName(name):
-            log.LogDebug("finding performer: "+name+ str(performer["name"]))
+            log.LogDebug(f"finding performer by name: {name} {performer['name']}")
             if performer["name"] == name:
                 log.LogDebug("Found performer")
                 return performer
@@ -741,7 +759,7 @@ fragment PerformerData on Performer {
 
     def findPerformerByURL(self, url):
         for performer in self.findPerformersByURL(url):
-            log.LogDebug("finding performer: "+url+ str(performer["url"]))
+            log.LogDebug(f"finding performer by url: {url} {performer['url']}")
             if performer["url"] == url:
                 log.LogDebug("Found performer")
                 return performer
