@@ -173,7 +173,7 @@ class StashDatabase(StashDatabaseBase):
 
         # insert new movie if does not exist
         if not movie:
-            movie = MoviesRow
+            movie = MoviesRow()
             movie.name = name
             movie.checksum = get_checksum(name)
             movie.url = url
@@ -184,11 +184,11 @@ class StashDatabase(StashDatabaseBase):
 
         # get front/back image contents
         front_image = None
-        if front_image:
-            front_image = image_to_base64(open(front_path, 'rb').read())
+        if front_path:
+            front_image = open(front_path, 'rb').read()
         back_image = None
         if back_path:
-            back_image = image_to_base64(open(back_path, 'rb').read())
+            back_image = open(back_path, 'rb').read()
 
         # insert or update front/back images
         movies_images = self.movies_images.selectone_movie_id(movie.id)
@@ -200,7 +200,7 @@ class StashDatabase(StashDatabaseBase):
             self.movies_images.insert_model(movies_images)
         else:
             self.movies_images.update_front_image_by_movie_id(movie.id, front_image, commit=False)
-            self.movies_images.update_front_image_by_movie_id(movie.id, back_image, commit=False)
+            self.movies_images.update_back_image_by_movie_id(movie.id, back_image, commit=False)
             self.commit()
 
         return movie
@@ -209,6 +209,7 @@ class StashDatabase(StashDatabaseBase):
         name = os.path.basename(dirpath)
         name = re.sub(' \[.*?\]', '', name)
         name = re.sub(' \(\d{4}\)', '', name)
+        name = re.sub(' DISC\d', '', name)
 
         # get front/back image paths
         if not front_path:
