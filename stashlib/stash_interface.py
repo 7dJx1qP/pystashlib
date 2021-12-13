@@ -41,6 +41,10 @@ class StashInterface:
 
         log.LogDebug(f"Using stash GraphQl endpoint at {self.url}")
 
+    def callGraphQL(self, query, variables = None):
+        if "mutation" in query: self.waitForIdle() #Check that the DB is not locked
+        return self.__callGraphQL(query, variables)
+
     def __callGraphQL(self, query, variables=None):
         json = {'query': query}
         if variables is not None:
