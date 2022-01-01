@@ -2212,6 +2212,10 @@ class Scenes(Table):
 		colvalues['interactive'] = interactive
 		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_interactive_speed(self, interactive_speed, colvalues={}, selectcols=['*']):
+		colvalues['interactive_speed'] = interactive_speed
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_id(self, id, colvalues={}, selectcols=['*']):
 		colvalues['id'] = id
 		row = self.selectone(colvalues, selectcols)
@@ -2420,11 +2424,19 @@ class Scenes(Table):
 		else:
 			return None
 
-	def insert(self, path, checksum, oshash, title, details, url, date, rating, size, duration, video_codec, audio_codec, width, height, framerate, bitrate, studio_id, o_counter, format, created_at, updated_at, file_mod_time, organized, phash, interactive, commit=True):
-		return self.execute("INSERT INTO scenes (path, checksum, oshash, title, details, url, date, rating, size, duration, video_codec, audio_codec, width, height, framerate, bitrate, studio_id, o_counter, format, created_at, updated_at, file_mod_time, organized, phash, interactive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [path, checksum, oshash, title, details, url, date, rating, size, duration, video_codec, audio_codec, width, height, framerate, bitrate, studio_id, o_counter, format, created_at, updated_at, file_mod_time, organized, phash, interactive], commit)
+	def selectone_interactive_speed(self, interactive_speed, colvalues={}, selectcols=['*']):
+		colvalues['interactive_speed'] = interactive_speed
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, path, checksum, oshash, title, details, url, date, rating, size, duration, video_codec, audio_codec, width, height, framerate, bitrate, studio_id, o_counter, format, created_at, updated_at, file_mod_time, organized, phash, interactive, interactive_speed, commit=True):
+		return self.execute("INSERT INTO scenes (path, checksum, oshash, title, details, url, date, rating, size, duration, video_codec, audio_codec, width, height, framerate, bitrate, studio_id, o_counter, format, created_at, updated_at, file_mod_time, organized, phash, interactive, interactive_speed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [path, checksum, oshash, title, details, url, date, rating, size, duration, video_codec, audio_codec, width, height, framerate, bitrate, studio_id, o_counter, format, created_at, updated_at, file_mod_time, organized, phash, interactive, interactive_speed], commit)
 
 	def insert_model(self, model: ScenesRow, commit=True):
-		return self.execute("INSERT INTO scenes (path, checksum, oshash, title, details, url, date, rating, size, duration, video_codec, audio_codec, width, height, framerate, bitrate, studio_id, o_counter, format, created_at, updated_at, file_mod_time, organized, phash, interactive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO scenes (path, checksum, oshash, title, details, url, date, rating, size, duration, video_codec, audio_codec, width, height, framerate, bitrate, studio_id, o_counter, format, created_at, updated_at, file_mod_time, organized, phash, interactive, interactive_speed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
 	def update_title_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE scenes SET title = ? WHERE id = ?", [value, id], commit)
@@ -2558,6 +2570,12 @@ class Scenes(Table):
 	def update_empty_interactive_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE scenes SET interactive = ? WHERE id = ? AND (interactive IS NULL OR interactive = '' OR interactive = 0)", [value, id], commit)
 
+	def update_interactive_speed_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_interactive_speed_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE id = ? AND (interactive_speed IS NULL OR interactive_speed = '' OR interactive_speed = 0)", [value, id], commit)
+
 	def update_title_by_path(self, path, value, commit=True):
 		return self.execute("UPDATE scenes SET title = ? WHERE path = ?", [value, path], commit)
 
@@ -2689,6 +2707,12 @@ class Scenes(Table):
 
 	def update_empty_interactive_by_path(self, path, value, commit=True):
 		return self.execute("UPDATE scenes SET interactive = ? WHERE path = ? AND (interactive IS NULL OR interactive = '' OR interactive = 0)", [value, path], commit)
+
+	def update_interactive_speed_by_path(self, path, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE path = ?", [value, path], commit)
+
+	def update_empty_interactive_speed_by_path(self, path, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE path = ? AND (interactive_speed IS NULL OR interactive_speed = '' OR interactive_speed = 0)", [value, path], commit)
 
 	def update_title_by_checksum(self, checksum, value, commit=True):
 		return self.execute("UPDATE scenes SET title = ? WHERE checksum = ?", [value, checksum], commit)
@@ -2822,6 +2846,12 @@ class Scenes(Table):
 	def update_empty_interactive_by_checksum(self, checksum, value, commit=True):
 		return self.execute("UPDATE scenes SET interactive = ? WHERE checksum = ? AND (interactive IS NULL OR interactive = '' OR interactive = 0)", [value, checksum], commit)
 
+	def update_interactive_speed_by_checksum(self, checksum, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE checksum = ?", [value, checksum], commit)
+
+	def update_empty_interactive_speed_by_checksum(self, checksum, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE checksum = ? AND (interactive_speed IS NULL OR interactive_speed = '' OR interactive_speed = 0)", [value, checksum], commit)
+
 	def update_title_by_oshash(self, oshash, value, commit=True):
 		return self.execute("UPDATE scenes SET title = ? WHERE oshash = ?", [value, oshash], commit)
 
@@ -2954,6 +2984,12 @@ class Scenes(Table):
 	def update_empty_interactive_by_oshash(self, oshash, value, commit=True):
 		return self.execute("UPDATE scenes SET interactive = ? WHERE oshash = ? AND (interactive IS NULL OR interactive = '' OR interactive = 0)", [value, oshash], commit)
 
+	def update_interactive_speed_by_oshash(self, oshash, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE oshash = ?", [value, oshash], commit)
+
+	def update_empty_interactive_speed_by_oshash(self, oshash, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE oshash = ? AND (interactive_speed IS NULL OR interactive_speed = '' OR interactive_speed = 0)", [value, oshash], commit)
+
 	def update_title_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE scenes SET title = ? WHERE studio_id = ?", [value, studio_id], commit)
 
@@ -3079,6 +3115,12 @@ class Scenes(Table):
 
 	def update_empty_interactive_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE scenes SET interactive = ? WHERE studio_id = ? AND (interactive IS NULL OR interactive = '' OR interactive = 0)", [value, studio_id], commit)
+
+	def update_interactive_speed_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_interactive_speed_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET interactive_speed = ? WHERE studio_id = ? AND (interactive_speed IS NULL OR interactive_speed = '' OR interactive_speed = 0)", [value, studio_id], commit)
 
 class PerformersScenes(Table):
 	def __init__(self, conn: sqlite3.Connection):

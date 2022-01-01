@@ -945,6 +945,7 @@ class ScenesRow(TableRow):
 		self._organized = None
 		self._phash = None
 		self._interactive = None
+		self._interactive_speed = None
 
 	@property
 	def table_name(self):
@@ -1158,14 +1159,22 @@ class ScenesRow(TableRow):
 	def interactive(self, interactive):
 		self._interactive = interactive
 
+	@property
+	def interactive_speed(self):
+		return self._interactive_speed
+
+	@interactive_speed.setter
+	def interactive_speed(self, interactive_speed):
+		self._interactive_speed = interactive_speed
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.path, self.checksum, self.oshash, self.title, self.details, self.url, self.date, self.rating, self.size, self.duration, self.video_codec, self.audio_codec, self.width, self.height, self.framerate, self.bitrate, self.studio_id, self.o_counter, self.format, self.created_at, self.updated_at, self.file_mod_time, self.organized, self.phash, self.interactive]
+			return [self.id, self.path, self.checksum, self.oshash, self.title, self.details, self.url, self.date, self.rating, self.size, self.duration, self.video_codec, self.audio_codec, self.width, self.height, self.framerate, self.bitrate, self.studio_id, self.o_counter, self.format, self.created_at, self.updated_at, self.file_mod_time, self.organized, self.phash, self.interactive, self.interactive_speed]
 		else:
-			return [self.path, self.checksum, self.oshash, self.title, self.details, self.url, self.date, self.rating, self.size, self.duration, self.video_codec, self.audio_codec, self.width, self.height, self.framerate, self.bitrate, self.studio_id, self.o_counter, self.format, self.created_at, self.updated_at, self.file_mod_time, self.organized, self.phash, self.interactive]
+			return [self.path, self.checksum, self.oshash, self.title, self.details, self.url, self.date, self.rating, self.size, self.duration, self.video_codec, self.audio_codec, self.width, self.height, self.framerate, self.bitrate, self.studio_id, self.o_counter, self.format, self.created_at, self.updated_at, self.file_mod_time, self.organized, self.phash, self.interactive, self.interactive_speed]
 
 class PerformersScenesRow(TableRow):
 	def __init__(self):

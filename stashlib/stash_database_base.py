@@ -4,7 +4,7 @@ from .stash_tables import *
 
 class StashDatabaseBase(Database):
 
-	SCHEMA_VERSION = 28
+	SCHEMA_VERSION = 29
 
 	def __init__(self, db_path):
 		super().__init__(db_path)
