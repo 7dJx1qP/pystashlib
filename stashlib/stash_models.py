@@ -2288,3 +2288,56 @@ class StudioAliasesRow(TableRow):
 		else:
 			return [self.studio_id, self.alias]
 
+class SceneCaptionsRow(TableRow):
+	def __init__(self):
+		super().__init__('scene_captions')
+		self._scene_id = None
+		self._language_code = None
+		self._filename = None
+		self._caption_type = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def scene_id(self):
+		return self._scene_id
+
+	@scene_id.setter
+	def scene_id(self, scene_id):
+		self._scene_id = scene_id
+
+	@property
+	def language_code(self):
+		return self._language_code
+
+	@language_code.setter
+	def language_code(self, language_code):
+		self._language_code = language_code
+
+	@property
+	def filename(self):
+		return self._filename
+
+	@filename.setter
+	def filename(self, filename):
+		self._filename = filename
+
+	@property
+	def caption_type(self):
+		return self._caption_type
+
+	@caption_type.setter
+	def caption_type(self, caption_type):
+		self._caption_type = caption_type
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.scene_id, self.language_code, self.filename, self.caption_type]
+		else:
+			return [self.scene_id, self.language_code, self.filename, self.caption_type]
+

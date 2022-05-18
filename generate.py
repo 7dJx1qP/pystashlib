@@ -129,7 +129,7 @@ def generate_models(db_path, outfile):
 
         f.close()
 
-generate_database(r'stash-go.sqlite', 'stashlib/stash_database_base.py', 30)
+generate_database(r'stash-go.sqlite', 'stashlib/stash_database_base.py', 31)
 generate_tables(r'stash-go.sqlite', 'stashlib/stash_tables.py')
 generate_models(r'stash-go.sqlite', 'stashlib/stash_models.py')
 

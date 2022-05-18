@@ -5262,3 +5262,79 @@ class StudioAliases(Table):
 	def update_empty_alias_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE studio_aliases SET alias = ? WHERE studio_id = ? AND (alias IS NULL OR alias = '' OR alias = 0)", [value, studio_id], commit)
 
+class SceneCaptions(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'scene_captions')
+
+	def select_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		return [SceneCaptionsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_language_code(self, language_code, colvalues={}, selectcols=['*']):
+		colvalues['language_code'] = language_code
+		return [SceneCaptionsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_filename(self, filename, colvalues={}, selectcols=['*']):
+		colvalues['filename'] = filename
+		return [SceneCaptionsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_caption_type(self, caption_type, colvalues={}, selectcols=['*']):
+		colvalues['caption_type'] = caption_type
+		return [SceneCaptionsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SceneCaptionsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_language_code(self, language_code, colvalues={}, selectcols=['*']):
+		colvalues['language_code'] = language_code
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SceneCaptionsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_filename(self, filename, colvalues={}, selectcols=['*']):
+		colvalues['filename'] = filename
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SceneCaptionsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_caption_type(self, caption_type, colvalues={}, selectcols=['*']):
+		colvalues['caption_type'] = caption_type
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SceneCaptionsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, scene_id, language_code, filename, caption_type, commit=True):
+		return self.execute("INSERT INTO scene_captions (scene_id, language_code, filename, caption_type) VALUES (?, ?, ?, ?)", [scene_id, language_code, filename, caption_type], commit)
+
+	def insert_model(self, model: SceneCaptionsRow, commit=True):
+		return self.execute("INSERT INTO scene_captions (scene_id, language_code, filename, caption_type) VALUES (?, ?, ?, ?)", model.values_list(False), commit)
+
+	def update_language_code_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_captions SET language_code = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_language_code_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_captions SET language_code = ? WHERE scene_id = ? AND (language_code IS NULL OR language_code = '' OR language_code = 0)", [value, scene_id], commit)
+
+	def update_filename_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_captions SET filename = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_filename_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_captions SET filename = ? WHERE scene_id = ? AND (filename IS NULL OR filename = '' OR filename = 0)", [value, scene_id], commit)
+
+	def update_caption_type_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_captions SET caption_type = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_caption_type_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_captions SET caption_type = ? WHERE scene_id = ? AND (caption_type IS NULL OR caption_type = '' OR caption_type = 0)", [value, scene_id], commit)
+
