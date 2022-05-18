@@ -56,6 +56,10 @@ class Tags(Table):
 		colvalues['updated_at'] = updated_at
 		return [TagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
+		colvalues['ignore_auto_tag'] = ignore_auto_tag
+		return [TagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_id(self, id, colvalues={}, selectcols=['*']):
 		colvalues['id'] = id
 		row = self.selectone(colvalues, selectcols)
@@ -88,11 +92,19 @@ class Tags(Table):
 		else:
 			return None
 
-	def insert(self, name, created_at, updated_at, commit=True):
-		return self.execute("INSERT INTO tags (name, created_at, updated_at) VALUES (?, ?, ?)", [name, created_at, updated_at], commit)
+	def selectone_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
+		colvalues['ignore_auto_tag'] = ignore_auto_tag
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return TagsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, name, created_at, updated_at, ignore_auto_tag, commit=True):
+		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag) VALUES (?, ?, ?, ?)", [name, created_at, updated_at, ignore_auto_tag], commit)
 
 	def insert_model(self, model: TagsRow, commit=True):
-		return self.execute("INSERT INTO tags (name, created_at, updated_at) VALUES (?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag) VALUES (?, ?, ?, ?)", model.values_list(False), commit)
 
 	def update_created_at_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE tags SET created_at = ? WHERE id = ?", [value, id], commit)
@@ -106,6 +118,12 @@ class Tags(Table):
 	def update_empty_updated_at_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE tags SET updated_at = ? WHERE id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, id], commit)
 
+	def update_ignore_auto_tag_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE tags SET ignore_auto_tag = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_ignore_auto_tag_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE tags SET ignore_auto_tag = ? WHERE id = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, id], commit)
+
 	def update_created_at_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE tags SET created_at = ? WHERE name = ?", [value, name], commit)
 
@@ -117,6 +135,12 @@ class Tags(Table):
 
 	def update_empty_updated_at_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE tags SET updated_at = ? WHERE name = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, name], commit)
+
+	def update_ignore_auto_tag_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE tags SET ignore_auto_tag = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_ignore_auto_tag_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE tags SET ignore_auto_tag = ? WHERE name = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, name], commit)
 
 class SqliteSequence(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -198,6 +222,10 @@ class Studios(Table):
 		colvalues['rating'] = rating
 		return [StudiosRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
+		colvalues['ignore_auto_tag'] = ignore_auto_tag
+		return [StudiosRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_id(self, id, colvalues={}, selectcols=['*']):
 		colvalues['id'] = id
 		row = self.selectone(colvalues, selectcols)
@@ -270,11 +298,19 @@ class Studios(Table):
 		else:
 			return None
 
-	def insert(self, checksum, name, url, parent_id, created_at, updated_at, details, rating, commit=True):
-		return self.execute("INSERT INTO studios (checksum, name, url, parent_id, created_at, updated_at, details, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [checksum, name, url, parent_id, created_at, updated_at, details, rating], commit)
+	def selectone_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
+		colvalues['ignore_auto_tag'] = ignore_auto_tag
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return StudiosRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, checksum, name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, commit=True):
+		return self.execute("INSERT INTO studios (checksum, name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [checksum, name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag], commit)
 
 	def insert_model(self, model: StudiosRow, commit=True):
-		return self.execute("INSERT INTO studios (checksum, name, url, parent_id, created_at, updated_at, details, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO studios (checksum, name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
 	def update_url_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE studios SET url = ? WHERE id = ?", [value, id], commit)
@@ -312,6 +348,12 @@ class Studios(Table):
 	def update_empty_rating_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE studios SET rating = ? WHERE id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, id], commit)
 
+	def update_ignore_auto_tag_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE studios SET ignore_auto_tag = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_ignore_auto_tag_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE studios SET ignore_auto_tag = ? WHERE id = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, id], commit)
+
 	def update_url_by_checksum(self, checksum, value, commit=True):
 		return self.execute("UPDATE studios SET url = ? WHERE checksum = ?", [value, checksum], commit)
 
@@ -347,6 +389,12 @@ class Studios(Table):
 
 	def update_empty_rating_by_checksum(self, checksum, value, commit=True):
 		return self.execute("UPDATE studios SET rating = ? WHERE checksum = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, checksum], commit)
+
+	def update_ignore_auto_tag_by_checksum(self, checksum, value, commit=True):
+		return self.execute("UPDATE studios SET ignore_auto_tag = ? WHERE checksum = ?", [value, checksum], commit)
+
+	def update_empty_ignore_auto_tag_by_checksum(self, checksum, value, commit=True):
+		return self.execute("UPDATE studios SET ignore_auto_tag = ? WHERE checksum = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, checksum], commit)
 
 	def update_url_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE studios SET url = ? WHERE name = ?", [value, name], commit)
@@ -384,6 +432,12 @@ class Studios(Table):
 	def update_empty_rating_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE studios SET rating = ? WHERE name = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, name], commit)
 
+	def update_ignore_auto_tag_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE studios SET ignore_auto_tag = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_ignore_auto_tag_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE studios SET ignore_auto_tag = ? WHERE name = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, name], commit)
+
 	def update_url_by_parent_id(self, parent_id, value, commit=True):
 		return self.execute("UPDATE studios SET url = ? WHERE parent_id = ?", [value, parent_id], commit)
 
@@ -413,6 +467,12 @@ class Studios(Table):
 
 	def update_empty_rating_by_parent_id(self, parent_id, value, commit=True):
 		return self.execute("UPDATE studios SET rating = ? WHERE parent_id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, parent_id], commit)
+
+	def update_ignore_auto_tag_by_parent_id(self, parent_id, value, commit=True):
+		return self.execute("UPDATE studios SET ignore_auto_tag = ? WHERE parent_id = ?", [value, parent_id], commit)
+
+	def update_empty_ignore_auto_tag_by_parent_id(self, parent_id, value, commit=True):
+		return self.execute("UPDATE studios SET ignore_auto_tag = ? WHERE parent_id = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, parent_id], commit)
 
 class Performers(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -520,6 +580,10 @@ class Performers(Table):
 
 	def select_rating(self, rating, colvalues={}, selectcols=['*']):
 		colvalues['rating'] = rating
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
+		colvalues['ignore_auto_tag'] = ignore_auto_tag
 		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
 	def selectone_id(self, id, colvalues={}, selectcols=['*']):
@@ -730,11 +794,19 @@ class Performers(Table):
 		else:
 			return None
 
-	def insert(self, checksum, name, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, aliases, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, commit=True):
-		return self.execute("INSERT INTO performers (checksum, name, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, aliases, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [checksum, name, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, aliases, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating], commit)
+	def selectone_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
+		colvalues['ignore_auto_tag'] = ignore_auto_tag
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, checksum, name, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, aliases, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, commit=True):
+		return self.execute("INSERT INTO performers (checksum, name, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, aliases, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [checksum, name, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, aliases, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag], commit)
 
 	def insert_model(self, model: PerformersRow, commit=True):
-		return self.execute("INSERT INTO performers (checksum, name, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, aliases, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO performers (checksum, name, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, aliases, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
 	def update_gender_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE performers SET gender = ? WHERE id = ?", [value, id], commit)
@@ -874,6 +946,12 @@ class Performers(Table):
 	def update_empty_rating_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE performers SET rating = ? WHERE id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, id], commit)
 
+	def update_ignore_auto_tag_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_ignore_auto_tag_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE id = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, id], commit)
+
 	def update_gender_by_checksum(self, checksum, value, commit=True):
 		return self.execute("UPDATE performers SET gender = ? WHERE checksum = ?", [value, checksum], commit)
 
@@ -1012,6 +1090,12 @@ class Performers(Table):
 	def update_empty_rating_by_checksum(self, checksum, value, commit=True):
 		return self.execute("UPDATE performers SET rating = ? WHERE checksum = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, checksum], commit)
 
+	def update_ignore_auto_tag_by_checksum(self, checksum, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE checksum = ?", [value, checksum], commit)
+
+	def update_empty_ignore_auto_tag_by_checksum(self, checksum, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE checksum = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, checksum], commit)
+
 	def update_gender_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE performers SET gender = ? WHERE name = ?", [value, name], commit)
 
@@ -1149,6 +1233,12 @@ class Performers(Table):
 
 	def update_empty_rating_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE performers SET rating = ? WHERE name = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, name], commit)
+
+	def update_ignore_auto_tag_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_ignore_auto_tag_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE name = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, name], commit)
 
 class Movies(Table):
 	def __init__(self, conn: sqlite3.Connection):

@@ -42,6 +42,7 @@ class TagsRow(TableRow):
 		self._name = None
 		self._created_at = None
 		self._updated_at = None
+		self._ignore_auto_tag = None
 
 	@property
 	def table_name(self):
@@ -79,14 +80,22 @@ class TagsRow(TableRow):
 	def updated_at(self, updated_at):
 		self._updated_at = updated_at
 
+	@property
+	def ignore_auto_tag(self):
+		return self._ignore_auto_tag
+
+	@ignore_auto_tag.setter
+	def ignore_auto_tag(self, ignore_auto_tag):
+		self._ignore_auto_tag = ignore_auto_tag
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.name, self.created_at, self.updated_at]
+			return [self.id, self.name, self.created_at, self.updated_at, self.ignore_auto_tag]
 		else:
-			return [self.name, self.created_at, self.updated_at]
+			return [self.name, self.created_at, self.updated_at, self.ignore_auto_tag]
 
 class SqliteSequenceRow(TableRow):
 	def __init__(self):
@@ -135,6 +144,7 @@ class StudiosRow(TableRow):
 		self._updated_at = None
 		self._details = None
 		self._rating = None
+		self._ignore_auto_tag = None
 
 	@property
 	def table_name(self):
@@ -212,14 +222,22 @@ class StudiosRow(TableRow):
 	def rating(self, rating):
 		self._rating = rating
 
+	@property
+	def ignore_auto_tag(self):
+		return self._ignore_auto_tag
+
+	@ignore_auto_tag.setter
+	def ignore_auto_tag(self, ignore_auto_tag):
+		self._ignore_auto_tag = ignore_auto_tag
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.checksum, self.name, self.url, self.parent_id, self.created_at, self.updated_at, self.details, self.rating]
+			return [self.id, self.checksum, self.name, self.url, self.parent_id, self.created_at, self.updated_at, self.details, self.rating, self.ignore_auto_tag]
 		else:
-			return [self.checksum, self.name, self.url, self.parent_id, self.created_at, self.updated_at, self.details, self.rating]
+			return [self.checksum, self.name, self.url, self.parent_id, self.created_at, self.updated_at, self.details, self.rating, self.ignore_auto_tag]
 
 class PerformersRow(TableRow):
 	def __init__(self):
@@ -250,6 +268,7 @@ class PerformersRow(TableRow):
 		self._hair_color = None
 		self._weight = None
 		self._rating = None
+		self._ignore_auto_tag = None
 
 	@property
 	def table_name(self):
@@ -463,14 +482,22 @@ class PerformersRow(TableRow):
 	def rating(self, rating):
 		self._rating = rating
 
+	@property
+	def ignore_auto_tag(self):
+		return self._ignore_auto_tag
+
+	@ignore_auto_tag.setter
+	def ignore_auto_tag(self, ignore_auto_tag):
+		self._ignore_auto_tag = ignore_auto_tag
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.checksum, self.name, self.gender, self.url, self.twitter, self.instagram, self.birthdate, self.ethnicity, self.country, self.eye_color, self.height, self.measurements, self.fake_tits, self.career_length, self.tattoos, self.piercings, self.aliases, self.favorite, self.created_at, self.updated_at, self.details, self.death_date, self.hair_color, self.weight, self.rating]
+			return [self.id, self.checksum, self.name, self.gender, self.url, self.twitter, self.instagram, self.birthdate, self.ethnicity, self.country, self.eye_color, self.height, self.measurements, self.fake_tits, self.career_length, self.tattoos, self.piercings, self.aliases, self.favorite, self.created_at, self.updated_at, self.details, self.death_date, self.hair_color, self.weight, self.rating, self.ignore_auto_tag]
 		else:
-			return [self.checksum, self.name, self.gender, self.url, self.twitter, self.instagram, self.birthdate, self.ethnicity, self.country, self.eye_color, self.height, self.measurements, self.fake_tits, self.career_length, self.tattoos, self.piercings, self.aliases, self.favorite, self.created_at, self.updated_at, self.details, self.death_date, self.hair_color, self.weight, self.rating]
+			return [self.checksum, self.name, self.gender, self.url, self.twitter, self.instagram, self.birthdate, self.ethnicity, self.country, self.eye_color, self.height, self.measurements, self.fake_tits, self.career_length, self.tattoos, self.piercings, self.aliases, self.favorite, self.created_at, self.updated_at, self.details, self.death_date, self.hair_color, self.weight, self.rating, self.ignore_auto_tag]
 
 class MoviesRow(TableRow):
 	def __init__(self):
