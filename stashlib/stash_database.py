@@ -95,6 +95,7 @@ class StashDatabase(StashDatabaseBase):
         performer.url = url
         performer.favorite = 0
         performer.details = None
+        performer.ignore_auto_tag = False
 
         performer = self.insert_performer(performer)
         if performer:
