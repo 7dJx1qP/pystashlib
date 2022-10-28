@@ -168,6 +168,19 @@ class StashDatabase(StashDatabaseBase):
         if commit:
             self.commit()
 
+    def get_scenes_from_filepath(self, filepath):
+        dirpath, filename = os.path.split(filepath)
+        rows = self.fetchall("""SELECT a.*
+FROM scenes a
+JOIN scenes_files b
+ON a.id = b.scene_id
+JOIN files c
+ON c.id = b.file_id
+JOIN folders d
+ON c.parent_folder_id = d.id
+WHERE d.path = ? AND c.basename = ?""", (dirpath, filename))
+        return [ScenesRow().from_sqliterow(row) for row in rows]
+
     def create_movie(self, name, url, front_path, back_path):
         # get existing movie by name
         movie = self.movies.selectone_name(name)
