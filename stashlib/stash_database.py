@@ -152,8 +152,8 @@ class StashDatabase(StashDatabaseBase):
             self.scenes_tags.insert_model(scenes_tags, commit)
         return True
 
-    def add_scenes_to_movie(self, movie: MoviesRow, scenes: list[ScenesRow], scene_index=[], commit=True):
-        for i in range(0, len(scenes)):
+    def add_scenes_to_movie(self, movie: MoviesRow, scenes: list[ScenesRow], scene_index=None, commit=True):
+        for i, scene in enumerate(scenes):
             scene = scenes[i]
             movies_scenes = MoviesScenesRow()
             movies_scenes.movie_id = movie.id
@@ -219,11 +219,9 @@ WHERE d.path = ? AND c.basename = ?""", (dirpath, filename))
 
         return movie
 
-    def create_movie_from_folder(self, dirpath, url, front_path, back_path, front_only=False):
-        name = os.path.basename(dirpath)
-        name = re.sub(' \[.*?\]', '', name)
-        name = re.sub(' \(\d{4}\)', '', name)
-        name = re.sub(' DISC\d', '', name)
+    def create_movie_from_folder(self, dirpath, url, front_path, back_path, front_only=False, name=None):
+        if not name:
+            name = os.path.basename(dirpath)
 
         # get front/back image paths
         if not front_path:
@@ -235,20 +233,23 @@ WHERE d.path = ? AND c.basename = ?""", (dirpath, filename))
 
         # add scene from files in folder to movie
         filepaths = [os.path.join(dirpath, file) for file in os.listdir(dirpath)]
-        scenes = [self.scenes.selectone_path(filepath) for filepath in filepaths]
+        scenes = []
+        for filepath in filepaths:
+            scenes += self.get_scenes_from_filepath(filepath)
         scenes = [scene for scene in scenes if scene]
         self.add_scenes_to_movie(movie, scenes)
 
-    def create_movie_from_file(self, filepath, url, front_path, back_path):
+    def create_movie_from_file(self, filepath, url, front_path, back_path, name=None, scene_index=1):
         filename = os.path.basename(filepath)
-        part, name = parse_part(os.path.splitext(filename)[0])
+        if not name:
+            name = os.path.splitext(filename)[0]
 
         movie = self.create_movie(name, url, front_path, back_path)
 
         # add scene from file to movie
-        scene = self.scenes.selectone_path(filepath)
-        if scene:
-            self.add_scenes_to_movie(movie, [scene], scene_index=[part])
+        scenes = self.get_scenes_from_filepath(filepath)
+        for scene in scenes:
+            self.add_scenes_to_movie(movie, [scene], scene_index=[scene_index])
 
     def add_performers_to_gallery(self, gallery: GalleriesRow, performers: list[PerformersRow], commit=True):
         existing_performer_ids = [performer_gallery.performer_id for performer_gallery in self.performers_galleries.select_gallery_id(gallery.id)]
