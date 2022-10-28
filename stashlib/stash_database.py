@@ -65,7 +65,7 @@ class StashDatabase(StashDatabaseBase):
                     break
         return results
 
-    def query_studio_name(self, name):
+    def query_similar_studio_name(self, name):
         result = self.fetchone(f"""SELECT * FROM studios WHERE REPLACE(REPLACE(name, ' ', ''), '-', '') LIKE ?""", (name.replace(' ', '').replace('-', ''), ))
         if result:
             return StudiosRow().from_sqliterow(result)
