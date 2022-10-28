@@ -43,6 +43,7 @@ class TagsRow(TableRow):
 		self._created_at = None
 		self._updated_at = None
 		self._ignore_auto_tag = None
+		self._description = None
 
 	@property
 	def table_name(self):
@@ -88,14 +89,22 @@ class TagsRow(TableRow):
 	def ignore_auto_tag(self, ignore_auto_tag):
 		self._ignore_auto_tag = ignore_auto_tag
 
+	@property
+	def description(self):
+		return self._description
+
+	@description.setter
+	def description(self, description):
+		self._description = description
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.name, self.created_at, self.updated_at, self.ignore_auto_tag]
+			return [self.id, self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description]
 		else:
-			return [self.name, self.created_at, self.updated_at, self.ignore_auto_tag]
+			return [self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description]
 
 class SqliteSequenceRow(TableRow):
 	def __init__(self):
@@ -794,6 +803,1150 @@ class ScrapedItemsRow(TableRow):
 		else:
 			return [self.title, self.description, self.url, self.date, self.rating, self.tags, self.models, self.episode, self.gallery_filename, self.gallery_url, self.video_filename, self.video_url, self.studio_id, self.created_at, self.updated_at]
 
+class SceneMarkersRow(TableRow):
+	def __init__(self):
+		super().__init__('scene_markers')
+		self._id = None
+		self._title = None
+		self._seconds = None
+		self._primary_tag_id = None
+		self._scene_id = None
+		self._created_at = None
+		self._updated_at = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def title(self):
+		return self._title
+
+	@title.setter
+	def title(self, title):
+		self._title = title
+
+	@property
+	def seconds(self):
+		return self._seconds
+
+	@seconds.setter
+	def seconds(self, seconds):
+		self._seconds = seconds
+
+	@property
+	def primary_tag_id(self):
+		return self._primary_tag_id
+
+	@primary_tag_id.setter
+	def primary_tag_id(self, primary_tag_id):
+		self._primary_tag_id = primary_tag_id
+
+	@property
+	def scene_id(self):
+		return self._scene_id
+
+	@scene_id.setter
+	def scene_id(self, scene_id):
+		self._scene_id = scene_id
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at]
+		else:
+			return [self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at]
+
+class PerformerStashIdsRow(TableRow):
+	def __init__(self):
+		super().__init__('performer_stash_ids')
+		self._performer_id = None
+		self._endpoint = None
+		self._stash_id = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def performer_id(self):
+		return self._performer_id
+
+	@performer_id.setter
+	def performer_id(self, performer_id):
+		self._performer_id = performer_id
+
+	@property
+	def endpoint(self):
+		return self._endpoint
+
+	@endpoint.setter
+	def endpoint(self, endpoint):
+		self._endpoint = endpoint
+
+	@property
+	def stash_id(self):
+		return self._stash_id
+
+	@stash_id.setter
+	def stash_id(self, stash_id):
+		self._stash_id = stash_id
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.performer_id, self.endpoint, self.stash_id]
+		else:
+			return [self.performer_id, self.endpoint, self.stash_id]
+
+class StudioStashIdsRow(TableRow):
+	def __init__(self):
+		super().__init__('studio_stash_ids')
+		self._studio_id = None
+		self._endpoint = None
+		self._stash_id = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def studio_id(self):
+		return self._studio_id
+
+	@studio_id.setter
+	def studio_id(self, studio_id):
+		self._studio_id = studio_id
+
+	@property
+	def endpoint(self):
+		return self._endpoint
+
+	@endpoint.setter
+	def endpoint(self, endpoint):
+		self._endpoint = endpoint
+
+	@property
+	def stash_id(self):
+		return self._stash_id
+
+	@stash_id.setter
+	def stash_id(self, stash_id):
+		self._stash_id = stash_id
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.studio_id, self.endpoint, self.stash_id]
+		else:
+			return [self.studio_id, self.endpoint, self.stash_id]
+
+class SavedFiltersRow(TableRow):
+	def __init__(self):
+		super().__init__('saved_filters')
+		self._id = None
+		self._name = None
+		self._mode = None
+		self._filter = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def name(self):
+		return self._name
+
+	@name.setter
+	def name(self, name):
+		self._name = name
+
+	@property
+	def mode(self):
+		return self._mode
+
+	@mode.setter
+	def mode(self, mode):
+		self._mode = mode
+
+	@property
+	def filter(self):
+		return self._filter
+
+	@filter.setter
+	def filter(self, filter):
+		self._filter = filter
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.name, self.mode, self.filter]
+		else:
+			return [self.name, self.mode, self.filter]
+
+class TagsRelationsRow(TableRow):
+	def __init__(self):
+		super().__init__('tags_relations')
+		self._parent_id = None
+		self._child_id = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def parent_id(self):
+		return self._parent_id
+
+	@parent_id.setter
+	def parent_id(self, parent_id):
+		self._parent_id = parent_id
+
+	@property
+	def child_id(self):
+		return self._child_id
+
+	@child_id.setter
+	def child_id(self, child_id):
+		self._child_id = child_id
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.parent_id, self.child_id]
+		else:
+			return [self.parent_id, self.child_id]
+
+class FoldersRow(TableRow):
+	def __init__(self):
+		super().__init__('folders')
+		self._id = None
+		self._path = None
+		self._parent_folder_id = None
+		self._mod_time = None
+		self._created_at = None
+		self._updated_at = None
+		self._zip_file_id = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def path(self):
+		return self._path
+
+	@path.setter
+	def path(self, path):
+		self._path = path
+
+	@property
+	def parent_folder_id(self):
+		return self._parent_folder_id
+
+	@parent_folder_id.setter
+	def parent_folder_id(self, parent_folder_id):
+		self._parent_folder_id = parent_folder_id
+
+	@property
+	def mod_time(self):
+		return self._mod_time
+
+	@mod_time.setter
+	def mod_time(self, mod_time):
+		self._mod_time = mod_time
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	@property
+	def zip_file_id(self):
+		return self._zip_file_id
+
+	@zip_file_id.setter
+	def zip_file_id(self, zip_file_id):
+		self._zip_file_id = zip_file_id
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.path, self.parent_folder_id, self.mod_time, self.created_at, self.updated_at, self.zip_file_id]
+		else:
+			return [self.path, self.parent_folder_id, self.mod_time, self.created_at, self.updated_at, self.zip_file_id]
+
+class FilesRow(TableRow):
+	def __init__(self):
+		super().__init__('files')
+		self._id = None
+		self._basename = None
+		self._zip_file_id = None
+		self._parent_folder_id = None
+		self._size = None
+		self._mod_time = None
+		self._created_at = None
+		self._updated_at = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def basename(self):
+		return self._basename
+
+	@basename.setter
+	def basename(self, basename):
+		self._basename = basename
+
+	@property
+	def zip_file_id(self):
+		return self._zip_file_id
+
+	@zip_file_id.setter
+	def zip_file_id(self, zip_file_id):
+		self._zip_file_id = zip_file_id
+
+	@property
+	def parent_folder_id(self):
+		return self._parent_folder_id
+
+	@parent_folder_id.setter
+	def parent_folder_id(self, parent_folder_id):
+		self._parent_folder_id = parent_folder_id
+
+	@property
+	def size(self):
+		return self._size
+
+	@size.setter
+	def size(self, size):
+		self._size = size
+
+	@property
+	def mod_time(self):
+		return self._mod_time
+
+	@mod_time.setter
+	def mod_time(self, mod_time):
+		self._mod_time = mod_time
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.basename, self.zip_file_id, self.parent_folder_id, self.size, self.mod_time, self.created_at, self.updated_at]
+		else:
+			return [self.basename, self.zip_file_id, self.parent_folder_id, self.size, self.mod_time, self.created_at, self.updated_at]
+
+class FilesFingerprintsRow(TableRow):
+	def __init__(self):
+		super().__init__('files_fingerprints')
+		self._file_id = None
+		self._type = None
+		self._fingerprint = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def file_id(self):
+		return self._file_id
+
+	@file_id.setter
+	def file_id(self, file_id):
+		self._file_id = file_id
+
+	@property
+	def type(self):
+		return self._type
+
+	@type.setter
+	def type(self, type):
+		self._type = type
+
+	@property
+	def fingerprint(self):
+		return self._fingerprint
+
+	@fingerprint.setter
+	def fingerprint(self, fingerprint):
+		self._fingerprint = fingerprint
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.file_id, self.type, self.fingerprint]
+		else:
+			return [self.file_id, self.type, self.fingerprint]
+
+class VideoFilesRow(TableRow):
+	def __init__(self):
+		super().__init__('video_files')
+		self._file_id = None
+		self._duration = None
+		self._video_codec = None
+		self._format = None
+		self._audio_codec = None
+		self._width = None
+		self._height = None
+		self._frame_rate = None
+		self._bit_rate = None
+		self._interactive = None
+		self._interactive_speed = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def file_id(self):
+		return self._file_id
+
+	@file_id.setter
+	def file_id(self, file_id):
+		self._file_id = file_id
+
+	@property
+	def duration(self):
+		return self._duration
+
+	@duration.setter
+	def duration(self, duration):
+		self._duration = duration
+
+	@property
+	def video_codec(self):
+		return self._video_codec
+
+	@video_codec.setter
+	def video_codec(self, video_codec):
+		self._video_codec = video_codec
+
+	@property
+	def format(self):
+		return self._format
+
+	@format.setter
+	def format(self, format):
+		self._format = format
+
+	@property
+	def audio_codec(self):
+		return self._audio_codec
+
+	@audio_codec.setter
+	def audio_codec(self, audio_codec):
+		self._audio_codec = audio_codec
+
+	@property
+	def width(self):
+		return self._width
+
+	@width.setter
+	def width(self, width):
+		self._width = width
+
+	@property
+	def height(self):
+		return self._height
+
+	@height.setter
+	def height(self, height):
+		self._height = height
+
+	@property
+	def frame_rate(self):
+		return self._frame_rate
+
+	@frame_rate.setter
+	def frame_rate(self, frame_rate):
+		self._frame_rate = frame_rate
+
+	@property
+	def bit_rate(self):
+		return self._bit_rate
+
+	@bit_rate.setter
+	def bit_rate(self, bit_rate):
+		self._bit_rate = bit_rate
+
+	@property
+	def interactive(self):
+		return self._interactive
+
+	@interactive.setter
+	def interactive(self, interactive):
+		self._interactive = interactive
+
+	@property
+	def interactive_speed(self):
+		return self._interactive_speed
+
+	@interactive_speed.setter
+	def interactive_speed(self, interactive_speed):
+		self._interactive_speed = interactive_speed
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.file_id, self.duration, self.video_codec, self.format, self.audio_codec, self.width, self.height, self.frame_rate, self.bit_rate, self.interactive, self.interactive_speed]
+		else:
+			return [self.file_id, self.duration, self.video_codec, self.format, self.audio_codec, self.width, self.height, self.frame_rate, self.bit_rate, self.interactive, self.interactive_speed]
+
+class VideoCaptionsRow(TableRow):
+	def __init__(self):
+		super().__init__('video_captions')
+		self._file_id = None
+		self._language_code = None
+		self._filename = None
+		self._caption_type = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def file_id(self):
+		return self._file_id
+
+	@file_id.setter
+	def file_id(self, file_id):
+		self._file_id = file_id
+
+	@property
+	def language_code(self):
+		return self._language_code
+
+	@language_code.setter
+	def language_code(self, language_code):
+		self._language_code = language_code
+
+	@property
+	def filename(self):
+		return self._filename
+
+	@filename.setter
+	def filename(self, filename):
+		self._filename = filename
+
+	@property
+	def caption_type(self):
+		return self._caption_type
+
+	@caption_type.setter
+	def caption_type(self, caption_type):
+		self._caption_type = caption_type
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.file_id, self.language_code, self.filename, self.caption_type]
+		else:
+			return [self.file_id, self.language_code, self.filename, self.caption_type]
+
+class ImageFilesRow(TableRow):
+	def __init__(self):
+		super().__init__('image_files')
+		self._file_id = None
+		self._format = None
+		self._width = None
+		self._height = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def file_id(self):
+		return self._file_id
+
+	@file_id.setter
+	def file_id(self, file_id):
+		self._file_id = file_id
+
+	@property
+	def format(self):
+		return self._format
+
+	@format.setter
+	def format(self, format):
+		self._format = format
+
+	@property
+	def width(self):
+		return self._width
+
+	@width.setter
+	def width(self, width):
+		self._width = width
+
+	@property
+	def height(self):
+		return self._height
+
+	@height.setter
+	def height(self, height):
+		self._height = height
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.file_id, self.format, self.width, self.height]
+		else:
+			return [self.file_id, self.format, self.width, self.height]
+
+class ImagesFilesRow(TableRow):
+	def __init__(self):
+		super().__init__('images_files')
+		self._image_id = None
+		self._file_id = None
+		self._primary = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def image_id(self):
+		return self._image_id
+
+	@image_id.setter
+	def image_id(self, image_id):
+		self._image_id = image_id
+
+	@property
+	def file_id(self):
+		return self._file_id
+
+	@file_id.setter
+	def file_id(self, file_id):
+		self._file_id = file_id
+
+	@property
+	def primary(self):
+		return self._primary
+
+	@primary.setter
+	def primary(self, primary):
+		self._primary = primary
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.image_id, self.file_id, self.primary]
+		else:
+			return [self.image_id, self.file_id, self.primary]
+
+class GalleriesFilesRow(TableRow):
+	def __init__(self):
+		super().__init__('galleries_files')
+		self._gallery_id = None
+		self._file_id = None
+		self._primary = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def gallery_id(self):
+		return self._gallery_id
+
+	@gallery_id.setter
+	def gallery_id(self, gallery_id):
+		self._gallery_id = gallery_id
+
+	@property
+	def file_id(self):
+		return self._file_id
+
+	@file_id.setter
+	def file_id(self, file_id):
+		self._file_id = file_id
+
+	@property
+	def primary(self):
+		return self._primary
+
+	@primary.setter
+	def primary(self, primary):
+		self._primary = primary
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.gallery_id, self.file_id, self.primary]
+		else:
+			return [self.gallery_id, self.file_id, self.primary]
+
+class ScenesFilesRow(TableRow):
+	def __init__(self):
+		super().__init__('scenes_files')
+		self._scene_id = None
+		self._file_id = None
+		self._primary = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def scene_id(self):
+		return self._scene_id
+
+	@scene_id.setter
+	def scene_id(self, scene_id):
+		self._scene_id = scene_id
+
+	@property
+	def file_id(self):
+		return self._file_id
+
+	@file_id.setter
+	def file_id(self, file_id):
+		self._file_id = file_id
+
+	@property
+	def primary(self):
+		return self._primary
+
+	@primary.setter
+	def primary(self, primary):
+		self._primary = primary
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.scene_id, self.file_id, self.primary]
+		else:
+			return [self.scene_id, self.file_id, self.primary]
+
+class ImagesRow(TableRow):
+	def __init__(self):
+		super().__init__('images')
+		self._id = None
+		self._title = None
+		self._rating = None
+		self._studio_id = None
+		self._o_counter = None
+		self._organized = None
+		self._created_at = None
+		self._updated_at = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def title(self):
+		return self._title
+
+	@title.setter
+	def title(self, title):
+		self._title = title
+
+	@property
+	def rating(self):
+		return self._rating
+
+	@rating.setter
+	def rating(self, rating):
+		self._rating = rating
+
+	@property
+	def studio_id(self):
+		return self._studio_id
+
+	@studio_id.setter
+	def studio_id(self, studio_id):
+		self._studio_id = studio_id
+
+	@property
+	def o_counter(self):
+		return self._o_counter
+
+	@o_counter.setter
+	def o_counter(self, o_counter):
+		self._o_counter = o_counter
+
+	@property
+	def organized(self):
+		return self._organized
+
+	@organized.setter
+	def organized(self, organized):
+		self._organized = organized
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.title, self.rating, self.studio_id, self.o_counter, self.organized, self.created_at, self.updated_at]
+		else:
+			return [self.title, self.rating, self.studio_id, self.o_counter, self.organized, self.created_at, self.updated_at]
+
+class GalleriesRow(TableRow):
+	def __init__(self):
+		super().__init__('galleries')
+		self._id = None
+		self._folder_id = None
+		self._title = None
+		self._url = None
+		self._date = None
+		self._details = None
+		self._studio_id = None
+		self._rating = None
+		self._organized = None
+		self._created_at = None
+		self._updated_at = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def folder_id(self):
+		return self._folder_id
+
+	@folder_id.setter
+	def folder_id(self, folder_id):
+		self._folder_id = folder_id
+
+	@property
+	def title(self):
+		return self._title
+
+	@title.setter
+	def title(self, title):
+		self._title = title
+
+	@property
+	def url(self):
+		return self._url
+
+	@url.setter
+	def url(self, url):
+		self._url = url
+
+	@property
+	def date(self):
+		return self._date
+
+	@date.setter
+	def date(self, date):
+		self._date = date
+
+	@property
+	def details(self):
+		return self._details
+
+	@details.setter
+	def details(self, details):
+		self._details = details
+
+	@property
+	def studio_id(self):
+		return self._studio_id
+
+	@studio_id.setter
+	def studio_id(self, studio_id):
+		self._studio_id = studio_id
+
+	@property
+	def rating(self):
+		return self._rating
+
+	@rating.setter
+	def rating(self, rating):
+		self._rating = rating
+
+	@property
+	def organized(self):
+		return self._organized
+
+	@organized.setter
+	def organized(self, organized):
+		self._organized = organized
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.folder_id, self.title, self.url, self.date, self.details, self.studio_id, self.rating, self.organized, self.created_at, self.updated_at]
+		else:
+			return [self.folder_id, self.title, self.url, self.date, self.details, self.studio_id, self.rating, self.organized, self.created_at, self.updated_at]
+
+class ScenesRow(TableRow):
+	def __init__(self):
+		super().__init__('scenes')
+		self._id = None
+		self._title = None
+		self._details = None
+		self._url = None
+		self._date = None
+		self._rating = None
+		self._studio_id = None
+		self._o_counter = None
+		self._organized = None
+		self._created_at = None
+		self._updated_at = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def title(self):
+		return self._title
+
+	@title.setter
+	def title(self, title):
+		self._title = title
+
+	@property
+	def details(self):
+		return self._details
+
+	@details.setter
+	def details(self, details):
+		self._details = details
+
+	@property
+	def url(self):
+		return self._url
+
+	@url.setter
+	def url(self, url):
+		self._url = url
+
+	@property
+	def date(self):
+		return self._date
+
+	@date.setter
+	def date(self, date):
+		self._date = date
+
+	@property
+	def rating(self):
+		return self._rating
+
+	@rating.setter
+	def rating(self, rating):
+		self._rating = rating
+
+	@property
+	def studio_id(self):
+		return self._studio_id
+
+	@studio_id.setter
+	def studio_id(self, studio_id):
+		self._studio_id = studio_id
+
+	@property
+	def o_counter(self):
+		return self._o_counter
+
+	@o_counter.setter
+	def o_counter(self, o_counter):
+		self._o_counter = o_counter
+
+	@property
+	def organized(self):
+		return self._organized
+
+	@organized.setter
+	def organized(self, organized):
+		self._organized = organized
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.title, self.details, self.url, self.date, self.rating, self.studio_id, self.o_counter, self.organized, self.created_at, self.updated_at]
+		else:
+			return [self.title, self.details, self.url, self.date, self.rating, self.studio_id, self.o_counter, self.organized, self.created_at, self.updated_at]
+
 class PerformersImageRow(TableRow):
 	def __init__(self):
 		super().__init__('performers_image')
@@ -943,266 +2096,6 @@ class TagsImageRow(TableRow):
 		else:
 			return [self.tag_id, self.image]
 
-class ScenesRow(TableRow):
-	def __init__(self):
-		super().__init__('scenes')
-		self._id = None
-		self._path = None
-		self._checksum = None
-		self._oshash = None
-		self._title = None
-		self._details = None
-		self._url = None
-		self._date = None
-		self._rating = None
-		self._size = None
-		self._duration = None
-		self._video_codec = None
-		self._audio_codec = None
-		self._width = None
-		self._height = None
-		self._framerate = None
-		self._bitrate = None
-		self._studio_id = None
-		self._o_counter = None
-		self._format = None
-		self._created_at = None
-		self._updated_at = None
-		self._file_mod_time = None
-		self._organized = None
-		self._phash = None
-		self._interactive = None
-		self._interactive_speed = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, id):
-		self._id = id
-
-	@property
-	def path(self):
-		return self._path
-
-	@path.setter
-	def path(self, path):
-		self._path = path
-
-	@property
-	def checksum(self):
-		return self._checksum
-
-	@checksum.setter
-	def checksum(self, checksum):
-		self._checksum = checksum
-
-	@property
-	def oshash(self):
-		return self._oshash
-
-	@oshash.setter
-	def oshash(self, oshash):
-		self._oshash = oshash
-
-	@property
-	def title(self):
-		return self._title
-
-	@title.setter
-	def title(self, title):
-		self._title = title
-
-	@property
-	def details(self):
-		return self._details
-
-	@details.setter
-	def details(self, details):
-		self._details = details
-
-	@property
-	def url(self):
-		return self._url
-
-	@url.setter
-	def url(self, url):
-		self._url = url
-
-	@property
-	def date(self):
-		return self._date
-
-	@date.setter
-	def date(self, date):
-		self._date = date
-
-	@property
-	def rating(self):
-		return self._rating
-
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
-
-	@property
-	def size(self):
-		return self._size
-
-	@size.setter
-	def size(self, size):
-		self._size = size
-
-	@property
-	def duration(self):
-		return self._duration
-
-	@duration.setter
-	def duration(self, duration):
-		self._duration = duration
-
-	@property
-	def video_codec(self):
-		return self._video_codec
-
-	@video_codec.setter
-	def video_codec(self, video_codec):
-		self._video_codec = video_codec
-
-	@property
-	def audio_codec(self):
-		return self._audio_codec
-
-	@audio_codec.setter
-	def audio_codec(self, audio_codec):
-		self._audio_codec = audio_codec
-
-	@property
-	def width(self):
-		return self._width
-
-	@width.setter
-	def width(self, width):
-		self._width = width
-
-	@property
-	def height(self):
-		return self._height
-
-	@height.setter
-	def height(self, height):
-		self._height = height
-
-	@property
-	def framerate(self):
-		return self._framerate
-
-	@framerate.setter
-	def framerate(self, framerate):
-		self._framerate = framerate
-
-	@property
-	def bitrate(self):
-		return self._bitrate
-
-	@bitrate.setter
-	def bitrate(self, bitrate):
-		self._bitrate = bitrate
-
-	@property
-	def studio_id(self):
-		return self._studio_id
-
-	@studio_id.setter
-	def studio_id(self, studio_id):
-		self._studio_id = studio_id
-
-	@property
-	def o_counter(self):
-		return self._o_counter
-
-	@o_counter.setter
-	def o_counter(self, o_counter):
-		self._o_counter = o_counter
-
-	@property
-	def format(self):
-		return self._format
-
-	@format.setter
-	def format(self, format):
-		self._format = format
-
-	@property
-	def created_at(self):
-		return self._created_at
-
-	@created_at.setter
-	def created_at(self, created_at):
-		self._created_at = created_at
-
-	@property
-	def updated_at(self):
-		return self._updated_at
-
-	@updated_at.setter
-	def updated_at(self, updated_at):
-		self._updated_at = updated_at
-
-	@property
-	def file_mod_time(self):
-		return self._file_mod_time
-
-	@file_mod_time.setter
-	def file_mod_time(self, file_mod_time):
-		self._file_mod_time = file_mod_time
-
-	@property
-	def organized(self):
-		return self._organized
-
-	@organized.setter
-	def organized(self, organized):
-		self._organized = organized
-
-	@property
-	def phash(self):
-		return self._phash
-
-	@phash.setter
-	def phash(self, phash):
-		self._phash = phash
-
-	@property
-	def interactive(self):
-		return self._interactive
-
-	@interactive.setter
-	def interactive(self, interactive):
-		self._interactive = interactive
-
-	@property
-	def interactive_speed(self):
-		return self._interactive_speed
-
-	@interactive_speed.setter
-	def interactive_speed(self, interactive_speed):
-		self._interactive_speed = interactive_speed
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.id, self.path, self.checksum, self.oshash, self.title, self.details, self.url, self.date, self.rating, self.size, self.duration, self.video_codec, self.audio_codec, self.width, self.height, self.framerate, self.bitrate, self.studio_id, self.o_counter, self.format, self.created_at, self.updated_at, self.file_mod_time, self.organized, self.phash, self.interactive, self.interactive_speed]
-		else:
-			return [self.path, self.checksum, self.oshash, self.title, self.details, self.url, self.date, self.rating, self.size, self.duration, self.video_codec, self.audio_codec, self.width, self.height, self.framerate, self.bitrate, self.studio_id, self.o_counter, self.format, self.created_at, self.updated_at, self.file_mod_time, self.organized, self.phash, self.interactive, self.interactive_speed]
-
 class PerformersScenesRow(TableRow):
 	def __init__(self):
 		super().__init__('performers_scenes')
@@ -1237,86 +2130,6 @@ class PerformersScenesRow(TableRow):
 			return [self.performer_id, self.scene_id]
 		else:
 			return [self.performer_id, self.scene_id]
-
-class SceneMarkersRow(TableRow):
-	def __init__(self):
-		super().__init__('scene_markers')
-		self._id = None
-		self._title = None
-		self._seconds = None
-		self._primary_tag_id = None
-		self._scene_id = None
-		self._created_at = None
-		self._updated_at = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, id):
-		self._id = id
-
-	@property
-	def title(self):
-		return self._title
-
-	@title.setter
-	def title(self, title):
-		self._title = title
-
-	@property
-	def seconds(self):
-		return self._seconds
-
-	@seconds.setter
-	def seconds(self, seconds):
-		self._seconds = seconds
-
-	@property
-	def primary_tag_id(self):
-		return self._primary_tag_id
-
-	@primary_tag_id.setter
-	def primary_tag_id(self, primary_tag_id):
-		self._primary_tag_id = primary_tag_id
-
-	@property
-	def scene_id(self):
-		return self._scene_id
-
-	@scene_id.setter
-	def scene_id(self, scene_id):
-		self._scene_id = scene_id
-
-	@property
-	def created_at(self):
-		return self._created_at
-
-	@created_at.setter
-	def created_at(self, created_at):
-		self._created_at = created_at
-
-	@property
-	def updated_at(self):
-		return self._updated_at
-
-	@updated_at.setter
-	def updated_at(self, updated_at):
-		self._updated_at = updated_at
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.id, self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at]
-		else:
-			return [self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at]
 
 class SceneMarkersTagsRow(TableRow):
 	def __init__(self):
@@ -1467,149 +2280,6 @@ class ScenesCoverRow(TableRow):
 		else:
 			return [self.scene_id, self.cover]
 
-class ImagesRow(TableRow):
-	def __init__(self):
-		super().__init__('images')
-		self._id = None
-		self._path = None
-		self._checksum = None
-		self._title = None
-		self._rating = None
-		self._size = None
-		self._width = None
-		self._height = None
-		self._studio_id = None
-		self._o_counter = None
-		self._created_at = None
-		self._updated_at = None
-		self._file_mod_time = None
-		self._organized = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, id):
-		self._id = id
-
-	@property
-	def path(self):
-		return self._path
-
-	@path.setter
-	def path(self, path):
-		self._path = path
-
-	@property
-	def checksum(self):
-		return self._checksum
-
-	@checksum.setter
-	def checksum(self, checksum):
-		self._checksum = checksum
-
-	@property
-	def title(self):
-		return self._title
-
-	@title.setter
-	def title(self, title):
-		self._title = title
-
-	@property
-	def rating(self):
-		return self._rating
-
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
-
-	@property
-	def size(self):
-		return self._size
-
-	@size.setter
-	def size(self, size):
-		self._size = size
-
-	@property
-	def width(self):
-		return self._width
-
-	@width.setter
-	def width(self, width):
-		self._width = width
-
-	@property
-	def height(self):
-		return self._height
-
-	@height.setter
-	def height(self, height):
-		self._height = height
-
-	@property
-	def studio_id(self):
-		return self._studio_id
-
-	@studio_id.setter
-	def studio_id(self, studio_id):
-		self._studio_id = studio_id
-
-	@property
-	def o_counter(self):
-		return self._o_counter
-
-	@o_counter.setter
-	def o_counter(self, o_counter):
-		self._o_counter = o_counter
-
-	@property
-	def created_at(self):
-		return self._created_at
-
-	@created_at.setter
-	def created_at(self, created_at):
-		self._created_at = created_at
-
-	@property
-	def updated_at(self):
-		return self._updated_at
-
-	@updated_at.setter
-	def updated_at(self, updated_at):
-		self._updated_at = updated_at
-
-	@property
-	def file_mod_time(self):
-		return self._file_mod_time
-
-	@file_mod_time.setter
-	def file_mod_time(self, file_mod_time):
-		self._file_mod_time = file_mod_time
-
-	@property
-	def organized(self):
-		return self._organized
-
-	@organized.setter
-	def organized(self, organized):
-		self._organized = organized
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.id, self.path, self.checksum, self.title, self.rating, self.size, self.width, self.height, self.studio_id, self.o_counter, self.created_at, self.updated_at, self.file_mod_time, self.organized]
-		else:
-			return [self.path, self.checksum, self.title, self.rating, self.size, self.width, self.height, self.studio_id, self.o_counter, self.created_at, self.updated_at, self.file_mod_time, self.organized]
-
 class PerformersImagesRow(TableRow):
 	def __init__(self):
 		super().__init__('performers_images')
@@ -1723,237 +2393,6 @@ class SceneStashIdsRow(TableRow):
 			return [self.scene_id, self.endpoint, self.stash_id]
 		else:
 			return [self.scene_id, self.endpoint, self.stash_id]
-
-class PerformerStashIdsRow(TableRow):
-	def __init__(self):
-		super().__init__('performer_stash_ids')
-		self._performer_id = None
-		self._endpoint = None
-		self._stash_id = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def performer_id(self):
-		return self._performer_id
-
-	@performer_id.setter
-	def performer_id(self, performer_id):
-		self._performer_id = performer_id
-
-	@property
-	def endpoint(self):
-		return self._endpoint
-
-	@endpoint.setter
-	def endpoint(self, endpoint):
-		self._endpoint = endpoint
-
-	@property
-	def stash_id(self):
-		return self._stash_id
-
-	@stash_id.setter
-	def stash_id(self, stash_id):
-		self._stash_id = stash_id
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.performer_id, self.endpoint, self.stash_id]
-		else:
-			return [self.performer_id, self.endpoint, self.stash_id]
-
-class StudioStashIdsRow(TableRow):
-	def __init__(self):
-		super().__init__('studio_stash_ids')
-		self._studio_id = None
-		self._endpoint = None
-		self._stash_id = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def studio_id(self):
-		return self._studio_id
-
-	@studio_id.setter
-	def studio_id(self, studio_id):
-		self._studio_id = studio_id
-
-	@property
-	def endpoint(self):
-		return self._endpoint
-
-	@endpoint.setter
-	def endpoint(self, endpoint):
-		self._endpoint = endpoint
-
-	@property
-	def stash_id(self):
-		return self._stash_id
-
-	@stash_id.setter
-	def stash_id(self, stash_id):
-		self._stash_id = stash_id
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.studio_id, self.endpoint, self.stash_id]
-		else:
-			return [self.studio_id, self.endpoint, self.stash_id]
-
-class GalleriesRow(TableRow):
-	def __init__(self):
-		super().__init__('galleries')
-		self._id = None
-		self._path = None
-		self._checksum = None
-		self._zip = None
-		self._title = None
-		self._url = None
-		self._date = None
-		self._details = None
-		self._studio_id = None
-		self._rating = None
-		self._file_mod_time = None
-		self._organized = None
-		self._created_at = None
-		self._updated_at = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, id):
-		self._id = id
-
-	@property
-	def path(self):
-		return self._path
-
-	@path.setter
-	def path(self, path):
-		self._path = path
-
-	@property
-	def checksum(self):
-		return self._checksum
-
-	@checksum.setter
-	def checksum(self, checksum):
-		self._checksum = checksum
-
-	@property
-	def zip(self):
-		return self._zip
-
-	@zip.setter
-	def zip(self, zip):
-		self._zip = zip
-
-	@property
-	def title(self):
-		return self._title
-
-	@title.setter
-	def title(self, title):
-		self._title = title
-
-	@property
-	def url(self):
-		return self._url
-
-	@url.setter
-	def url(self, url):
-		self._url = url
-
-	@property
-	def date(self):
-		return self._date
-
-	@date.setter
-	def date(self, date):
-		self._date = date
-
-	@property
-	def details(self):
-		return self._details
-
-	@details.setter
-	def details(self, details):
-		self._details = details
-
-	@property
-	def studio_id(self):
-		return self._studio_id
-
-	@studio_id.setter
-	def studio_id(self, studio_id):
-		self._studio_id = studio_id
-
-	@property
-	def rating(self):
-		return self._rating
-
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
-
-	@property
-	def file_mod_time(self):
-		return self._file_mod_time
-
-	@file_mod_time.setter
-	def file_mod_time(self, file_mod_time):
-		self._file_mod_time = file_mod_time
-
-	@property
-	def organized(self):
-		return self._organized
-
-	@organized.setter
-	def organized(self, organized):
-		self._organized = organized
-
-	@property
-	def created_at(self):
-		return self._created_at
-
-	@created_at.setter
-	def created_at(self, created_at):
-		self._created_at = created_at
-
-	@property
-	def updated_at(self):
-		return self._updated_at
-
-	@updated_at.setter
-	def updated_at(self, updated_at):
-		self._updated_at = updated_at
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.id, self.path, self.checksum, self.zip, self.title, self.url, self.date, self.details, self.studio_id, self.rating, self.file_mod_time, self.organized, self.created_at, self.updated_at]
-		else:
-			return [self.path, self.checksum, self.zip, self.title, self.url, self.date, self.details, self.studio_id, self.rating, self.file_mod_time, self.organized, self.created_at, self.updated_at]
 
 class ScenesGalleriesRow(TableRow):
 	def __init__(self):
@@ -2165,94 +2604,6 @@ class TagAliasesRow(TableRow):
 		else:
 			return [self.tag_id, self.alias]
 
-class SavedFiltersRow(TableRow):
-	def __init__(self):
-		super().__init__('saved_filters')
-		self._id = None
-		self._name = None
-		self._mode = None
-		self._filter = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, id):
-		self._id = id
-
-	@property
-	def name(self):
-		return self._name
-
-	@name.setter
-	def name(self, name):
-		self._name = name
-
-	@property
-	def mode(self):
-		return self._mode
-
-	@mode.setter
-	def mode(self, mode):
-		self._mode = mode
-
-	@property
-	def filter(self):
-		return self._filter
-
-	@filter.setter
-	def filter(self, filter):
-		self._filter = filter
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.id, self.name, self.mode, self.filter]
-		else:
-			return [self.name, self.mode, self.filter]
-
-class TagsRelationsRow(TableRow):
-	def __init__(self):
-		super().__init__('tags_relations')
-		self._parent_id = None
-		self._child_id = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def parent_id(self):
-		return self._parent_id
-
-	@parent_id.setter
-	def parent_id(self, parent_id):
-		self._parent_id = parent_id
-
-	@property
-	def child_id(self):
-		return self._child_id
-
-	@child_id.setter
-	def child_id(self, child_id):
-		self._child_id = child_id
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.parent_id, self.child_id]
-		else:
-			return [self.parent_id, self.child_id]
-
 class StudioAliasesRow(TableRow):
 	def __init__(self):
 		super().__init__('studio_aliases')
@@ -2288,56 +2639,118 @@ class StudioAliasesRow(TableRow):
 		else:
 			return [self.studio_id, self.alias]
 
-class SceneCaptionsRow(TableRow):
+class SqliteStat1Row(TableRow):
 	def __init__(self):
-		super().__init__('scene_captions')
-		self._scene_id = None
-		self._language_code = None
-		self._filename = None
-		self._caption_type = None
+		super().__init__('sqlite_stat1')
+		self._tbl = None
+		self._idx = None
+		self._stat = None
 
 	@property
 	def table_name(self):
 		return self._table_name
 
 	@property
-	def scene_id(self):
-		return self._scene_id
+	def tbl(self):
+		return self._tbl
 
-	@scene_id.setter
-	def scene_id(self, scene_id):
-		self._scene_id = scene_id
-
-	@property
-	def language_code(self):
-		return self._language_code
-
-	@language_code.setter
-	def language_code(self, language_code):
-		self._language_code = language_code
+	@tbl.setter
+	def tbl(self, tbl):
+		self._tbl = tbl
 
 	@property
-	def filename(self):
-		return self._filename
+	def idx(self):
+		return self._idx
 
-	@filename.setter
-	def filename(self, filename):
-		self._filename = filename
+	@idx.setter
+	def idx(self, idx):
+		self._idx = idx
 
 	@property
-	def caption_type(self):
-		return self._caption_type
+	def stat(self):
+		return self._stat
 
-	@caption_type.setter
-	def caption_type(self, caption_type):
-		self._caption_type = caption_type
+	@stat.setter
+	def stat(self, stat):
+		self._stat = stat
 
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.scene_id, self.language_code, self.filename, self.caption_type]
+			return [self.tbl, self.idx, self.stat]
 		else:
-			return [self.scene_id, self.language_code, self.filename, self.caption_type]
+			return [self.tbl, self.idx, self.stat]
+
+class SqliteStat4Row(TableRow):
+	def __init__(self):
+		super().__init__('sqlite_stat4')
+		self._tbl = None
+		self._idx = None
+		self._neq = None
+		self._nlt = None
+		self._ndlt = None
+		self._sample = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def tbl(self):
+		return self._tbl
+
+	@tbl.setter
+	def tbl(self, tbl):
+		self._tbl = tbl
+
+	@property
+	def idx(self):
+		return self._idx
+
+	@idx.setter
+	def idx(self, idx):
+		self._idx = idx
+
+	@property
+	def neq(self):
+		return self._neq
+
+	@neq.setter
+	def neq(self, neq):
+		self._neq = neq
+
+	@property
+	def nlt(self):
+		return self._nlt
+
+	@nlt.setter
+	def nlt(self, nlt):
+		self._nlt = nlt
+
+	@property
+	def ndlt(self):
+		return self._ndlt
+
+	@ndlt.setter
+	def ndlt(self, ndlt):
+		self._ndlt = ndlt
+
+	@property
+	def sample(self):
+		return self._sample
+
+	@sample.setter
+	def sample(self, sample):
+		self._sample = sample
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.tbl, self.idx, self.neq, self.nlt, self.ndlt, self.sample]
+		else:
+			return [self.tbl, self.idx, self.neq, self.nlt, self.ndlt, self.sample]
 
