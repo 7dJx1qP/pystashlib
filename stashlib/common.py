@@ -8,7 +8,6 @@ import re
 import time
 import yaml
 from datetime import date, datetime, timedelta
-from lxml import html
 from dateutil.tz import tzoffset
 from .logger import logger as log
 
@@ -47,12 +46,6 @@ def url2filename(url):
 def filename2url(f):
     return base64.urlsafe_b64decode(f).decode('UTF-8')
 
-def tree_from_file(filepath):
-    with open(filepath, 'r', encoding='utf-8') as f:
-        content = f.read()
-    tree = html.fromstring(content)
-    return tree
-
 def optional_nonalphanum_regex(s):
     return '(?i)' + ''.join([ch if ch.isalnum() or ch == '\\' else ch + '*' for ch in re.escape(s)])
 
@@ -60,27 +53,6 @@ def strip_end(text, suffix):
     if suffix and text.endswith(suffix):
         return text[:-len(suffix)]
     return text
-
-def scrape(url, filepath, overwrite=False):
-    log.LogDebug(f'scrape {url}')
-    if not overwrite and os.path.exists(filepath):
-        with open(filepath, 'r', encoding='utf-8') as f:
-            return html.fromstring(f.read())
-    while True:
-        scraper = cloudscraper.create_scraper()
-        try:
-            scraped = scraper.get(url, timeout=(3,7))
-        except Exception as e:
-            log.LogDebug("scrape error %s" % e)
-        if scraped.status_code < 400:
-            break
-        else:
-            log.LogDebug("HTTP error %s" % scraped.status_code)
-        time.sleep(2)
-    
-    with open(filepath, 'wb') as f:
-        f.write(scraped.content)
-    return html.fromstring(scraped.content)
 
 def scrape_image(url):
     log.LogDebug(f'scrape_image {url}')

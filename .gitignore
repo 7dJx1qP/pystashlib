@@ -3,3 +3,4 @@ dist
 pystashlib.egg-info
 venv
 __pycache__
+.vscode
