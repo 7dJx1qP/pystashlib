@@ -153,8 +153,15 @@ class StashDatabase(StashDatabaseBase):
         return True
 
     def add_scenes_to_movie(self, movie: MoviesRow, scenes: list[ScenesRow], scene_index=None, commit=True):
+        movies_scenes_rows = self.movies_scenes.select_movie_id(movie.id)
+        movies_scenes_dict = {}
+        for row in movies_scenes_rows:
+            movies_scenes_dict[row.scene_id] = row
+
         for i, scene in enumerate(scenes):
             scene = scenes[i]
+            if scene.id in movies_scenes_dict:
+                continue
             movies_scenes = MoviesScenesRow()
             movies_scenes.movie_id = movie.id
             movies_scenes.scene_id = scene.id
