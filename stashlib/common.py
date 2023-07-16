@@ -61,7 +61,7 @@ def strip_end(text, suffix):
         return text[:-len(suffix)]
     return text
 
-def scrape(url, filepath, overwrite=False):
+def scrape(url, filepath, overwrite=False, timeout=(3,7)):
     log.LogDebug(f'scrape {url}')
     if not overwrite and os.path.exists(filepath):
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -69,7 +69,7 @@ def scrape(url, filepath, overwrite=False):
     while True:
         scraper = cloudscraper.create_scraper()
         try:
-            scraped = scraper.get(url, timeout=(3,7))
+            scraped = scraper.get(url, timeout=timeout)
         except Exception as e:
             log.LogDebug("scrape error %s" % e)
         if scraped.status_code < 400:
@@ -82,12 +82,12 @@ def scrape(url, filepath, overwrite=False):
         f.write(scraped.content)
     return html.fromstring(scraped.content)
 
-def scrape_image(url):
+def scrape_image(url, timeout=(3,7)):
     log.LogDebug(f'scrape_image {url}')
     while True:
         scraper = cloudscraper.create_scraper()
         try:
-            scraped = scraper.get(url, timeout=(3,7))
+            scraped = scraper.get(url, timeout=timeout)
         except Exception as e:
             log.LogDebug("scrape error %s" %e )
         if scraped.status_code < 400:
