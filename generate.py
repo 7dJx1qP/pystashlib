@@ -69,6 +69,14 @@ from .stash_models import *\n\n""")
 """)
 
             key_cols = ['id', 'name', 'checksum', 'path', 'oshash']
+
+            for col in cols:
+                if col in key_cols or col.endswith('_id'):
+                    f.write(f"""\tdef delete_by_{col}(self, {col}, commit=True):
+\t\treturn self.execute("DELETE FROM {table} WHERE {col} = ?", [{col}, ], commit)
+
+""")
+
             for col in cols:
                 if col in key_cols or col.endswith('_id'):
                     for target_col in cols:

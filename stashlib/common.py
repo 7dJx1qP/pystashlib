@@ -30,6 +30,12 @@ def dict_subset(d, keys):
 def get_checksum(s):
     return hashlib.md5(s.encode('utf-8')).hexdigest()
 
+def get_checksum_filepath(filepath: str):
+    return hashlib.md5(open(filepath, 'rb').read()).hexdigest()
+
+def get_checksum_bytes(b: bytes):
+    return hashlib.md5(b).hexdigest()
+
 def get_timestamp():
     return datetime.now(tzoffset('EDT', -4*60*60)).replace(microsecond=0).isoformat()
 

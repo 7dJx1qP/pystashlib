@@ -130,6 +130,12 @@ class Tags(Table):
 	def insert_model(self, model: TagsRow, commit=True):
 		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob) VALUES (?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM tags WHERE id = ?", [id, ], commit)
+
+	def delete_by_name(self, name, commit=True):
+		return self.execute("DELETE FROM tags WHERE name = ?", [name, ], commit)
+
 	def update_created_at_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE tags SET created_at = ? WHERE id = ?", [value, id], commit)
 
@@ -224,6 +230,9 @@ class SqliteSequence(Table):
 	def insert_model(self, model: SqliteSequenceRow, commit=True):
 		return self.execute("INSERT INTO sqlite_sequence (name, seq) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_name(self, name, commit=True):
+		return self.execute("DELETE FROM sqlite_sequence WHERE name = ?", [name, ], commit)
+
 	def update_seq_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE sqlite_sequence SET seq = ? WHERE name = ?", [value, name], commit)
 
@@ -275,6 +284,12 @@ class PerformerStashIds(Table):
 
 	def insert_model(self, model: PerformerStashIdsRow, commit=True):
 		return self.execute("INSERT INTO performer_stash_ids (performer_id, endpoint, stash_id) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_performer_id(self, performer_id, commit=True):
+		return self.execute("DELETE FROM performer_stash_ids WHERE performer_id = ?", [performer_id, ], commit)
+
+	def delete_by_stash_id(self, stash_id, commit=True):
+		return self.execute("DELETE FROM performer_stash_ids WHERE stash_id = ?", [stash_id, ], commit)
 
 	def update_endpoint_by_performer_id(self, performer_id, value, commit=True):
 		return self.execute("UPDATE performer_stash_ids SET endpoint = ? WHERE performer_id = ?", [value, performer_id], commit)
@@ -346,6 +361,12 @@ class StudioStashIds(Table):
 	def insert_model(self, model: StudioStashIdsRow, commit=True):
 		return self.execute("INSERT INTO studio_stash_ids (studio_id, endpoint, stash_id) VALUES (?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM studio_stash_ids WHERE studio_id = ?", [studio_id, ], commit)
+
+	def delete_by_stash_id(self, stash_id, commit=True):
+		return self.execute("DELETE FROM studio_stash_ids WHERE stash_id = ?", [stash_id, ], commit)
+
 	def update_endpoint_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE studio_stash_ids SET endpoint = ? WHERE studio_id = ?", [value, studio_id], commit)
 
@@ -403,6 +424,12 @@ class TagsRelations(Table):
 
 	def insert_model(self, model: TagsRelationsRow, commit=True):
 		return self.execute("INSERT INTO tags_relations (parent_id, child_id) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_parent_id(self, parent_id, commit=True):
+		return self.execute("DELETE FROM tags_relations WHERE parent_id = ?", [parent_id, ], commit)
+
+	def delete_by_child_id(self, child_id, commit=True):
+		return self.execute("DELETE FROM tags_relations WHERE child_id = ?", [child_id, ], commit)
 
 	def update_child_id_by_parent_id(self, parent_id, value, commit=True):
 		return self.execute("UPDATE tags_relations SET child_id = ? WHERE parent_id = ?", [value, parent_id], commit)
@@ -509,6 +536,18 @@ class Folders(Table):
 
 	def insert_model(self, model: FoldersRow, commit=True):
 		return self.execute("INSERT INTO folders (path, parent_folder_id, mod_time, created_at, updated_at, zip_file_id) VALUES (?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM folders WHERE id = ?", [id, ], commit)
+
+	def delete_by_path(self, path, commit=True):
+		return self.execute("DELETE FROM folders WHERE path = ?", [path, ], commit)
+
+	def delete_by_parent_folder_id(self, parent_folder_id, commit=True):
+		return self.execute("DELETE FROM folders WHERE parent_folder_id = ?", [parent_folder_id, ], commit)
+
+	def delete_by_zip_file_id(self, zip_file_id, commit=True):
+		return self.execute("DELETE FROM folders WHERE zip_file_id = ?", [zip_file_id, ], commit)
 
 	def update_parent_folder_id_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE folders SET parent_folder_id = ? WHERE id = ?", [value, id], commit)
@@ -724,6 +763,15 @@ class Files(Table):
 	def insert_model(self, model: FilesRow, commit=True):
 		return self.execute("INSERT INTO files (basename, zip_file_id, parent_folder_id, size, mod_time, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM files WHERE id = ?", [id, ], commit)
+
+	def delete_by_zip_file_id(self, zip_file_id, commit=True):
+		return self.execute("DELETE FROM files WHERE zip_file_id = ?", [zip_file_id, ], commit)
+
+	def delete_by_parent_folder_id(self, parent_folder_id, commit=True):
+		return self.execute("DELETE FROM files WHERE parent_folder_id = ?", [parent_folder_id, ], commit)
+
 	def update_basename_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE files SET basename = ? WHERE id = ?", [value, id], commit)
 
@@ -884,6 +932,9 @@ class FilesFingerprints(Table):
 	def insert_model(self, model: FilesFingerprintsRow, commit=True):
 		return self.execute("INSERT INTO files_fingerprints (file_id, type, fingerprint) VALUES (?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_file_id(self, file_id, commit=True):
+		return self.execute("DELETE FROM files_fingerprints WHERE file_id = ?", [file_id, ], commit)
+
 	def update_type_by_file_id(self, file_id, value, commit=True):
 		return self.execute("UPDATE files_fingerprints SET type = ? WHERE file_id = ?", [value, file_id], commit)
 
@@ -1038,6 +1089,9 @@ class VideoFiles(Table):
 	def insert_model(self, model: VideoFilesRow, commit=True):
 		return self.execute("INSERT INTO video_files (file_id, duration, video_codec, format, audio_codec, width, height, frame_rate, bit_rate, interactive, interactive_speed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_file_id(self, file_id, commit=True):
+		return self.execute("DELETE FROM video_files WHERE file_id = ?", [file_id, ], commit)
+
 	def update_duration_by_file_id(self, file_id, value, commit=True):
 		return self.execute("UPDATE video_files SET duration = ? WHERE file_id = ?", [value, file_id], commit)
 
@@ -1156,6 +1210,9 @@ class VideoCaptions(Table):
 	def insert_model(self, model: VideoCaptionsRow, commit=True):
 		return self.execute("INSERT INTO video_captions (file_id, language_code, filename, caption_type) VALUES (?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_file_id(self, file_id, commit=True):
+		return self.execute("DELETE FROM video_captions WHERE file_id = ?", [file_id, ], commit)
+
 	def update_language_code_by_file_id(self, file_id, value, commit=True):
 		return self.execute("UPDATE video_captions SET language_code = ? WHERE file_id = ?", [value, file_id], commit)
 
@@ -1232,6 +1289,9 @@ class ImageFiles(Table):
 	def insert_model(self, model: ImageFilesRow, commit=True):
 		return self.execute("INSERT INTO image_files (file_id, format, width, height) VALUES (?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_file_id(self, file_id, commit=True):
+		return self.execute("DELETE FROM image_files WHERE file_id = ?", [file_id, ], commit)
+
 	def update_format_by_file_id(self, file_id, value, commit=True):
 		return self.execute("UPDATE image_files SET format = ? WHERE file_id = ?", [value, file_id], commit)
 
@@ -1295,6 +1355,12 @@ class ImagesFiles(Table):
 
 	def insert_model(self, model: ImagesFilesRow, commit=True):
 		return self.execute("INSERT INTO images_files (image_id, file_id, primary) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_image_id(self, image_id, commit=True):
+		return self.execute("DELETE FROM images_files WHERE image_id = ?", [image_id, ], commit)
+
+	def delete_by_file_id(self, file_id, commit=True):
+		return self.execute("DELETE FROM images_files WHERE file_id = ?", [file_id, ], commit)
 
 	def update_file_id_by_image_id(self, image_id, value, commit=True):
 		return self.execute("UPDATE images_files SET file_id = ? WHERE image_id = ?", [value, image_id], commit)
@@ -1366,6 +1432,12 @@ class GalleriesFiles(Table):
 	def insert_model(self, model: GalleriesFilesRow, commit=True):
 		return self.execute("INSERT INTO galleries_files (gallery_id, file_id, primary) VALUES (?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_gallery_id(self, gallery_id, commit=True):
+		return self.execute("DELETE FROM galleries_files WHERE gallery_id = ?", [gallery_id, ], commit)
+
+	def delete_by_file_id(self, file_id, commit=True):
+		return self.execute("DELETE FROM galleries_files WHERE file_id = ?", [file_id, ], commit)
+
 	def update_file_id_by_gallery_id(self, gallery_id, value, commit=True):
 		return self.execute("UPDATE galleries_files SET file_id = ? WHERE gallery_id = ?", [value, gallery_id], commit)
 
@@ -1435,6 +1507,12 @@ class ScenesFiles(Table):
 
 	def insert_model(self, model: ScenesFilesRow, commit=True):
 		return self.execute("INSERT INTO scenes_files (scene_id, file_id, primary) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scenes_files WHERE scene_id = ?", [scene_id, ], commit)
+
+	def delete_by_file_id(self, file_id, commit=True):
+		return self.execute("DELETE FROM scenes_files WHERE file_id = ?", [file_id, ], commit)
 
 	def update_file_id_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scenes_files SET file_id = ? WHERE scene_id = ?", [value, scene_id], commit)
@@ -1622,6 +1700,12 @@ class PerformersScenes(Table):
 	def insert_model(self, model: PerformersScenesRow, commit=True):
 		return self.execute("INSERT INTO performers_scenes (performer_id, scene_id) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_performer_id(self, performer_id, commit=True):
+		return self.execute("DELETE FROM performers_scenes WHERE performer_id = ?", [performer_id, ], commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM performers_scenes WHERE scene_id = ?", [scene_id, ], commit)
+
 	def update_scene_id_by_performer_id(self, performer_id, value, commit=True):
 		return self.execute("UPDATE performers_scenes SET scene_id = ? WHERE performer_id = ?", [value, performer_id], commit)
 
@@ -1668,6 +1752,12 @@ class SceneMarkersTags(Table):
 	def insert_model(self, model: SceneMarkersTagsRow, commit=True):
 		return self.execute("INSERT INTO scene_markers_tags (scene_marker_id, tag_id) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_scene_marker_id(self, scene_marker_id, commit=True):
+		return self.execute("DELETE FROM scene_markers_tags WHERE scene_marker_id = ?", [scene_marker_id, ], commit)
+
+	def delete_by_tag_id(self, tag_id, commit=True):
+		return self.execute("DELETE FROM scene_markers_tags WHERE tag_id = ?", [tag_id, ], commit)
+
 	def update_tag_id_by_scene_marker_id(self, scene_marker_id, value, commit=True):
 		return self.execute("UPDATE scene_markers_tags SET tag_id = ? WHERE scene_marker_id = ?", [value, scene_marker_id], commit)
 
@@ -1713,6 +1803,12 @@ class ScenesTags(Table):
 
 	def insert_model(self, model: ScenesTagsRow, commit=True):
 		return self.execute("INSERT INTO scenes_tags (scene_id, tag_id) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scenes_tags WHERE scene_id = ?", [scene_id, ], commit)
+
+	def delete_by_tag_id(self, tag_id, commit=True):
+		return self.execute("DELETE FROM scenes_tags WHERE tag_id = ?", [tag_id, ], commit)
 
 	def update_tag_id_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scenes_tags SET tag_id = ? WHERE scene_id = ?", [value, scene_id], commit)
@@ -1772,6 +1868,12 @@ class MoviesScenes(Table):
 	def insert_model(self, model: MoviesScenesRow, commit=True):
 		return self.execute("INSERT INTO movies_scenes (movie_id, scene_id, scene_index) VALUES (?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_movie_id(self, movie_id, commit=True):
+		return self.execute("DELETE FROM movies_scenes WHERE movie_id = ?", [movie_id, ], commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM movies_scenes WHERE scene_id = ?", [scene_id, ], commit)
+
 	def update_scene_id_by_movie_id(self, movie_id, value, commit=True):
 		return self.execute("UPDATE movies_scenes SET scene_id = ? WHERE movie_id = ?", [value, movie_id], commit)
 
@@ -1830,6 +1932,12 @@ class PerformersImages(Table):
 	def insert_model(self, model: PerformersImagesRow, commit=True):
 		return self.execute("INSERT INTO performers_images (performer_id, image_id) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_performer_id(self, performer_id, commit=True):
+		return self.execute("DELETE FROM performers_images WHERE performer_id = ?", [performer_id, ], commit)
+
+	def delete_by_image_id(self, image_id, commit=True):
+		return self.execute("DELETE FROM performers_images WHERE image_id = ?", [image_id, ], commit)
+
 	def update_image_id_by_performer_id(self, performer_id, value, commit=True):
 		return self.execute("UPDATE performers_images SET image_id = ? WHERE performer_id = ?", [value, performer_id], commit)
 
@@ -1875,6 +1983,12 @@ class ImagesTags(Table):
 
 	def insert_model(self, model: ImagesTagsRow, commit=True):
 		return self.execute("INSERT INTO images_tags (image_id, tag_id) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_image_id(self, image_id, commit=True):
+		return self.execute("DELETE FROM images_tags WHERE image_id = ?", [image_id, ], commit)
+
+	def delete_by_tag_id(self, tag_id, commit=True):
+		return self.execute("DELETE FROM images_tags WHERE tag_id = ?", [tag_id, ], commit)
 
 	def update_tag_id_by_image_id(self, image_id, value, commit=True):
 		return self.execute("UPDATE images_tags SET tag_id = ? WHERE image_id = ?", [value, image_id], commit)
@@ -1934,6 +2048,12 @@ class SceneStashIds(Table):
 	def insert_model(self, model: SceneStashIdsRow, commit=True):
 		return self.execute("INSERT INTO scene_stash_ids (scene_id, endpoint, stash_id) VALUES (?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scene_stash_ids WHERE scene_id = ?", [scene_id, ], commit)
+
+	def delete_by_stash_id(self, stash_id, commit=True):
+		return self.execute("DELETE FROM scene_stash_ids WHERE stash_id = ?", [stash_id, ], commit)
+
 	def update_endpoint_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scene_stash_ids SET endpoint = ? WHERE scene_id = ?", [value, scene_id], commit)
 
@@ -1992,6 +2112,12 @@ class ScenesGalleries(Table):
 	def insert_model(self, model: ScenesGalleriesRow, commit=True):
 		return self.execute("INSERT INTO scenes_galleries (scene_id, gallery_id) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scenes_galleries WHERE scene_id = ?", [scene_id, ], commit)
+
+	def delete_by_gallery_id(self, gallery_id, commit=True):
+		return self.execute("DELETE FROM scenes_galleries WHERE gallery_id = ?", [gallery_id, ], commit)
+
 	def update_gallery_id_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scenes_galleries SET gallery_id = ? WHERE scene_id = ?", [value, scene_id], commit)
 
@@ -2037,6 +2163,12 @@ class GalleriesImages(Table):
 
 	def insert_model(self, model: GalleriesImagesRow, commit=True):
 		return self.execute("INSERT INTO galleries_images (gallery_id, image_id) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_gallery_id(self, gallery_id, commit=True):
+		return self.execute("DELETE FROM galleries_images WHERE gallery_id = ?", [gallery_id, ], commit)
+
+	def delete_by_image_id(self, image_id, commit=True):
+		return self.execute("DELETE FROM galleries_images WHERE image_id = ?", [image_id, ], commit)
 
 	def update_image_id_by_gallery_id(self, gallery_id, value, commit=True):
 		return self.execute("UPDATE galleries_images SET image_id = ? WHERE gallery_id = ?", [value, gallery_id], commit)
@@ -2084,6 +2216,12 @@ class PerformersGalleries(Table):
 	def insert_model(self, model: PerformersGalleriesRow, commit=True):
 		return self.execute("INSERT INTO performers_galleries (performer_id, gallery_id) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_performer_id(self, performer_id, commit=True):
+		return self.execute("DELETE FROM performers_galleries WHERE performer_id = ?", [performer_id, ], commit)
+
+	def delete_by_gallery_id(self, gallery_id, commit=True):
+		return self.execute("DELETE FROM performers_galleries WHERE gallery_id = ?", [gallery_id, ], commit)
+
 	def update_gallery_id_by_performer_id(self, performer_id, value, commit=True):
 		return self.execute("UPDATE performers_galleries SET gallery_id = ? WHERE performer_id = ?", [value, performer_id], commit)
 
@@ -2129,6 +2267,12 @@ class GalleriesTags(Table):
 
 	def insert_model(self, model: GalleriesTagsRow, commit=True):
 		return self.execute("INSERT INTO galleries_tags (gallery_id, tag_id) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_gallery_id(self, gallery_id, commit=True):
+		return self.execute("DELETE FROM galleries_tags WHERE gallery_id = ?", [gallery_id, ], commit)
+
+	def delete_by_tag_id(self, tag_id, commit=True):
+		return self.execute("DELETE FROM galleries_tags WHERE tag_id = ?", [tag_id, ], commit)
 
 	def update_tag_id_by_gallery_id(self, gallery_id, value, commit=True):
 		return self.execute("UPDATE galleries_tags SET tag_id = ? WHERE gallery_id = ?", [value, gallery_id], commit)
@@ -2176,6 +2320,12 @@ class PerformersTags(Table):
 	def insert_model(self, model: PerformersTagsRow, commit=True):
 		return self.execute("INSERT INTO performers_tags (performer_id, tag_id) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_performer_id(self, performer_id, commit=True):
+		return self.execute("DELETE FROM performers_tags WHERE performer_id = ?", [performer_id, ], commit)
+
+	def delete_by_tag_id(self, tag_id, commit=True):
+		return self.execute("DELETE FROM performers_tags WHERE tag_id = ?", [tag_id, ], commit)
+
 	def update_tag_id_by_performer_id(self, performer_id, value, commit=True):
 		return self.execute("UPDATE performers_tags SET tag_id = ? WHERE performer_id = ?", [value, performer_id], commit)
 
@@ -2222,6 +2372,9 @@ class TagAliases(Table):
 	def insert_model(self, model: TagAliasesRow, commit=True):
 		return self.execute("INSERT INTO tag_aliases (tag_id, alias) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_tag_id(self, tag_id, commit=True):
+		return self.execute("DELETE FROM tag_aliases WHERE tag_id = ?", [tag_id, ], commit)
+
 	def update_alias_by_tag_id(self, tag_id, value, commit=True):
 		return self.execute("UPDATE tag_aliases SET alias = ? WHERE tag_id = ?", [value, tag_id], commit)
 
@@ -2262,6 +2415,9 @@ class StudioAliases(Table):
 	def insert_model(self, model: StudioAliasesRow, commit=True):
 		return self.execute("INSERT INTO studio_aliases (studio_id, alias) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM studio_aliases WHERE studio_id = ?", [studio_id, ], commit)
+
 	def update_alias_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE studio_aliases SET alias = ? WHERE studio_id = ?", [value, studio_id], commit)
 
@@ -2301,6 +2457,9 @@ class PerformerAliases(Table):
 
 	def insert_model(self, model: PerformerAliasesRow, commit=True):
 		return self.execute("INSERT INTO performer_aliases (performer_id, alias) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_performer_id(self, performer_id, commit=True):
+		return self.execute("DELETE FROM performer_aliases WHERE performer_id = ?", [performer_id, ], commit)
 
 	def update_alias_by_performer_id(self, performer_id, value, commit=True):
 		return self.execute("UPDATE performer_aliases SET alias = ? WHERE performer_id = ?", [value, performer_id], commit)
@@ -2665,6 +2824,12 @@ class Performers(Table):
 
 	def insert_model(self, model: PerformersRow, commit=True):
 		return self.execute("INSERT INTO performers (name, disambiguation, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM performers WHERE id = ?", [id, ], commit)
+
+	def delete_by_name(self, name, commit=True):
+		return self.execute("DELETE FROM performers WHERE name = ?", [name, ], commit)
 
 	def update_disambiguation_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE performers SET disambiguation = ? WHERE id = ?", [value, id], commit)
@@ -3072,6 +3237,12 @@ class GalleriesChapters(Table):
 	def insert_model(self, model: GalleriesChaptersRow, commit=True):
 		return self.execute("INSERT INTO galleries_chapters (title, image_index, gallery_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM galleries_chapters WHERE id = ?", [id, ], commit)
+
+	def delete_by_gallery_id(self, gallery_id, commit=True):
+		return self.execute("DELETE FROM galleries_chapters WHERE gallery_id = ?", [gallery_id, ], commit)
+
 	def update_title_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE galleries_chapters SET title = ? WHERE id = ?", [value, id], commit)
 
@@ -3160,6 +3331,9 @@ class Blobs(Table):
 	def insert_model(self, model: BlobsRow, commit=True):
 		return self.execute("INSERT INTO blobs (checksum, blob) VALUES (?, ?)", model.values_list(False), commit)
 
+	def delete_by_checksum(self, checksum, commit=True):
+		return self.execute("DELETE FROM blobs WHERE checksum = ?", [checksum, ], commit)
+
 	def update_blob_by_checksum(self, checksum, value, commit=True):
 		return self.execute("UPDATE blobs SET blob = ? WHERE checksum = ?", [value, checksum], commit)
 
@@ -3211,6 +3385,9 @@ class SceneUrls(Table):
 
 	def insert_model(self, model: SceneUrlsRow, commit=True):
 		return self.execute("INSERT INTO scene_urls (scene_id, position, url) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scene_urls WHERE scene_id = ?", [scene_id, ], commit)
 
 	def update_position_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scene_urls SET position = ? WHERE scene_id = ?", [value, scene_id], commit)
@@ -3437,6 +3614,12 @@ class Scenes(Table):
 
 	def insert_model(self, model: ScenesRow, commit=True):
 		return self.execute("INSERT INTO scenes (title, details, date, rating, studio_id, o_counter, organized, created_at, updated_at, code, director, resume_time, last_played_at, play_count, play_duration, cover_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM scenes WHERE id = ?", [id, ], commit)
+
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM scenes WHERE studio_id = ?", [studio_id, ], commit)
 
 	def update_title_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE scenes SET title = ? WHERE id = ?", [value, id], commit)
@@ -3718,6 +3901,15 @@ class SceneMarkers(Table):
 	def insert_model(self, model: SceneMarkersRow, commit=True):
 		return self.execute("INSERT INTO scene_markers (title, seconds, primary_tag_id, scene_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM scene_markers WHERE id = ?", [id, ], commit)
+
+	def delete_by_primary_tag_id(self, primary_tag_id, commit=True):
+		return self.execute("DELETE FROM scene_markers WHERE primary_tag_id = ?", [primary_tag_id, ], commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scene_markers WHERE scene_id = ?", [scene_id, ], commit)
+
 	def update_title_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE scene_markers SET title = ? WHERE id = ?", [value, id], commit)
 
@@ -3991,6 +4183,15 @@ class Movies(Table):
 
 	def insert_model(self, model: MoviesRow, commit=True):
 		return self.execute("INSERT INTO movies (name, aliases, duration, date, rating, studio_id, director, synopsis, url, created_at, updated_at, front_image_blob, back_image_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM movies WHERE id = ?", [id, ], commit)
+
+	def delete_by_name(self, name, commit=True):
+		return self.execute("DELETE FROM movies WHERE name = ?", [name, ], commit)
+
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM movies WHERE studio_id = ?", [studio_id, ], commit)
 
 	def update_aliases_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE movies SET aliases = ? WHERE id = ?", [value, id], commit)
@@ -4332,6 +4533,15 @@ class Studios(Table):
 	def insert_model(self, model: StudiosRow, commit=True):
 		return self.execute("INSERT INTO studios (name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM studios WHERE id = ?", [id, ], commit)
+
+	def delete_by_name(self, name, commit=True):
+		return self.execute("DELETE FROM studios WHERE name = ?", [name, ], commit)
+
+	def delete_by_parent_id(self, parent_id, commit=True):
+		return self.execute("DELETE FROM studios WHERE parent_id = ?", [parent_id, ], commit)
+
 	def update_url_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE studios SET url = ? WHERE id = ?", [value, id], commit)
 
@@ -4552,6 +4762,12 @@ class SavedFilters(Table):
 	def insert_model(self, model: SavedFiltersRow, commit=True):
 		return self.execute("INSERT INTO saved_filters (name, mode, find_filter, object_filter, ui_options) VALUES (?, ?, ?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM saved_filters WHERE id = ?", [id, ], commit)
+
+	def delete_by_name(self, name, commit=True):
+		return self.execute("DELETE FROM saved_filters WHERE name = ?", [name, ], commit)
+
 	def update_mode_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE saved_filters SET mode = ? WHERE id = ?", [value, id], commit)
 
@@ -4645,6 +4861,9 @@ class ImageUrls(Table):
 
 	def insert_model(self, model: ImageUrlsRow, commit=True):
 		return self.execute("INSERT INTO image_urls (image_id, position, url) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_image_id(self, image_id, commit=True):
+		return self.execute("DELETE FROM image_urls WHERE image_id = ?", [image_id, ], commit)
 
 	def update_position_by_image_id(self, image_id, value, commit=True):
 		return self.execute("UPDATE image_urls SET position = ? WHERE image_id = ?", [value, image_id], commit)
@@ -4811,6 +5030,12 @@ class Images(Table):
 
 	def insert_model(self, model: ImagesRow, commit=True):
 		return self.execute("INSERT INTO images (title, rating, studio_id, o_counter, organized, created_at, updated_at, date, code, photographer, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM images WHERE id = ?", [id, ], commit)
+
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM images WHERE studio_id = ?", [studio_id, ], commit)
 
 	def update_title_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE images SET title = ? WHERE id = ?", [value, id], commit)
@@ -4984,6 +5209,9 @@ class GalleryUrls(Table):
 	def insert_model(self, model: GalleryUrlsRow, commit=True):
 		return self.execute("INSERT INTO gallery_urls (gallery_id, position, url) VALUES (?, ?, ?)", model.values_list(False), commit)
 
+	def delete_by_gallery_id(self, gallery_id, commit=True):
+		return self.execute("DELETE FROM gallery_urls WHERE gallery_id = ?", [gallery_id, ], commit)
+
 	def update_position_by_gallery_id(self, gallery_id, value, commit=True):
 		return self.execute("UPDATE gallery_urls SET position = ? WHERE gallery_id = ?", [value, gallery_id], commit)
 
@@ -5149,6 +5377,15 @@ class Galleries(Table):
 
 	def insert_model(self, model: GalleriesRow, commit=True):
 		return self.execute("INSERT INTO galleries (folder_id, title, date, details, studio_id, rating, organized, created_at, updated_at, code, photographer) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM galleries WHERE id = ?", [id, ], commit)
+
+	def delete_by_folder_id(self, folder_id, commit=True):
+		return self.execute("DELETE FROM galleries WHERE folder_id = ?", [folder_id, ], commit)
+
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM galleries WHERE studio_id = ?", [studio_id, ], commit)
 
 	def update_folder_id_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE galleries SET folder_id = ? WHERE id = ?", [value, id], commit)
