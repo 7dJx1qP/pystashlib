@@ -29,6 +29,12 @@ def dict_subset(d, keys):
 def get_checksum(s):
     return hashlib.md5(s.encode('utf-8')).hexdigest()
 
+def get_checksum_filepath(filepath: str):
+    return hashlib.md5(open(filepath, 'rb').read()).hexdigest()
+
+def get_checksum_bytes(b: bytes):
+    return hashlib.md5(b).hexdigest()
+
 def get_timestamp():
     return datetime.now(tzoffset('EDT', -4*60*60)).replace(microsecond=0).isoformat()
 
@@ -54,12 +60,12 @@ def strip_end(text, suffix):
         return text[:-len(suffix)]
     return text
 
-def scrape_image(url):
+def scrape_image(url, timeout=(3,7)):
     log.LogDebug(f'scrape_image {url}')
     while True:
         scraper = cloudscraper.create_scraper()
         try:
-            scraped = scraper.get(url, timeout=(3,7))
+            scraped = scraper.get(url, timeout=timeout)
         except Exception as e:
             log.LogDebug("scrape error %s" %e )
         if scraped.status_code < 400:

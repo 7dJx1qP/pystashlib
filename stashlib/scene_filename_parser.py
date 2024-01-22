@@ -1,10 +1,10 @@
 import os
 import re
-from enum import Enum
+from enum import StrEnum
 from .common import parse_date_str
 from .stash_database import StashDatabase
 
-class S(str, Enum):
+class S(StrEnum):
     studio = '\[(?P<studio>[a-zA-Z0-9]+)\]'
     title = '(?P<title>.*?)'
     performers = "(?P<performers>[a-zA-Z0-9 ,']+)"

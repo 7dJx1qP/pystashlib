@@ -1,6 +1,6 @@
 import os
 import re
-from .common import get_checksum, get_timestamp, image_to_base64, parse_part, optional_nonalphanum_regex
+from .common import get_checksum, get_checksum_bytes, get_timestamp, image_to_base64, parse_part, optional_nonalphanum_regex
 from .logger import logger as log
 from .stash_database_base import StashDatabaseBase
 from .stash_tables import *
@@ -8,8 +8,10 @@ from .stash_models import *
 
 class StashDatabase(StashDatabaseBase):
 
-    def __init__(self, db_path):
+    def __init__(self, db_path, blobs_path, blobs_storage):
         super().__init__(db_path)
+        self.blobs_path = blobs_path
+        self.blobs_storage = blobs_storage
         row = self.schema_migrations.selectone()
         if not row:
             raise Exception(f'schema version not found')
@@ -72,7 +74,6 @@ class StashDatabase(StashDatabaseBase):
         return None
 
     def insert_performer(self, performer: PerformersRow, commit=True):
-        performer.checksum = get_checksum(performer.name)
         performer.created_at = get_timestamp()
         performer.updated_at = get_timestamp()
         c = self.performers.insert_model(performer, commit)
@@ -102,19 +103,40 @@ class StashDatabase(StashDatabaseBase):
             return performer
         return None
 
+    def get_blobpath(self, checksum: str):
+        return os.path.join(self.blobs_path, checksum[0:2], checksum[2:4], checksum)
 
-    def insert_performer_image(self, performer: PerformersRow, image_bytes: bytes, commit=True):
-        performer_image = self.performers_image.selectone_performer_id(performer.id)
-        if not performer_image:
-            performer_image = PerformersImageRow()
-            performer_image.performer_id = performer.id
-            performer_image.image = image_bytes
-            c = self.performers_image.insert_model(performer_image, commit)
-            if c.rowcount:
-                return self.performers_image.selectone_performer_id(performer.id)
+    def remove_blobpath(self, checksum: str):
+        if self.blobs_storage == 'FILESYSTEM':
+            blobpath = self.get_blobpath(checksum)
+            if os.path.exists(blobpath):
+                os.remove(blobpath)
+
+    def save_blob(self, image_bytes: bytes):
+        checksum = get_checksum_bytes(image_bytes)
+        image_blob = BlobsRow()
+        image_blob.checksum = checksum
+        if self.blobs_storage == 'FILESYSTEM':
+            blobpath = self.get_blobpath(checksum)
+            with open(blobpath, 'wb') as f:
+                f.write(image_bytes)
+        elif self.blobs_storage == 'DATABASE':
+            image_blob.blob = image_bytes
+        try:
+            self.blobs.insert_model(image_blob)
+        except:
+            if self.blobs_storage == 'FILESYSTEM':
+                os.remove(blobpath)
             return None
-        else:
-            return performer_image
+        return checksum
+
+    def insert_performer_image(self, performer: PerformersRow, image_bytes: bytes):
+        if performer.image_blob:
+            self.blobs.delete_by_checksum(performer.image_blob)
+            self.remove_blobpath(performer.image_blob)
+        checksum = self.save_blob(image_bytes)
+        self.performers.update_image_blob_by_id(performer.id, checksum)
+        return checksum
 
     def add_performers_to_scene(self, scene: ScenesRow, performers: list[PerformersRow], commit=True):
         existing_performer_ids = [performer_scene.performer_id for performer_scene in self.performers_scenes.select_scene_id(scene.id)]
@@ -153,8 +175,15 @@ class StashDatabase(StashDatabaseBase):
         return True
 
     def add_scenes_to_movie(self, movie: MoviesRow, scenes: list[ScenesRow], scene_index=None, commit=True):
+        movies_scenes_rows = self.movies_scenes.select_movie_id(movie.id)
+        movies_scenes_dict = {}
+        for row in movies_scenes_rows:
+            movies_scenes_dict[row.scene_id] = row
+
         for i, scene in enumerate(scenes):
             scene = scenes[i]
+            if scene.id in movies_scenes_dict:
+                continue
             movies_scenes = MoviesScenesRow()
             movies_scenes.movie_id = movie.id
             movies_scenes.scene_id = scene.id
@@ -189,7 +218,6 @@ WHERE d.path = ? AND c.basename = ?""", (dirpath, filename))
         if not movie:
             movie = MoviesRow()
             movie.name = name
-            movie.checksum = get_checksum(name)
             movie.url = url
             movie.created_at = get_timestamp()
             movie.updated_at = get_timestamp()
@@ -205,19 +233,22 @@ WHERE d.path = ? AND c.basename = ?""", (dirpath, filename))
             back_image = open(back_path, 'rb').read()
 
         # insert or update front/back images
-        movies_images = self.movies_images.selectone_movie_id(movie.id)
-        if not movies_images:
-            movies_images = MoviesImagesRow()
-            movies_images.movie_id = movie.id
-            movies_images.front_image = front_image
-            movies_images.back_image = back_image
-            self.movies_images.insert_model(movies_images)
-        else:
-            self.movies_images.update_front_image_by_movie_id(movie.id, front_image, commit=False)
-            self.movies_images.update_back_image_by_movie_id(movie.id, back_image, commit=False)
-            self.commit()
+        if movie.front_image_blob:
+            self.blobs.delete_by_checksum(movie.front_image_blob)
+            self.remove_blobpath(movie.front_image_blob)
+        if movie.back_image_blob:
+            self.blobs.delete_by_checksum(movie.back_image_blob)
+            self.remove_blobpath(movie.back_image_blob)
 
-        return movie
+        if front_image:
+            front_checksum = self.save_blob(front_image)
+            self.movies.update_front_image_blob_by_id(movie.id, front_checksum)
+
+        if back_image:
+            back_checksum = self.save_blob(back_image)
+            self.movies.update_back_image_blob_by_id(movie.id, back_checksum)
+
+        return self.movies.selectone_name(name)
 
     def create_movie_from_folder(self, dirpath, url, front_path, back_path, front_only=False, name=None):
         if not name:
@@ -250,6 +281,22 @@ WHERE d.path = ? AND c.basename = ?""", (dirpath, filename))
         scenes = self.get_scenes_from_filepath(filepath)
         for scene in scenes:
             self.add_scenes_to_movie(movie, [scene], scene_index=[scene_index])
+
+    def insert_movie_front_image(self, movie: MoviesRow, image_bytes: bytes):
+        if movie.front_image_blob:
+            self.blobs.delete_by_checksum(movie.front_image_blob)
+            self.remove_blobpath(movie.front_image_blob)
+        checksum = self.save_blob(image_bytes)
+        self.movies.update_front_image_blob_by_id(movie.id, checksum)
+        return checksum
+
+    def insert_movie_back_image(self, movie: MoviesRow, image_bytes: bytes):
+        if movie.back_image_blob:
+            self.blobs.delete_by_checksum(movie.back_image_blob)
+            self.remove_blobpath(movie.back_image_blob)
+        checksum = self.save_blob(image_bytes)
+        self.movies.update_back_image_blob_by_id(movie.id, checksum)
+        return checksum
 
     def add_performers_to_gallery(self, gallery: GalleriesRow, performers: list[PerformersRow], commit=True):
         existing_performer_ids = [performer_gallery.performer_id for performer_gallery in self.performers_galleries.select_gallery_id(gallery.id)]

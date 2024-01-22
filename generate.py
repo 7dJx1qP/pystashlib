@@ -1,8 +1,10 @@
 from stashlib.common import camel_case, array_param
 from stashlib.database import Database
 
-def generate_database(db_path, outfile, schema_version):
+def generate_database(db_path, outfile):
     with Database(db_path) as db:
+        schema_version = db.fetchone("""SELECT max(version) from schema_migrations WHERE dirty = 0""")[0]
+
         f = open(outfile, 'w')
         f.write(f"""from . import sqlite_wrapper as sq
 from .database import Database
@@ -67,6 +69,14 @@ from .stash_models import *\n\n""")
 """)
 
             key_cols = ['id', 'name', 'checksum', 'path', 'oshash']
+
+            for col in cols:
+                if col in key_cols or col.endswith('_id'):
+                    f.write(f"""\tdef delete_by_{col}(self, {col}, commit=True):
+\t\treturn self.execute("DELETE FROM {table} WHERE {col} = ?", [{col}, ], commit)
+
+""")
+
             for col in cols:
                 if col in key_cols or col.endswith('_id'):
                     for target_col in cols:
@@ -129,7 +139,7 @@ def generate_models(db_path, outfile):
 
         f.close()
 
-generate_database(r'stash-go.sqlite', 'stashlib/stash_database_base.py', 36)
+generate_database(r'stash-go.sqlite', 'stashlib/stash_database_base.py')
 generate_tables(r'stash-go.sqlite', 'stashlib/stash_tables.py')
 generate_models(r'stash-go.sqlite', 'stashlib/stash_models.py')
 
