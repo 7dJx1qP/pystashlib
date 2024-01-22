@@ -12,5 +12,14 @@ pystashlib and Stash compatibility table:
 
 # Changelog
 
+## v0.4.2
+*  Added back tree_from_file and scrape functions to new stashlib.html module with lxml as an optional dependency
+
+## v0.4.1
+* Fix image blob saving
+
+## v0.4.0
+* Update to support Stash v0.24.3
+
 ## v0.3.1
 * Removed tree_from_file and scrape functions from stashlib.common to remove dependency on lxml
