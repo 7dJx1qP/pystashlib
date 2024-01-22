@@ -49,6 +49,9 @@ class Database(object):
     def commit(self):
         self.conn.commit()
 
+    def rollback(self):
+        self.conn.rollback()
+
     def execute(self, sql, vals=[], commit=True):
         return sq.db_execute(self.conn, sql, vals, commit)
 

@@ -81,7 +81,7 @@ class StashDatabase(StashDatabaseBase):
             return self.performers.selectone_name(performer.name)
         return None
 
-    def create_performer_from_url(self, name, url):
+    def create_performer_from_url(self, name, url, commit=True):
         performer = self.performers.selectone_url(url)
         if performer:
             return performer
@@ -98,10 +98,7 @@ class StashDatabase(StashDatabaseBase):
         performer.details = None
         performer.ignore_auto_tag = False
 
-        performer = self.insert_performer(performer)
-        if performer:
-            return performer
-        return None
+        return self.insert_performer(performer, commit)
 
     def get_blobpath(self, checksum: str):
         return os.path.join(self.blobs_path, checksum[0:2], checksum[2:4], checksum)
@@ -112,7 +109,8 @@ class StashDatabase(StashDatabaseBase):
                 blobpath = self.get_blobpath(checksum)
                 if os.path.exists(blobpath):
                     os.remove(blobpath)
-        except:
+        except Exception as e:
+            log.LogError(str(e))
             return False
         return True
 
@@ -133,52 +131,56 @@ class StashDatabase(StashDatabaseBase):
             image_blob.blob = image_bytes
         try:
             self.blobs.insert_model(image_blob, commit)
-        except:
+        except Exception as e:
+            log.LogError(str(e))
             if self.blobs_storage == 'FILESYSTEM':
                 os.remove(blobpath)
             return None
         return checksum
 
-    def insert_performer_image(self, performer: PerformersRow, image_bytes: bytes):
+    def insert_performer_image(self, performer: PerformersRow, image_bytes: bytes, commit=True):
         self.performers.update_image_blob_by_id(performer.id, None, False)
         if performer.image_blob:
             self.blobs.delete_by_checksum(performer.image_blob, False)
             if not self.remove_blobpath(performer.image_blob):
+                self.rollback()
                 return None
-        self.commit()
         checksum = self.save_blob(image_bytes, False)
         if checksum is None:
             return None
         self.performers.update_image_blob_by_id(performer.id, checksum, False)
-        self.commit()
+        if commit:
+            self.commit()
         return checksum
 
-    def insert_movie_front_image(self, movie: MoviesRow, image_bytes: bytes):
+    def insert_movie_front_image(self, movie: MoviesRow, image_bytes: bytes, commit=True):
         self.movies.update_front_image_blob_by_id(movie.id, None, False)
         if movie.front_image_blob:
             self.blobs.delete_by_checksum(movie.front_image_blob, False)
             if not self.remove_blobpath(movie.front_image_blob):
+                self.rollback()
                 return None
-        self.commit()
         checksum = self.save_blob(image_bytes, False)
         if checksum is None:
             return None
         self.movies.update_front_image_blob_by_id(movie.id, checksum, False)
-        self.commit()
+        if commit:
+            self.commit()
         return checksum
 
-    def insert_movie_back_image(self, movie: MoviesRow, image_bytes: bytes):
+    def insert_movie_back_image(self, movie: MoviesRow, image_bytes: bytes, commit=True):
         self.movies.update_back_image_blob_by_id(movie.id, None, False)
         if movie.back_image_blob:
             self.blobs.delete_by_checksum(movie.back_image_blob, False)
             if not self.remove_blobpath(movie.back_image_blob):
+                self.rollback()
                 return None
-        self.commit()
         checksum = self.save_blob(image_bytes, False)
         if checksum is None:
             return None
         self.movies.update_back_image_blob_by_id(movie.id, checksum, False)
-        self.commit()
+        if commit:
+            self.commit()
         return checksum
 
     def add_performers_to_scene(self, scene: ScenesRow, performers: list[PerformersRow], commit=True):
@@ -193,7 +195,6 @@ class StashDatabase(StashDatabaseBase):
                 self.performers_scenes.insert_model(performers_scenes, commit=False)
             except Exception as e:
                 log.LogError(str(e))
-                pass
         if commit:
             self.commit()
 
@@ -236,7 +237,6 @@ class StashDatabase(StashDatabaseBase):
                 self.movies_scenes.insert_model(movies_scenes, commit=False)
             except Exception as e:
                 log.LogError(str(e))
-                pass
         if commit:
             self.commit()
 
@@ -323,6 +323,5 @@ WHERE d.path = ? AND c.basename = ?""", (dirpath, filename))
                 self.performers_galleries.insert_model(performers_galleries, commit=False)
             except Exception as e:
                 log.LogError(str(e))
-                pass
         if commit:
             self.commit()
