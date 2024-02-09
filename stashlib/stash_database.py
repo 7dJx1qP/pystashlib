@@ -32,7 +32,13 @@ class StashDatabase(StashDatabaseBase):
         return None
 
     def query_performer_name(self, name):
-        result = self.fetchone(f"""SELECT * FROM performers WHERE name LIKE ?""", (name, ))
+        rows = self.fetchall(f"""SELECT * FROM performers WHERE name LIKE ?""", (name, ))
+        return [PerformersRow().from_sqliterow(row) for row in rows]
+
+    def query_performer_name_disambiguated(self, name, disambiguation):
+        if disambiguation is None:
+            disambiguation = ''
+        result = self.fetchone(f"""SELECT * FROM performers WHERE name LIKE ? AND COALESCE(disambiguation, '') LIKE ?""", (name, disambiguation))
         if result:
             return PerformersRow().from_sqliterow(result)
         return None
@@ -81,7 +87,7 @@ class StashDatabase(StashDatabaseBase):
             return self.performers.selectone_name(performer.name)
         return None
 
-    def create_performer_from_url(self, name, url, commit=True):
+    def create_performer_from_url(self, name, disambiguation, url, commit=True):
         performer = self.performers.selectone_url(url)
         if performer:
             return performer
@@ -92,6 +98,7 @@ class StashDatabase(StashDatabaseBase):
 
         performer = PerformersRow()
         performer.name = name
+        performer.disambiguation = disambiguation
         performer.gender = 'FEMALE'
         performer.url = url
         performer.favorite = 0
