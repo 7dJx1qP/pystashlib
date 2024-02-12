@@ -42,7 +42,6 @@ class StashInterface:
         log.LogDebug(f"Using stash GraphQl endpoint at {self.url}")
 
     def callGraphQL(self, query, variables = None):
-        if "mutation" in query: self.waitForIdle() #Check that the DB is not locked
         return self.__callGraphQL(query, variables)
 
     def __callGraphQL(self, query, variables=None):
@@ -543,6 +542,7 @@ class StashInterface:
             scrapePerformerURL(url: $url) {
                 stored_id
                 name
+                disambiguation
                 gender
                 url
                 twitter
@@ -554,6 +554,8 @@ class StashInterface:
                 height
                 measurements
                 fake_tits
+                penis_length
+                circumcised
                 career_length
                 tattoos
                 piercings
@@ -689,8 +691,8 @@ class StashInterface:
 }
 fragment PerformerData on Performer {
   id
-  checksum
   name
+  disambiguation
   url
   gender
   twitter
@@ -699,22 +701,27 @@ fragment PerformerData on Performer {
   ethnicity
   country
   eye_color
-  height
+  height_cm
   measurements
   fake_tits
   career_length
   tattoos
   piercings
-  aliases
+  alias_list
   favorite
   image_path
   scene_count
   stash_ids {
     stash_id
     endpoint
-    __typename
   }
-  __typename
+  tags {
+    id
+  }
+  rating100
+  details
+  hair_color
+  weight
 }"""
 
         result = self.__callGraphQL(query, variables)
@@ -734,10 +741,10 @@ fragment PerformerData on Performer {
         }
         return self.findPerformers(variables)
 
-    def findPerformerByName(self, name):
+    def findPerformerByName(self, name, disambiguation):
         for performer in self.findPerformersByName(name):
             log.LogDebug(f"finding performer by name: {name} {performer['name']}")
-            if performer["name"] == name:
+            if performer["name"] == name and performer["disambiguation"] == disambiguation:
                 log.LogDebug("Found performer")
                 return performer
         return None
