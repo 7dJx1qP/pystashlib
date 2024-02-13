@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="pystashlib",
-    version="0.4.4",
+    version="0.4.5",
     description="A python library for manipulating a stash database",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -25,7 +25,7 @@ setup(
     ],
     packages=["stashlib"],
     include_package_data=True,
-    install_requires=["cloudscraper", "pyyaml", "python-dateutil"],
+    install_requires=["cloudscraper", "pyyaml", "python-dateutil", "requests"],
     extras_require={
         "html": ["lxml"],
     },
