@@ -1926,176 +1926,6 @@ class SceneUrlsRow(TableRow):
 		else:
 			return [self.scene_id, self.position, self.url]
 
-class ScenesRow(TableRow):
-	def __init__(self):
-		super().__init__('scenes')
-		self._id = None
-		self._title = None
-		self._details = None
-		self._date = None
-		self._rating = None
-		self._studio_id = None
-		self._o_counter = None
-		self._organized = None
-		self._created_at = None
-		self._updated_at = None
-		self._code = None
-		self._director = None
-		self._resume_time = None
-		self._last_played_at = None
-		self._play_count = None
-		self._play_duration = None
-		self._cover_blob = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, id):
-		self._id = id
-
-	@property
-	def title(self):
-		return self._title
-
-	@title.setter
-	def title(self, title):
-		self._title = title
-
-	@property
-	def details(self):
-		return self._details
-
-	@details.setter
-	def details(self, details):
-		self._details = details
-
-	@property
-	def date(self):
-		return self._date
-
-	@date.setter
-	def date(self, date):
-		self._date = date
-
-	@property
-	def rating(self):
-		return self._rating
-
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
-
-	@property
-	def studio_id(self):
-		return self._studio_id
-
-	@studio_id.setter
-	def studio_id(self, studio_id):
-		self._studio_id = studio_id
-
-	@property
-	def o_counter(self):
-		return self._o_counter
-
-	@o_counter.setter
-	def o_counter(self, o_counter):
-		self._o_counter = o_counter
-
-	@property
-	def organized(self):
-		return self._organized
-
-	@organized.setter
-	def organized(self, organized):
-		self._organized = organized
-
-	@property
-	def created_at(self):
-		return self._created_at
-
-	@created_at.setter
-	def created_at(self, created_at):
-		self._created_at = created_at
-
-	@property
-	def updated_at(self):
-		return self._updated_at
-
-	@updated_at.setter
-	def updated_at(self, updated_at):
-		self._updated_at = updated_at
-
-	@property
-	def code(self):
-		return self._code
-
-	@code.setter
-	def code(self, code):
-		self._code = code
-
-	@property
-	def director(self):
-		return self._director
-
-	@director.setter
-	def director(self, director):
-		self._director = director
-
-	@property
-	def resume_time(self):
-		return self._resume_time
-
-	@resume_time.setter
-	def resume_time(self, resume_time):
-		self._resume_time = resume_time
-
-	@property
-	def last_played_at(self):
-		return self._last_played_at
-
-	@last_played_at.setter
-	def last_played_at(self, last_played_at):
-		self._last_played_at = last_played_at
-
-	@property
-	def play_count(self):
-		return self._play_count
-
-	@play_count.setter
-	def play_count(self, play_count):
-		self._play_count = play_count
-
-	@property
-	def play_duration(self):
-		return self._play_duration
-
-	@play_duration.setter
-	def play_duration(self, play_duration):
-		self._play_duration = play_duration
-
-	@property
-	def cover_blob(self):
-		return self._cover_blob
-
-	@cover_blob.setter
-	def cover_blob(self, cover_blob):
-		self._cover_blob = cover_blob
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.id, self.title, self.details, self.date, self.rating, self.studio_id, self.o_counter, self.organized, self.created_at, self.updated_at, self.code, self.director, self.resume_time, self.last_played_at, self.play_count, self.play_duration, self.cover_blob]
-		else:
-			return [self.title, self.details, self.date, self.rating, self.studio_id, self.o_counter, self.organized, self.created_at, self.updated_at, self.code, self.director, self.resume_time, self.last_played_at, self.play_count, self.play_duration, self.cover_blob]
-
 class SceneMarkersRow(TableRow):
 	def __init__(self):
 		super().__init__('scene_markers')
@@ -2834,4 +2664,217 @@ class GalleriesRow(TableRow):
 			return [self.id, self.folder_id, self.title, self.date, self.details, self.studio_id, self.rating, self.organized, self.created_at, self.updated_at, self.code, self.photographer]
 		else:
 			return [self.folder_id, self.title, self.date, self.details, self.studio_id, self.rating, self.organized, self.created_at, self.updated_at, self.code, self.photographer]
+
+class ScenesViewDatesRow(TableRow):
+	def __init__(self):
+		super().__init__('scenes_view_dates')
+		self._scene_id = None
+		self._view_date = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def scene_id(self):
+		return self._scene_id
+
+	@scene_id.setter
+	def scene_id(self, scene_id):
+		self._scene_id = scene_id
+
+	@property
+	def view_date(self):
+		return self._view_date
+
+	@view_date.setter
+	def view_date(self, view_date):
+		self._view_date = view_date
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.scene_id, self.view_date]
+		else:
+			return [self.scene_id, self.view_date]
+
+class ScenesODatesRow(TableRow):
+	def __init__(self):
+		super().__init__('scenes_o_dates')
+		self._scene_id = None
+		self._o_date = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def scene_id(self):
+		return self._scene_id
+
+	@scene_id.setter
+	def scene_id(self, scene_id):
+		self._scene_id = scene_id
+
+	@property
+	def o_date(self):
+		return self._o_date
+
+	@o_date.setter
+	def o_date(self, o_date):
+		self._o_date = o_date
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.scene_id, self.o_date]
+		else:
+			return [self.scene_id, self.o_date]
+
+class ScenesRow(TableRow):
+	def __init__(self):
+		super().__init__('scenes')
+		self._id = None
+		self._title = None
+		self._details = None
+		self._date = None
+		self._rating = None
+		self._studio_id = None
+		self._organized = None
+		self._created_at = None
+		self._updated_at = None
+		self._code = None
+		self._director = None
+		self._resume_time = None
+		self._play_duration = None
+		self._cover_blob = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def title(self):
+		return self._title
+
+	@title.setter
+	def title(self, title):
+		self._title = title
+
+	@property
+	def details(self):
+		return self._details
+
+	@details.setter
+	def details(self, details):
+		self._details = details
+
+	@property
+	def date(self):
+		return self._date
+
+	@date.setter
+	def date(self, date):
+		self._date = date
+
+	@property
+	def rating(self):
+		return self._rating
+
+	@rating.setter
+	def rating(self, rating):
+		self._rating = rating
+
+	@property
+	def studio_id(self):
+		return self._studio_id
+
+	@studio_id.setter
+	def studio_id(self, studio_id):
+		self._studio_id = studio_id
+
+	@property
+	def organized(self):
+		return self._organized
+
+	@organized.setter
+	def organized(self, organized):
+		self._organized = organized
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	@property
+	def code(self):
+		return self._code
+
+	@code.setter
+	def code(self, code):
+		self._code = code
+
+	@property
+	def director(self):
+		return self._director
+
+	@director.setter
+	def director(self, director):
+		self._director = director
+
+	@property
+	def resume_time(self):
+		return self._resume_time
+
+	@resume_time.setter
+	def resume_time(self, resume_time):
+		self._resume_time = resume_time
+
+	@property
+	def play_duration(self):
+		return self._play_duration
+
+	@play_duration.setter
+	def play_duration(self, play_duration):
+		self._play_duration = play_duration
+
+	@property
+	def cover_blob(self):
+		return self._cover_blob
+
+	@cover_blob.setter
+	def cover_blob(self, cover_blob):
+		self._cover_blob = cover_blob
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.title, self.details, self.date, self.rating, self.studio_id, self.organized, self.created_at, self.updated_at, self.code, self.director, self.resume_time, self.play_duration, self.cover_blob]
+		else:
+			return [self.title, self.details, self.date, self.rating, self.studio_id, self.organized, self.created_at, self.updated_at, self.code, self.director, self.resume_time, self.play_duration, self.cover_blob]
 

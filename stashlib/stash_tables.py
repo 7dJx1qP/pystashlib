@@ -3401,412 +3401,6 @@ class SceneUrls(Table):
 	def update_empty_url_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scene_urls SET url = ? WHERE scene_id = ? AND (url IS NULL OR url = '' OR url = 0)", [value, scene_id], commit)
 
-class Scenes(Table):
-	def __init__(self, conn: sqlite3.Connection):
-		super().__init__(conn, 'scenes')
-
-	def select_id(self, id, colvalues={}, selectcols=['*']):
-		colvalues['id'] = id
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_title(self, title, colvalues={}, selectcols=['*']):
-		colvalues['title'] = title
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_details(self, details, colvalues={}, selectcols=['*']):
-		colvalues['details'] = details
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_date(self, date, colvalues={}, selectcols=['*']):
-		colvalues['date'] = date
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_rating(self, rating, colvalues={}, selectcols=['*']):
-		colvalues['rating'] = rating
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
-		colvalues['studio_id'] = studio_id
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_o_counter(self, o_counter, colvalues={}, selectcols=['*']):
-		colvalues['o_counter'] = o_counter
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_organized(self, organized, colvalues={}, selectcols=['*']):
-		colvalues['organized'] = organized
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_created_at(self, created_at, colvalues={}, selectcols=['*']):
-		colvalues['created_at'] = created_at
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
-		colvalues['updated_at'] = updated_at
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_code(self, code, colvalues={}, selectcols=['*']):
-		colvalues['code'] = code
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_director(self, director, colvalues={}, selectcols=['*']):
-		colvalues['director'] = director
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_resume_time(self, resume_time, colvalues={}, selectcols=['*']):
-		colvalues['resume_time'] = resume_time
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_last_played_at(self, last_played_at, colvalues={}, selectcols=['*']):
-		colvalues['last_played_at'] = last_played_at
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_play_count(self, play_count, colvalues={}, selectcols=['*']):
-		colvalues['play_count'] = play_count
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_play_duration(self, play_duration, colvalues={}, selectcols=['*']):
-		colvalues['play_duration'] = play_duration
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_cover_blob(self, cover_blob, colvalues={}, selectcols=['*']):
-		colvalues['cover_blob'] = cover_blob
-		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def selectone_id(self, id, colvalues={}, selectcols=['*']):
-		colvalues['id'] = id
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_title(self, title, colvalues={}, selectcols=['*']):
-		colvalues['title'] = title
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_details(self, details, colvalues={}, selectcols=['*']):
-		colvalues['details'] = details
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_date(self, date, colvalues={}, selectcols=['*']):
-		colvalues['date'] = date
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_rating(self, rating, colvalues={}, selectcols=['*']):
-		colvalues['rating'] = rating
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
-		colvalues['studio_id'] = studio_id
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_o_counter(self, o_counter, colvalues={}, selectcols=['*']):
-		colvalues['o_counter'] = o_counter
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_organized(self, organized, colvalues={}, selectcols=['*']):
-		colvalues['organized'] = organized
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_created_at(self, created_at, colvalues={}, selectcols=['*']):
-		colvalues['created_at'] = created_at
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
-		colvalues['updated_at'] = updated_at
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_code(self, code, colvalues={}, selectcols=['*']):
-		colvalues['code'] = code
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_director(self, director, colvalues={}, selectcols=['*']):
-		colvalues['director'] = director
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_resume_time(self, resume_time, colvalues={}, selectcols=['*']):
-		colvalues['resume_time'] = resume_time
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_last_played_at(self, last_played_at, colvalues={}, selectcols=['*']):
-		colvalues['last_played_at'] = last_played_at
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_play_count(self, play_count, colvalues={}, selectcols=['*']):
-		colvalues['play_count'] = play_count
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_play_duration(self, play_duration, colvalues={}, selectcols=['*']):
-		colvalues['play_duration'] = play_duration
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_cover_blob(self, cover_blob, colvalues={}, selectcols=['*']):
-		colvalues['cover_blob'] = cover_blob
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def insert(self, title, details, date, rating, studio_id, o_counter, organized, created_at, updated_at, code, director, resume_time, last_played_at, play_count, play_duration, cover_blob, commit=True):
-		return self.execute("INSERT INTO scenes (title, details, date, rating, studio_id, o_counter, organized, created_at, updated_at, code, director, resume_time, last_played_at, play_count, play_duration, cover_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [title, details, date, rating, studio_id, o_counter, organized, created_at, updated_at, code, director, resume_time, last_played_at, play_count, play_duration, cover_blob], commit)
-
-	def insert_model(self, model: ScenesRow, commit=True):
-		return self.execute("INSERT INTO scenes (title, details, date, rating, studio_id, o_counter, organized, created_at, updated_at, code, director, resume_time, last_played_at, play_count, play_duration, cover_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
-
-	def delete_by_id(self, id, commit=True):
-		return self.execute("DELETE FROM scenes WHERE id = ?", [id, ], commit)
-
-	def delete_by_studio_id(self, studio_id, commit=True):
-		return self.execute("DELETE FROM scenes WHERE studio_id = ?", [studio_id, ], commit)
-
-	def update_title_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET title = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_title_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET title = ? WHERE id = ? AND (title IS NULL OR title = '' OR title = 0)", [value, id], commit)
-
-	def update_details_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET details = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_details_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET details = ? WHERE id = ? AND (details IS NULL OR details = '' OR details = 0)", [value, id], commit)
-
-	def update_date_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET date = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_date_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET date = ? WHERE id = ? AND (date IS NULL OR date = '' OR date = 0)", [value, id], commit)
-
-	def update_rating_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET rating = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_rating_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET rating = ? WHERE id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, id], commit)
-
-	def update_studio_id_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET studio_id = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_studio_id_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET studio_id = ? WHERE id = ? AND (studio_id IS NULL OR studio_id = '' OR studio_id = 0)", [value, id], commit)
-
-	def update_o_counter_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET o_counter = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_o_counter_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET o_counter = ? WHERE id = ? AND (o_counter IS NULL OR o_counter = '' OR o_counter = 0)", [value, id], commit)
-
-	def update_organized_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET organized = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_organized_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET organized = ? WHERE id = ? AND (organized IS NULL OR organized = '' OR organized = 0)", [value, id], commit)
-
-	def update_created_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET created_at = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_created_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET created_at = ? WHERE id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, id], commit)
-
-	def update_updated_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET updated_at = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_updated_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET updated_at = ? WHERE id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, id], commit)
-
-	def update_code_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET code = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_code_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET code = ? WHERE id = ? AND (code IS NULL OR code = '' OR code = 0)", [value, id], commit)
-
-	def update_director_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET director = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_director_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET director = ? WHERE id = ? AND (director IS NULL OR director = '' OR director = 0)", [value, id], commit)
-
-	def update_resume_time_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET resume_time = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_resume_time_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET resume_time = ? WHERE id = ? AND (resume_time IS NULL OR resume_time = '' OR resume_time = 0)", [value, id], commit)
-
-	def update_last_played_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET last_played_at = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_last_played_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET last_played_at = ? WHERE id = ? AND (last_played_at IS NULL OR last_played_at = '' OR last_played_at = 0)", [value, id], commit)
-
-	def update_play_count_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET play_count = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_play_count_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET play_count = ? WHERE id = ? AND (play_count IS NULL OR play_count = '' OR play_count = 0)", [value, id], commit)
-
-	def update_play_duration_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET play_duration = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_play_duration_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET play_duration = ? WHERE id = ? AND (play_duration IS NULL OR play_duration = '' OR play_duration = 0)", [value, id], commit)
-
-	def update_cover_blob_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET cover_blob = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_cover_blob_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE scenes SET cover_blob = ? WHERE id = ? AND (cover_blob IS NULL OR cover_blob = '' OR cover_blob = 0)", [value, id], commit)
-
-	def update_title_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET title = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_title_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET title = ? WHERE studio_id = ? AND (title IS NULL OR title = '' OR title = 0)", [value, studio_id], commit)
-
-	def update_details_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET details = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_details_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET details = ? WHERE studio_id = ? AND (details IS NULL OR details = '' OR details = 0)", [value, studio_id], commit)
-
-	def update_date_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET date = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_date_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET date = ? WHERE studio_id = ? AND (date IS NULL OR date = '' OR date = 0)", [value, studio_id], commit)
-
-	def update_rating_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET rating = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_rating_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET rating = ? WHERE studio_id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, studio_id], commit)
-
-	def update_o_counter_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET o_counter = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_o_counter_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET o_counter = ? WHERE studio_id = ? AND (o_counter IS NULL OR o_counter = '' OR o_counter = 0)", [value, studio_id], commit)
-
-	def update_organized_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET organized = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_organized_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET organized = ? WHERE studio_id = ? AND (organized IS NULL OR organized = '' OR organized = 0)", [value, studio_id], commit)
-
-	def update_created_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET created_at = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_created_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET created_at = ? WHERE studio_id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, studio_id], commit)
-
-	def update_updated_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET updated_at = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_updated_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET updated_at = ? WHERE studio_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, studio_id], commit)
-
-	def update_code_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET code = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_code_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET code = ? WHERE studio_id = ? AND (code IS NULL OR code = '' OR code = 0)", [value, studio_id], commit)
-
-	def update_director_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET director = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_director_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET director = ? WHERE studio_id = ? AND (director IS NULL OR director = '' OR director = 0)", [value, studio_id], commit)
-
-	def update_resume_time_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET resume_time = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_resume_time_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET resume_time = ? WHERE studio_id = ? AND (resume_time IS NULL OR resume_time = '' OR resume_time = 0)", [value, studio_id], commit)
-
-	def update_last_played_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET last_played_at = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_last_played_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET last_played_at = ? WHERE studio_id = ? AND (last_played_at IS NULL OR last_played_at = '' OR last_played_at = 0)", [value, studio_id], commit)
-
-	def update_play_count_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET play_count = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_play_count_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET play_count = ? WHERE studio_id = ? AND (play_count IS NULL OR play_count = '' OR play_count = 0)", [value, studio_id], commit)
-
-	def update_play_duration_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET play_duration = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_play_duration_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET play_duration = ? WHERE studio_id = ? AND (play_duration IS NULL OR play_duration = '' OR play_duration = 0)", [value, studio_id], commit)
-
-	def update_cover_blob_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET cover_blob = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_cover_blob_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE scenes SET cover_blob = ? WHERE studio_id = ? AND (cover_blob IS NULL OR cover_blob = '' OR cover_blob = 0)", [value, studio_id], commit)
-
 class SceneMarkers(Table):
 	def __init__(self, conn: sqlite3.Connection):
 		super().__init__(conn, 'scene_markers')
@@ -5572,4 +5166,424 @@ class Galleries(Table):
 
 	def update_empty_photographer_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE galleries SET photographer = ? WHERE studio_id = ? AND (photographer IS NULL OR photographer = '' OR photographer = 0)", [value, studio_id], commit)
+
+class ScenesViewDates(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'scenes_view_dates')
+
+	def select_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		return [ScenesViewDatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_view_date(self, view_date, colvalues={}, selectcols=['*']):
+		colvalues['view_date'] = view_date
+		return [ScenesViewDatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesViewDatesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_view_date(self, view_date, colvalues={}, selectcols=['*']):
+		colvalues['view_date'] = view_date
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesViewDatesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, scene_id, view_date, commit=True):
+		return self.execute("INSERT INTO scenes_view_dates (scene_id, view_date) VALUES (?, ?)", [scene_id, view_date], commit)
+
+	def insert_model(self, model: ScenesViewDatesRow, commit=True):
+		return self.execute("INSERT INTO scenes_view_dates (scene_id, view_date) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scenes_view_dates WHERE scene_id = ?", [scene_id, ], commit)
+
+	def update_view_date_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scenes_view_dates SET view_date = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_view_date_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scenes_view_dates SET view_date = ? WHERE scene_id = ? AND (view_date IS NULL OR view_date = '' OR view_date = 0)", [value, scene_id], commit)
+
+class ScenesODates(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'scenes_o_dates')
+
+	def select_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		return [ScenesODatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_o_date(self, o_date, colvalues={}, selectcols=['*']):
+		colvalues['o_date'] = o_date
+		return [ScenesODatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesODatesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_o_date(self, o_date, colvalues={}, selectcols=['*']):
+		colvalues['o_date'] = o_date
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesODatesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, scene_id, o_date, commit=True):
+		return self.execute("INSERT INTO scenes_o_dates (scene_id, o_date) VALUES (?, ?)", [scene_id, o_date], commit)
+
+	def insert_model(self, model: ScenesODatesRow, commit=True):
+		return self.execute("INSERT INTO scenes_o_dates (scene_id, o_date) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scenes_o_dates WHERE scene_id = ?", [scene_id, ], commit)
+
+	def update_o_date_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scenes_o_dates SET o_date = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_o_date_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scenes_o_dates SET o_date = ? WHERE scene_id = ? AND (o_date IS NULL OR o_date = '' OR o_date = 0)", [value, scene_id], commit)
+
+class Scenes(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'scenes')
+
+	def select_id(self, id, colvalues={}, selectcols=['*']):
+		colvalues['id'] = id
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_title(self, title, colvalues={}, selectcols=['*']):
+		colvalues['title'] = title
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_details(self, details, colvalues={}, selectcols=['*']):
+		colvalues['details'] = details
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_date(self, date, colvalues={}, selectcols=['*']):
+		colvalues['date'] = date
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_rating(self, rating, colvalues={}, selectcols=['*']):
+		colvalues['rating'] = rating
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
+		colvalues['studio_id'] = studio_id
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_organized(self, organized, colvalues={}, selectcols=['*']):
+		colvalues['organized'] = organized
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_created_at(self, created_at, colvalues={}, selectcols=['*']):
+		colvalues['created_at'] = created_at
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_code(self, code, colvalues={}, selectcols=['*']):
+		colvalues['code'] = code
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_director(self, director, colvalues={}, selectcols=['*']):
+		colvalues['director'] = director
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_resume_time(self, resume_time, colvalues={}, selectcols=['*']):
+		colvalues['resume_time'] = resume_time
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_play_duration(self, play_duration, colvalues={}, selectcols=['*']):
+		colvalues['play_duration'] = play_duration
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_cover_blob(self, cover_blob, colvalues={}, selectcols=['*']):
+		colvalues['cover_blob'] = cover_blob
+		return [ScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_id(self, id, colvalues={}, selectcols=['*']):
+		colvalues['id'] = id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_title(self, title, colvalues={}, selectcols=['*']):
+		colvalues['title'] = title
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_details(self, details, colvalues={}, selectcols=['*']):
+		colvalues['details'] = details
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_date(self, date, colvalues={}, selectcols=['*']):
+		colvalues['date'] = date
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_rating(self, rating, colvalues={}, selectcols=['*']):
+		colvalues['rating'] = rating
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
+		colvalues['studio_id'] = studio_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_organized(self, organized, colvalues={}, selectcols=['*']):
+		colvalues['organized'] = organized
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_created_at(self, created_at, colvalues={}, selectcols=['*']):
+		colvalues['created_at'] = created_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_code(self, code, colvalues={}, selectcols=['*']):
+		colvalues['code'] = code
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_director(self, director, colvalues={}, selectcols=['*']):
+		colvalues['director'] = director
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_resume_time(self, resume_time, colvalues={}, selectcols=['*']):
+		colvalues['resume_time'] = resume_time
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_play_duration(self, play_duration, colvalues={}, selectcols=['*']):
+		colvalues['play_duration'] = play_duration
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_cover_blob(self, cover_blob, colvalues={}, selectcols=['*']):
+		colvalues['cover_blob'] = cover_blob
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, title, details, date, rating, studio_id, organized, created_at, updated_at, code, director, resume_time, play_duration, cover_blob, commit=True):
+		return self.execute("INSERT INTO scenes (title, details, date, rating, studio_id, organized, created_at, updated_at, code, director, resume_time, play_duration, cover_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [title, details, date, rating, studio_id, organized, created_at, updated_at, code, director, resume_time, play_duration, cover_blob], commit)
+
+	def insert_model(self, model: ScenesRow, commit=True):
+		return self.execute("INSERT INTO scenes (title, details, date, rating, studio_id, organized, created_at, updated_at, code, director, resume_time, play_duration, cover_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM scenes WHERE id = ?", [id, ], commit)
+
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM scenes WHERE studio_id = ?", [studio_id, ], commit)
+
+	def update_title_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET title = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_title_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET title = ? WHERE id = ? AND (title IS NULL OR title = '' OR title = 0)", [value, id], commit)
+
+	def update_details_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET details = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_details_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET details = ? WHERE id = ? AND (details IS NULL OR details = '' OR details = 0)", [value, id], commit)
+
+	def update_date_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET date = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_date_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET date = ? WHERE id = ? AND (date IS NULL OR date = '' OR date = 0)", [value, id], commit)
+
+	def update_rating_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET rating = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_rating_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET rating = ? WHERE id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, id], commit)
+
+	def update_studio_id_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET studio_id = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_studio_id_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET studio_id = ? WHERE id = ? AND (studio_id IS NULL OR studio_id = '' OR studio_id = 0)", [value, id], commit)
+
+	def update_organized_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET organized = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_organized_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET organized = ? WHERE id = ? AND (organized IS NULL OR organized = '' OR organized = 0)", [value, id], commit)
+
+	def update_created_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET created_at = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_created_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET created_at = ? WHERE id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, id], commit)
+
+	def update_updated_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET updated_at = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_updated_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET updated_at = ? WHERE id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, id], commit)
+
+	def update_code_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET code = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_code_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET code = ? WHERE id = ? AND (code IS NULL OR code = '' OR code = 0)", [value, id], commit)
+
+	def update_director_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET director = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_director_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET director = ? WHERE id = ? AND (director IS NULL OR director = '' OR director = 0)", [value, id], commit)
+
+	def update_resume_time_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET resume_time = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_resume_time_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET resume_time = ? WHERE id = ? AND (resume_time IS NULL OR resume_time = '' OR resume_time = 0)", [value, id], commit)
+
+	def update_play_duration_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET play_duration = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_play_duration_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET play_duration = ? WHERE id = ? AND (play_duration IS NULL OR play_duration = '' OR play_duration = 0)", [value, id], commit)
+
+	def update_cover_blob_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET cover_blob = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_cover_blob_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scenes SET cover_blob = ? WHERE id = ? AND (cover_blob IS NULL OR cover_blob = '' OR cover_blob = 0)", [value, id], commit)
+
+	def update_title_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET title = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_title_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET title = ? WHERE studio_id = ? AND (title IS NULL OR title = '' OR title = 0)", [value, studio_id], commit)
+
+	def update_details_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET details = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_details_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET details = ? WHERE studio_id = ? AND (details IS NULL OR details = '' OR details = 0)", [value, studio_id], commit)
+
+	def update_date_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET date = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_date_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET date = ? WHERE studio_id = ? AND (date IS NULL OR date = '' OR date = 0)", [value, studio_id], commit)
+
+	def update_rating_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET rating = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_rating_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET rating = ? WHERE studio_id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, studio_id], commit)
+
+	def update_organized_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET organized = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_organized_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET organized = ? WHERE studio_id = ? AND (organized IS NULL OR organized = '' OR organized = 0)", [value, studio_id], commit)
+
+	def update_created_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET created_at = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_created_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET created_at = ? WHERE studio_id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, studio_id], commit)
+
+	def update_updated_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET updated_at = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_updated_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET updated_at = ? WHERE studio_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, studio_id], commit)
+
+	def update_code_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET code = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_code_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET code = ? WHERE studio_id = ? AND (code IS NULL OR code = '' OR code = 0)", [value, studio_id], commit)
+
+	def update_director_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET director = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_director_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET director = ? WHERE studio_id = ? AND (director IS NULL OR director = '' OR director = 0)", [value, studio_id], commit)
+
+	def update_resume_time_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET resume_time = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_resume_time_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET resume_time = ? WHERE studio_id = ? AND (resume_time IS NULL OR resume_time = '' OR resume_time = 0)", [value, studio_id], commit)
+
+	def update_play_duration_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET play_duration = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_play_duration_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET play_duration = ? WHERE studio_id = ? AND (play_duration IS NULL OR play_duration = '' OR play_duration = 0)", [value, studio_id], commit)
+
+	def update_cover_blob_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET cover_blob = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_cover_blob_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE scenes SET cover_blob = ? WHERE studio_id = ? AND (cover_blob IS NULL OR cover_blob = '' OR cover_blob = 0)", [value, studio_id], commit)
 
