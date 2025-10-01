@@ -45,6 +45,7 @@ class TagsRow(TableRow):
 		self._ignore_auto_tag = None
 		self._description = None
 		self._image_blob = None
+		self._favorite = None
 
 	@property
 	def table_name(self):
@@ -106,14 +107,22 @@ class TagsRow(TableRow):
 	def image_blob(self, image_blob):
 		self._image_blob = image_blob
 
+	@property
+	def favorite(self):
+		return self._favorite
+
+	@favorite.setter
+	def favorite(self, favorite):
+		self._favorite = favorite
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description, self.image_blob]
+			return [self.id, self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description, self.image_blob, self.favorite]
 		else:
-			return [self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description, self.image_blob]
+			return [self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description, self.image_blob, self.favorite]
 
 class SqliteSequenceRow(TableRow):
 	def __init__(self):
@@ -840,121 +849,6 @@ class ScenesFilesRow(TableRow):
 		else:
 			return [self.scene_id, self.file_id, self.primary]
 
-class SqliteStat1Row(TableRow):
-	def __init__(self):
-		super().__init__('sqlite_stat1')
-		self._tbl = None
-		self._idx = None
-		self._stat = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def tbl(self):
-		return self._tbl
-
-	@tbl.setter
-	def tbl(self, tbl):
-		self._tbl = tbl
-
-	@property
-	def idx(self):
-		return self._idx
-
-	@idx.setter
-	def idx(self, idx):
-		self._idx = idx
-
-	@property
-	def stat(self):
-		return self._stat
-
-	@stat.setter
-	def stat(self, stat):
-		self._stat = stat
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.tbl, self.idx, self.stat]
-		else:
-			return [self.tbl, self.idx, self.stat]
-
-class SqliteStat4Row(TableRow):
-	def __init__(self):
-		super().__init__('sqlite_stat4')
-		self._tbl = None
-		self._idx = None
-		self._neq = None
-		self._nlt = None
-		self._ndlt = None
-		self._sample = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def tbl(self):
-		return self._tbl
-
-	@tbl.setter
-	def tbl(self, tbl):
-		self._tbl = tbl
-
-	@property
-	def idx(self):
-		return self._idx
-
-	@idx.setter
-	def idx(self, idx):
-		self._idx = idx
-
-	@property
-	def neq(self):
-		return self._neq
-
-	@neq.setter
-	def neq(self, neq):
-		self._neq = neq
-
-	@property
-	def nlt(self):
-		return self._nlt
-
-	@nlt.setter
-	def nlt(self, nlt):
-		self._nlt = nlt
-
-	@property
-	def ndlt(self):
-		return self._ndlt
-
-	@ndlt.setter
-	def ndlt(self, ndlt):
-		self._ndlt = ndlt
-
-	@property
-	def sample(self):
-		return self._sample
-
-	@sample.setter
-	def sample(self, sample):
-		self._sample = sample
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.tbl, self.idx, self.neq, self.nlt, self.ndlt, self.sample]
-		else:
-			return [self.tbl, self.idx, self.neq, self.nlt, self.ndlt, self.sample]
-
 class PerformersScenesRow(TableRow):
 	def __init__(self):
 		super().__init__('performers_scenes')
@@ -1060,10 +954,10 @@ class ScenesTagsRow(TableRow):
 		else:
 			return [self.scene_id, self.tag_id]
 
-class MoviesScenesRow(TableRow):
+class GroupsScenesRow(TableRow):
 	def __init__(self):
-		super().__init__('movies_scenes')
-		self._movie_id = None
+		super().__init__('groups_scenes')
+		self._group_id = None
 		self._scene_id = None
 		self._scene_index = None
 
@@ -1072,12 +966,12 @@ class MoviesScenesRow(TableRow):
 		return self._table_name
 
 	@property
-	def movie_id(self):
-		return self._movie_id
+	def group_id(self):
+		return self._group_id
 
-	@movie_id.setter
-	def movie_id(self, movie_id):
-		self._movie_id = movie_id
+	@group_id.setter
+	def group_id(self, group_id):
+		self._group_id = group_id
 
 	@property
 	def scene_id(self):
@@ -1100,9 +994,9 @@ class MoviesScenesRow(TableRow):
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.movie_id, self.scene_id, self.scene_index]
+			return [self.group_id, self.scene_id, self.scene_index]
 		else:
-			return [self.movie_id, self.scene_id, self.scene_index]
+			return [self.group_id, self.scene_id, self.scene_index]
 
 class PerformersImagesRow(TableRow):
 	def __init__(self):
@@ -1258,6 +1152,7 @@ class GalleriesImagesRow(TableRow):
 		super().__init__('galleries_images')
 		self._gallery_id = None
 		self._image_id = None
+		self._cover = None
 
 	@property
 	def table_name(self):
@@ -1279,14 +1174,22 @@ class GalleriesImagesRow(TableRow):
 	def image_id(self, image_id):
 		self._image_id = image_id
 
+	@property
+	def cover(self):
+		return self._cover
+
+	@cover.setter
+	def cover(self, cover):
+		self._cover = cover
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.gallery_id, self.image_id]
+			return [self.gallery_id, self.image_id, self.cover]
 		else:
-			return [self.gallery_id, self.image_id]
+			return [self.gallery_id, self.image_id, self.cover]
 
 class PerformersGalleriesRow(TableRow):
 	def __init__(self):
@@ -1497,284 +1400,6 @@ class PerformerAliasesRow(TableRow):
 			return [self.performer_id, self.alias]
 		else:
 			return [self.performer_id, self.alias]
-
-class PerformersRow(TableRow):
-	def __init__(self):
-		super().__init__('performers')
-		self._id = None
-		self._name = None
-		self._disambiguation = None
-		self._gender = None
-		self._url = None
-		self._twitter = None
-		self._instagram = None
-		self._birthdate = None
-		self._ethnicity = None
-		self._country = None
-		self._eye_color = None
-		self._height = None
-		self._measurements = None
-		self._fake_tits = None
-		self._career_length = None
-		self._tattoos = None
-		self._piercings = None
-		self._favorite = None
-		self._created_at = None
-		self._updated_at = None
-		self._details = None
-		self._death_date = None
-		self._hair_color = None
-		self._weight = None
-		self._rating = None
-		self._ignore_auto_tag = None
-		self._image_blob = None
-		self._penis_length = None
-		self._circumcised = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, id):
-		self._id = id
-
-	@property
-	def name(self):
-		return self._name
-
-	@name.setter
-	def name(self, name):
-		self._name = name
-
-	@property
-	def disambiguation(self):
-		return self._disambiguation
-
-	@disambiguation.setter
-	def disambiguation(self, disambiguation):
-		self._disambiguation = disambiguation
-
-	@property
-	def gender(self):
-		return self._gender
-
-	@gender.setter
-	def gender(self, gender):
-		self._gender = gender
-
-	@property
-	def url(self):
-		return self._url
-
-	@url.setter
-	def url(self, url):
-		self._url = url
-
-	@property
-	def twitter(self):
-		return self._twitter
-
-	@twitter.setter
-	def twitter(self, twitter):
-		self._twitter = twitter
-
-	@property
-	def instagram(self):
-		return self._instagram
-
-	@instagram.setter
-	def instagram(self, instagram):
-		self._instagram = instagram
-
-	@property
-	def birthdate(self):
-		return self._birthdate
-
-	@birthdate.setter
-	def birthdate(self, birthdate):
-		self._birthdate = birthdate
-
-	@property
-	def ethnicity(self):
-		return self._ethnicity
-
-	@ethnicity.setter
-	def ethnicity(self, ethnicity):
-		self._ethnicity = ethnicity
-
-	@property
-	def country(self):
-		return self._country
-
-	@country.setter
-	def country(self, country):
-		self._country = country
-
-	@property
-	def eye_color(self):
-		return self._eye_color
-
-	@eye_color.setter
-	def eye_color(self, eye_color):
-		self._eye_color = eye_color
-
-	@property
-	def height(self):
-		return self._height
-
-	@height.setter
-	def height(self, height):
-		self._height = height
-
-	@property
-	def measurements(self):
-		return self._measurements
-
-	@measurements.setter
-	def measurements(self, measurements):
-		self._measurements = measurements
-
-	@property
-	def fake_tits(self):
-		return self._fake_tits
-
-	@fake_tits.setter
-	def fake_tits(self, fake_tits):
-		self._fake_tits = fake_tits
-
-	@property
-	def career_length(self):
-		return self._career_length
-
-	@career_length.setter
-	def career_length(self, career_length):
-		self._career_length = career_length
-
-	@property
-	def tattoos(self):
-		return self._tattoos
-
-	@tattoos.setter
-	def tattoos(self, tattoos):
-		self._tattoos = tattoos
-
-	@property
-	def piercings(self):
-		return self._piercings
-
-	@piercings.setter
-	def piercings(self, piercings):
-		self._piercings = piercings
-
-	@property
-	def favorite(self):
-		return self._favorite
-
-	@favorite.setter
-	def favorite(self, favorite):
-		self._favorite = favorite
-
-	@property
-	def created_at(self):
-		return self._created_at
-
-	@created_at.setter
-	def created_at(self, created_at):
-		self._created_at = created_at
-
-	@property
-	def updated_at(self):
-		return self._updated_at
-
-	@updated_at.setter
-	def updated_at(self, updated_at):
-		self._updated_at = updated_at
-
-	@property
-	def details(self):
-		return self._details
-
-	@details.setter
-	def details(self, details):
-		self._details = details
-
-	@property
-	def death_date(self):
-		return self._death_date
-
-	@death_date.setter
-	def death_date(self, death_date):
-		self._death_date = death_date
-
-	@property
-	def hair_color(self):
-		return self._hair_color
-
-	@hair_color.setter
-	def hair_color(self, hair_color):
-		self._hair_color = hair_color
-
-	@property
-	def weight(self):
-		return self._weight
-
-	@weight.setter
-	def weight(self, weight):
-		self._weight = weight
-
-	@property
-	def rating(self):
-		return self._rating
-
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
-
-	@property
-	def ignore_auto_tag(self):
-		return self._ignore_auto_tag
-
-	@ignore_auto_tag.setter
-	def ignore_auto_tag(self, ignore_auto_tag):
-		self._ignore_auto_tag = ignore_auto_tag
-
-	@property
-	def image_blob(self):
-		return self._image_blob
-
-	@image_blob.setter
-	def image_blob(self, image_blob):
-		self._image_blob = image_blob
-
-	@property
-	def penis_length(self):
-		return self._penis_length
-
-	@penis_length.setter
-	def penis_length(self, penis_length):
-		self._penis_length = penis_length
-
-	@property
-	def circumcised(self):
-		return self._circumcised
-
-	@circumcised.setter
-	def circumcised(self, circumcised):
-		self._circumcised = circumcised
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.id, self.name, self.disambiguation, self.gender, self.url, self.twitter, self.instagram, self.birthdate, self.ethnicity, self.country, self.eye_color, self.height, self.measurements, self.fake_tits, self.career_length, self.tattoos, self.piercings, self.favorite, self.created_at, self.updated_at, self.details, self.death_date, self.hair_color, self.weight, self.rating, self.ignore_auto_tag, self.image_blob, self.penis_length, self.circumcised]
-		else:
-			return [self.name, self.disambiguation, self.gender, self.url, self.twitter, self.instagram, self.birthdate, self.ethnicity, self.country, self.eye_color, self.height, self.measurements, self.fake_tits, self.career_length, self.tattoos, self.piercings, self.favorite, self.created_at, self.updated_at, self.details, self.death_date, self.hair_color, self.weight, self.rating, self.ignore_auto_tag, self.image_blob, self.penis_length, self.circumcised]
 
 class GalleriesChaptersRow(TableRow):
 	def __init__(self):
@@ -2006,149 +1631,6 @@ class SceneMarkersRow(TableRow):
 		else:
 			return [self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at]
 
-class MoviesRow(TableRow):
-	def __init__(self):
-		super().__init__('movies')
-		self._id = None
-		self._name = None
-		self._aliases = None
-		self._duration = None
-		self._date = None
-		self._rating = None
-		self._studio_id = None
-		self._director = None
-		self._synopsis = None
-		self._url = None
-		self._created_at = None
-		self._updated_at = None
-		self._front_image_blob = None
-		self._back_image_blob = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, id):
-		self._id = id
-
-	@property
-	def name(self):
-		return self._name
-
-	@name.setter
-	def name(self, name):
-		self._name = name
-
-	@property
-	def aliases(self):
-		return self._aliases
-
-	@aliases.setter
-	def aliases(self, aliases):
-		self._aliases = aliases
-
-	@property
-	def duration(self):
-		return self._duration
-
-	@duration.setter
-	def duration(self, duration):
-		self._duration = duration
-
-	@property
-	def date(self):
-		return self._date
-
-	@date.setter
-	def date(self, date):
-		self._date = date
-
-	@property
-	def rating(self):
-		return self._rating
-
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
-
-	@property
-	def studio_id(self):
-		return self._studio_id
-
-	@studio_id.setter
-	def studio_id(self, studio_id):
-		self._studio_id = studio_id
-
-	@property
-	def director(self):
-		return self._director
-
-	@director.setter
-	def director(self, director):
-		self._director = director
-
-	@property
-	def synopsis(self):
-		return self._synopsis
-
-	@synopsis.setter
-	def synopsis(self, synopsis):
-		self._synopsis = synopsis
-
-	@property
-	def url(self):
-		return self._url
-
-	@url.setter
-	def url(self, url):
-		self._url = url
-
-	@property
-	def created_at(self):
-		return self._created_at
-
-	@created_at.setter
-	def created_at(self, created_at):
-		self._created_at = created_at
-
-	@property
-	def updated_at(self):
-		return self._updated_at
-
-	@updated_at.setter
-	def updated_at(self, updated_at):
-		self._updated_at = updated_at
-
-	@property
-	def front_image_blob(self):
-		return self._front_image_blob
-
-	@front_image_blob.setter
-	def front_image_blob(self, front_image_blob):
-		self._front_image_blob = front_image_blob
-
-	@property
-	def back_image_blob(self):
-		return self._back_image_blob
-
-	@back_image_blob.setter
-	def back_image_blob(self, back_image_blob):
-		self._back_image_blob = back_image_blob
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.id, self.name, self.aliases, self.duration, self.date, self.rating, self.studio_id, self.director, self.synopsis, self.url, self.created_at, self.updated_at, self.front_image_blob, self.back_image_blob]
-		else:
-			return [self.name, self.aliases, self.duration, self.date, self.rating, self.studio_id, self.director, self.synopsis, self.url, self.created_at, self.updated_at, self.front_image_blob, self.back_image_blob]
-
 class StudiosRow(TableRow):
 	def __init__(self):
 		super().__init__('studios')
@@ -2162,6 +1644,7 @@ class StudiosRow(TableRow):
 		self._rating = None
 		self._ignore_auto_tag = None
 		self._image_blob = None
+		self._favorite = None
 
 	@property
 	def table_name(self):
@@ -2247,14 +1730,22 @@ class StudiosRow(TableRow):
 	def image_blob(self, image_blob):
 		self._image_blob = image_blob
 
+	@property
+	def favorite(self):
+		return self._favorite
+
+	@favorite.setter
+	def favorite(self, favorite):
+		self._favorite = favorite
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.name, self.url, self.parent_id, self.created_at, self.updated_at, self.details, self.rating, self.ignore_auto_tag, self.image_blob]
+			return [self.id, self.name, self.url, self.parent_id, self.created_at, self.updated_at, self.details, self.rating, self.ignore_auto_tag, self.image_blob, self.favorite]
 		else:
-			return [self.name, self.url, self.parent_id, self.created_at, self.updated_at, self.details, self.rating, self.ignore_auto_tag, self.image_blob]
+			return [self.name, self.url, self.parent_id, self.created_at, self.updated_at, self.details, self.rating, self.ignore_auto_tag, self.image_blob, self.favorite]
 
 class SavedFiltersRow(TableRow):
 	def __init__(self):
@@ -2665,76 +2156,6 @@ class GalleriesRow(TableRow):
 		else:
 			return [self.folder_id, self.title, self.date, self.details, self.studio_id, self.rating, self.organized, self.created_at, self.updated_at, self.code, self.photographer]
 
-class ScenesViewDatesRow(TableRow):
-	def __init__(self):
-		super().__init__('scenes_view_dates')
-		self._scene_id = None
-		self._view_date = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def scene_id(self):
-		return self._scene_id
-
-	@scene_id.setter
-	def scene_id(self, scene_id):
-		self._scene_id = scene_id
-
-	@property
-	def view_date(self):
-		return self._view_date
-
-	@view_date.setter
-	def view_date(self, view_date):
-		self._view_date = view_date
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.scene_id, self.view_date]
-		else:
-			return [self.scene_id, self.view_date]
-
-class ScenesODatesRow(TableRow):
-	def __init__(self):
-		super().__init__('scenes_o_dates')
-		self._scene_id = None
-		self._o_date = None
-
-	@property
-	def table_name(self):
-		return self._table_name
-
-	@property
-	def scene_id(self):
-		return self._scene_id
-
-	@scene_id.setter
-	def scene_id(self, scene_id):
-		self._scene_id = scene_id
-
-	@property
-	def o_date(self):
-		return self._o_date
-
-	@o_date.setter
-	def o_date(self, o_date):
-		self._o_date = o_date
-
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def values_list(self, include_id=False):
-		if include_id:
-			return [self.scene_id, self.o_date]
-		else:
-			return [self.scene_id, self.o_date]
-
 class ScenesRow(TableRow):
 	def __init__(self):
 		super().__init__('scenes')
@@ -2877,4 +2298,785 @@ class ScenesRow(TableRow):
 			return [self.id, self.title, self.details, self.date, self.rating, self.studio_id, self.organized, self.created_at, self.updated_at, self.code, self.director, self.resume_time, self.play_duration, self.cover_blob]
 		else:
 			return [self.title, self.details, self.date, self.rating, self.studio_id, self.organized, self.created_at, self.updated_at, self.code, self.director, self.resume_time, self.play_duration, self.cover_blob]
+
+class GroupUrlsRow(TableRow):
+	def __init__(self):
+		super().__init__('group_urls')
+		self._group_id = None
+		self._position = None
+		self._url = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def group_id(self):
+		return self._group_id
+
+	@group_id.setter
+	def group_id(self, group_id):
+		self._group_id = group_id
+
+	@property
+	def position(self):
+		return self._position
+
+	@position.setter
+	def position(self, position):
+		self._position = position
+
+	@property
+	def url(self):
+		return self._url
+
+	@url.setter
+	def url(self, url):
+		self._url = url
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.group_id, self.position, self.url]
+		else:
+			return [self.group_id, self.position, self.url]
+
+class GroupsRow(TableRow):
+	def __init__(self):
+		super().__init__('groups')
+		self._id = None
+		self._name = None
+		self._aliases = None
+		self._duration = None
+		self._date = None
+		self._rating = None
+		self._studio_id = None
+		self._director = None
+		self._description = None
+		self._created_at = None
+		self._updated_at = None
+		self._front_image_blob = None
+		self._back_image_blob = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def name(self):
+		return self._name
+
+	@name.setter
+	def name(self, name):
+		self._name = name
+
+	@property
+	def aliases(self):
+		return self._aliases
+
+	@aliases.setter
+	def aliases(self, aliases):
+		self._aliases = aliases
+
+	@property
+	def duration(self):
+		return self._duration
+
+	@duration.setter
+	def duration(self, duration):
+		self._duration = duration
+
+	@property
+	def date(self):
+		return self._date
+
+	@date.setter
+	def date(self, date):
+		self._date = date
+
+	@property
+	def rating(self):
+		return self._rating
+
+	@rating.setter
+	def rating(self, rating):
+		self._rating = rating
+
+	@property
+	def studio_id(self):
+		return self._studio_id
+
+	@studio_id.setter
+	def studio_id(self, studio_id):
+		self._studio_id = studio_id
+
+	@property
+	def director(self):
+		return self._director
+
+	@director.setter
+	def director(self, director):
+		self._director = director
+
+	@property
+	def description(self):
+		return self._description
+
+	@description.setter
+	def description(self, description):
+		self._description = description
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	@property
+	def front_image_blob(self):
+		return self._front_image_blob
+
+	@front_image_blob.setter
+	def front_image_blob(self, front_image_blob):
+		self._front_image_blob = front_image_blob
+
+	@property
+	def back_image_blob(self):
+		return self._back_image_blob
+
+	@back_image_blob.setter
+	def back_image_blob(self, back_image_blob):
+		self._back_image_blob = back_image_blob
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.name, self.aliases, self.duration, self.date, self.rating, self.studio_id, self.director, self.description, self.created_at, self.updated_at, self.front_image_blob, self.back_image_blob]
+		else:
+			return [self.name, self.aliases, self.duration, self.date, self.rating, self.studio_id, self.director, self.description, self.created_at, self.updated_at, self.front_image_blob, self.back_image_blob]
+
+class GroupsTagsRow(TableRow):
+	def __init__(self):
+		super().__init__('groups_tags')
+		self._group_id = None
+		self._tag_id = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def group_id(self):
+		return self._group_id
+
+	@group_id.setter
+	def group_id(self, group_id):
+		self._group_id = group_id
+
+	@property
+	def tag_id(self):
+		return self._tag_id
+
+	@tag_id.setter
+	def tag_id(self, tag_id):
+		self._tag_id = tag_id
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.group_id, self.tag_id]
+		else:
+			return [self.group_id, self.tag_id]
+
+class PerformerUrlsRow(TableRow):
+	def __init__(self):
+		super().__init__('performer_urls')
+		self._performer_id = None
+		self._position = None
+		self._url = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def performer_id(self):
+		return self._performer_id
+
+	@performer_id.setter
+	def performer_id(self, performer_id):
+		self._performer_id = performer_id
+
+	@property
+	def position(self):
+		return self._position
+
+	@position.setter
+	def position(self, position):
+		self._position = position
+
+	@property
+	def url(self):
+		return self._url
+
+	@url.setter
+	def url(self, url):
+		self._url = url
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.performer_id, self.position, self.url]
+		else:
+			return [self.performer_id, self.position, self.url]
+
+class PerformersRow(TableRow):
+	def __init__(self):
+		super().__init__('performers')
+		self._id = None
+		self._name = None
+		self._disambiguation = None
+		self._gender = None
+		self._birthdate = None
+		self._ethnicity = None
+		self._country = None
+		self._eye_color = None
+		self._height = None
+		self._measurements = None
+		self._fake_tits = None
+		self._career_length = None
+		self._tattoos = None
+		self._piercings = None
+		self._favorite = None
+		self._created_at = None
+		self._updated_at = None
+		self._details = None
+		self._death_date = None
+		self._hair_color = None
+		self._weight = None
+		self._rating = None
+		self._ignore_auto_tag = None
+		self._image_blob = None
+		self._penis_length = None
+		self._circumcised = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def id(self):
+		return self._id
+
+	@id.setter
+	def id(self, id):
+		self._id = id
+
+	@property
+	def name(self):
+		return self._name
+
+	@name.setter
+	def name(self, name):
+		self._name = name
+
+	@property
+	def disambiguation(self):
+		return self._disambiguation
+
+	@disambiguation.setter
+	def disambiguation(self, disambiguation):
+		self._disambiguation = disambiguation
+
+	@property
+	def gender(self):
+		return self._gender
+
+	@gender.setter
+	def gender(self, gender):
+		self._gender = gender
+
+	@property
+	def birthdate(self):
+		return self._birthdate
+
+	@birthdate.setter
+	def birthdate(self, birthdate):
+		self._birthdate = birthdate
+
+	@property
+	def ethnicity(self):
+		return self._ethnicity
+
+	@ethnicity.setter
+	def ethnicity(self, ethnicity):
+		self._ethnicity = ethnicity
+
+	@property
+	def country(self):
+		return self._country
+
+	@country.setter
+	def country(self, country):
+		self._country = country
+
+	@property
+	def eye_color(self):
+		return self._eye_color
+
+	@eye_color.setter
+	def eye_color(self, eye_color):
+		self._eye_color = eye_color
+
+	@property
+	def height(self):
+		return self._height
+
+	@height.setter
+	def height(self, height):
+		self._height = height
+
+	@property
+	def measurements(self):
+		return self._measurements
+
+	@measurements.setter
+	def measurements(self, measurements):
+		self._measurements = measurements
+
+	@property
+	def fake_tits(self):
+		return self._fake_tits
+
+	@fake_tits.setter
+	def fake_tits(self, fake_tits):
+		self._fake_tits = fake_tits
+
+	@property
+	def career_length(self):
+		return self._career_length
+
+	@career_length.setter
+	def career_length(self, career_length):
+		self._career_length = career_length
+
+	@property
+	def tattoos(self):
+		return self._tattoos
+
+	@tattoos.setter
+	def tattoos(self, tattoos):
+		self._tattoos = tattoos
+
+	@property
+	def piercings(self):
+		return self._piercings
+
+	@piercings.setter
+	def piercings(self, piercings):
+		self._piercings = piercings
+
+	@property
+	def favorite(self):
+		return self._favorite
+
+	@favorite.setter
+	def favorite(self, favorite):
+		self._favorite = favorite
+
+	@property
+	def created_at(self):
+		return self._created_at
+
+	@created_at.setter
+	def created_at(self, created_at):
+		self._created_at = created_at
+
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
+	@property
+	def details(self):
+		return self._details
+
+	@details.setter
+	def details(self, details):
+		self._details = details
+
+	@property
+	def death_date(self):
+		return self._death_date
+
+	@death_date.setter
+	def death_date(self, death_date):
+		self._death_date = death_date
+
+	@property
+	def hair_color(self):
+		return self._hair_color
+
+	@hair_color.setter
+	def hair_color(self, hair_color):
+		self._hair_color = hair_color
+
+	@property
+	def weight(self):
+		return self._weight
+
+	@weight.setter
+	def weight(self, weight):
+		self._weight = weight
+
+	@property
+	def rating(self):
+		return self._rating
+
+	@rating.setter
+	def rating(self, rating):
+		self._rating = rating
+
+	@property
+	def ignore_auto_tag(self):
+		return self._ignore_auto_tag
+
+	@ignore_auto_tag.setter
+	def ignore_auto_tag(self, ignore_auto_tag):
+		self._ignore_auto_tag = ignore_auto_tag
+
+	@property
+	def image_blob(self):
+		return self._image_blob
+
+	@image_blob.setter
+	def image_blob(self, image_blob):
+		self._image_blob = image_blob
+
+	@property
+	def penis_length(self):
+		return self._penis_length
+
+	@penis_length.setter
+	def penis_length(self, penis_length):
+		self._penis_length = penis_length
+
+	@property
+	def circumcised(self):
+		return self._circumcised
+
+	@circumcised.setter
+	def circumcised(self, circumcised):
+		self._circumcised = circumcised
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.id, self.name, self.disambiguation, self.gender, self.birthdate, self.ethnicity, self.country, self.eye_color, self.height, self.measurements, self.fake_tits, self.career_length, self.tattoos, self.piercings, self.favorite, self.created_at, self.updated_at, self.details, self.death_date, self.hair_color, self.weight, self.rating, self.ignore_auto_tag, self.image_blob, self.penis_length, self.circumcised]
+		else:
+			return [self.name, self.disambiguation, self.gender, self.birthdate, self.ethnicity, self.country, self.eye_color, self.height, self.measurements, self.fake_tits, self.career_length, self.tattoos, self.piercings, self.favorite, self.created_at, self.updated_at, self.details, self.death_date, self.hair_color, self.weight, self.rating, self.ignore_auto_tag, self.image_blob, self.penis_length, self.circumcised]
+
+class StudiosTagsRow(TableRow):
+	def __init__(self):
+		super().__init__('studios_tags')
+		self._studio_id = None
+		self._tag_id = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def studio_id(self):
+		return self._studio_id
+
+	@studio_id.setter
+	def studio_id(self, studio_id):
+		self._studio_id = studio_id
+
+	@property
+	def tag_id(self):
+		return self._tag_id
+
+	@tag_id.setter
+	def tag_id(self, tag_id):
+		self._tag_id = tag_id
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.studio_id, self.tag_id]
+		else:
+			return [self.studio_id, self.tag_id]
+
+class ScenesViewDatesRow(TableRow):
+	def __init__(self):
+		super().__init__('scenes_view_dates')
+		self._scene_id = None
+		self._view_date = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def scene_id(self):
+		return self._scene_id
+
+	@scene_id.setter
+	def scene_id(self, scene_id):
+		self._scene_id = scene_id
+
+	@property
+	def view_date(self):
+		return self._view_date
+
+	@view_date.setter
+	def view_date(self, view_date):
+		self._view_date = view_date
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.scene_id, self.view_date]
+		else:
+			return [self.scene_id, self.view_date]
+
+class ScenesODatesRow(TableRow):
+	def __init__(self):
+		super().__init__('scenes_o_dates')
+		self._scene_id = None
+		self._o_date = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def scene_id(self):
+		return self._scene_id
+
+	@scene_id.setter
+	def scene_id(self, scene_id):
+		self._scene_id = scene_id
+
+	@property
+	def o_date(self):
+		return self._o_date
+
+	@o_date.setter
+	def o_date(self, o_date):
+		self._o_date = o_date
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.scene_id, self.o_date]
+		else:
+			return [self.scene_id, self.o_date]
+
+class GroupsRelationsRow(TableRow):
+	def __init__(self):
+		super().__init__('groups_relations')
+		self._containing_id = None
+		self._sub_id = None
+		self._order_index = None
+		self._description = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def containing_id(self):
+		return self._containing_id
+
+	@containing_id.setter
+	def containing_id(self, containing_id):
+		self._containing_id = containing_id
+
+	@property
+	def sub_id(self):
+		return self._sub_id
+
+	@sub_id.setter
+	def sub_id(self, sub_id):
+		self._sub_id = sub_id
+
+	@property
+	def order_index(self):
+		return self._order_index
+
+	@order_index.setter
+	def order_index(self, order_index):
+		self._order_index = order_index
+
+	@property
+	def description(self):
+		return self._description
+
+	@description.setter
+	def description(self, description):
+		self._description = description
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.containing_id, self.sub_id, self.order_index, self.description]
+		else:
+			return [self.containing_id, self.sub_id, self.order_index, self.description]
+
+class SqliteStat1Row(TableRow):
+	def __init__(self):
+		super().__init__('sqlite_stat1')
+		self._tbl = None
+		self._idx = None
+		self._stat = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def tbl(self):
+		return self._tbl
+
+	@tbl.setter
+	def tbl(self, tbl):
+		self._tbl = tbl
+
+	@property
+	def idx(self):
+		return self._idx
+
+	@idx.setter
+	def idx(self, idx):
+		self._idx = idx
+
+	@property
+	def stat(self):
+		return self._stat
+
+	@stat.setter
+	def stat(self, stat):
+		self._stat = stat
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.tbl, self.idx, self.stat]
+		else:
+			return [self.tbl, self.idx, self.stat]
+
+class SqliteStat4Row(TableRow):
+	def __init__(self):
+		super().__init__('sqlite_stat4')
+		self._tbl = None
+		self._idx = None
+		self._neq = None
+		self._nlt = None
+		self._ndlt = None
+		self._sample = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def tbl(self):
+		return self._tbl
+
+	@tbl.setter
+	def tbl(self, tbl):
+		self._tbl = tbl
+
+	@property
+	def idx(self):
+		return self._idx
+
+	@idx.setter
+	def idx(self, idx):
+		self._idx = idx
+
+	@property
+	def neq(self):
+		return self._neq
+
+	@neq.setter
+	def neq(self, neq):
+		self._neq = neq
+
+	@property
+	def nlt(self):
+		return self._nlt
+
+	@nlt.setter
+	def nlt(self, nlt):
+		self._nlt = nlt
+
+	@property
+	def ndlt(self):
+		return self._ndlt
+
+	@ndlt.setter
+	def ndlt(self, ndlt):
+		self._ndlt = ndlt
+
+	@property
+	def sample(self):
+		return self._sample
+
+	@sample.setter
+	def sample(self, sample):
+		self._sample = sample
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.tbl, self.idx, self.neq, self.nlt, self.ndlt, self.sample]
+		else:
+			return [self.tbl, self.idx, self.neq, self.nlt, self.ndlt, self.sample]
 

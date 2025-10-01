@@ -68,6 +68,10 @@ class Tags(Table):
 		colvalues['image_blob'] = image_blob
 		return [TagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_favorite(self, favorite, colvalues={}, selectcols=['*']):
+		colvalues['favorite'] = favorite
+		return [TagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_id(self, id, colvalues={}, selectcols=['*']):
 		colvalues['id'] = id
 		row = self.selectone(colvalues, selectcols)
@@ -124,11 +128,19 @@ class Tags(Table):
 		else:
 			return None
 
-	def insert(self, name, created_at, updated_at, ignore_auto_tag, description, image_blob, commit=True):
-		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob) VALUES (?, ?, ?, ?, ?, ?)", [name, created_at, updated_at, ignore_auto_tag, description, image_blob], commit)
+	def selectone_favorite(self, favorite, colvalues={}, selectcols=['*']):
+		colvalues['favorite'] = favorite
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return TagsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite, commit=True):
+		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)", [name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite], commit)
 
 	def insert_model(self, model: TagsRow, commit=True):
-		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob) VALUES (?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
 	def delete_by_id(self, id, commit=True):
 		return self.execute("DELETE FROM tags WHERE id = ?", [id, ], commit)
@@ -166,6 +178,12 @@ class Tags(Table):
 	def update_empty_image_blob_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE tags SET image_blob = ? WHERE id = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, id], commit)
 
+	def update_favorite_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE tags SET favorite = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_favorite_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE tags SET favorite = ? WHERE id = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, id], commit)
+
 	def update_created_at_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE tags SET created_at = ? WHERE name = ?", [value, name], commit)
 
@@ -195,6 +213,12 @@ class Tags(Table):
 
 	def update_empty_image_blob_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE tags SET image_blob = ? WHERE name = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, name], commit)
+
+	def update_favorite_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE tags SET favorite = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_favorite_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE tags SET favorite = ? WHERE name = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, name], commit)
 
 class SqliteSequence(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -1538,134 +1562,6 @@ class ScenesFiles(Table):
 	def update_empty_primary_by_file_id(self, file_id, value, commit=True):
 		return self.execute("UPDATE scenes_files SET primary = ? WHERE file_id = ? AND (primary IS NULL OR primary = '' OR primary = 0)", [value, file_id], commit)
 
-class SqliteStat1(Table):
-	def __init__(self, conn: sqlite3.Connection):
-		super().__init__(conn, 'sqlite_stat1')
-
-	def select_tbl(self, tbl, colvalues={}, selectcols=['*']):
-		colvalues['tbl'] = tbl
-		return [SqliteStat1Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_idx(self, idx, colvalues={}, selectcols=['*']):
-		colvalues['idx'] = idx
-		return [SqliteStat1Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_stat(self, stat, colvalues={}, selectcols=['*']):
-		colvalues['stat'] = stat
-		return [SqliteStat1Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def selectone_tbl(self, tbl, colvalues={}, selectcols=['*']):
-		colvalues['tbl'] = tbl
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat1Row().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_idx(self, idx, colvalues={}, selectcols=['*']):
-		colvalues['idx'] = idx
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat1Row().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_stat(self, stat, colvalues={}, selectcols=['*']):
-		colvalues['stat'] = stat
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat1Row().from_sqliterow(row)
-		else:
-			return None
-
-	def insert(self, tbl, idx, stat, commit=True):
-		return self.execute("INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES (?, ?, ?)", [tbl, idx, stat], commit)
-
-	def insert_model(self, model: SqliteStat1Row, commit=True):
-		return self.execute("INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES (?, ?, ?)", model.values_list(False), commit)
-
-class SqliteStat4(Table):
-	def __init__(self, conn: sqlite3.Connection):
-		super().__init__(conn, 'sqlite_stat4')
-
-	def select_tbl(self, tbl, colvalues={}, selectcols=['*']):
-		colvalues['tbl'] = tbl
-		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_idx(self, idx, colvalues={}, selectcols=['*']):
-		colvalues['idx'] = idx
-		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_neq(self, neq, colvalues={}, selectcols=['*']):
-		colvalues['neq'] = neq
-		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_nlt(self, nlt, colvalues={}, selectcols=['*']):
-		colvalues['nlt'] = nlt
-		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_ndlt(self, ndlt, colvalues={}, selectcols=['*']):
-		colvalues['ndlt'] = ndlt
-		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_sample(self, sample, colvalues={}, selectcols=['*']):
-		colvalues['sample'] = sample
-		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def selectone_tbl(self, tbl, colvalues={}, selectcols=['*']):
-		colvalues['tbl'] = tbl
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat4Row().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_idx(self, idx, colvalues={}, selectcols=['*']):
-		colvalues['idx'] = idx
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat4Row().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_neq(self, neq, colvalues={}, selectcols=['*']):
-		colvalues['neq'] = neq
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat4Row().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_nlt(self, nlt, colvalues={}, selectcols=['*']):
-		colvalues['nlt'] = nlt
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat4Row().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_ndlt(self, ndlt, colvalues={}, selectcols=['*']):
-		colvalues['ndlt'] = ndlt
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat4Row().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_sample(self, sample, colvalues={}, selectcols=['*']):
-		colvalues['sample'] = sample
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return SqliteStat4Row().from_sqliterow(row)
-		else:
-			return None
-
-	def insert(self, tbl, idx, neq, nlt, ndlt, sample, commit=True):
-		return self.execute("INSERT INTO sqlite_stat4 (tbl, idx, neq, nlt, ndlt, sample) VALUES (?, ?, ?, ?, ?, ?)", [tbl, idx, neq, nlt, ndlt, sample], commit)
-
-	def insert_model(self, model: SqliteStat4Row, commit=True):
-		return self.execute("INSERT INTO sqlite_stat4 (tbl, idx, neq, nlt, ndlt, sample) VALUES (?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
-
 class PerformersScenes(Table):
 	def __init__(self, conn: sqlite3.Connection):
 		super().__init__(conn, 'performers_scenes')
@@ -1822,27 +1718,27 @@ class ScenesTags(Table):
 	def update_empty_scene_id_by_tag_id(self, tag_id, value, commit=True):
 		return self.execute("UPDATE scenes_tags SET scene_id = ? WHERE tag_id = ? AND (scene_id IS NULL OR scene_id = '' OR scene_id = 0)", [value, tag_id], commit)
 
-class MoviesScenes(Table):
+class GroupsScenes(Table):
 	def __init__(self, conn: sqlite3.Connection):
-		super().__init__(conn, 'movies_scenes')
+		super().__init__(conn, 'groups_scenes')
 
-	def select_movie_id(self, movie_id, colvalues={}, selectcols=['*']):
-		colvalues['movie_id'] = movie_id
-		return [MoviesScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+	def select_group_id(self, group_id, colvalues={}, selectcols=['*']):
+		colvalues['group_id'] = group_id
+		return [GroupsScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
 	def select_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
 		colvalues['scene_id'] = scene_id
-		return [MoviesScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+		return [GroupsScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
 	def select_scene_index(self, scene_index, colvalues={}, selectcols=['*']):
 		colvalues['scene_index'] = scene_index
-		return [MoviesScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+		return [GroupsScenesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
-	def selectone_movie_id(self, movie_id, colvalues={}, selectcols=['*']):
-		colvalues['movie_id'] = movie_id
+	def selectone_group_id(self, group_id, colvalues={}, selectcols=['*']):
+		colvalues['group_id'] = group_id
 		row = self.selectone(colvalues, selectcols)
 		if row:
-			return MoviesScenesRow().from_sqliterow(row)
+			return GroupsScenesRow().from_sqliterow(row)
 		else:
 			return None
 
@@ -1850,7 +1746,7 @@ class MoviesScenes(Table):
 		colvalues['scene_id'] = scene_id
 		row = self.selectone(colvalues, selectcols)
 		if row:
-			return MoviesScenesRow().from_sqliterow(row)
+			return GroupsScenesRow().from_sqliterow(row)
 		else:
 			return None
 
@@ -1858,45 +1754,45 @@ class MoviesScenes(Table):
 		colvalues['scene_index'] = scene_index
 		row = self.selectone(colvalues, selectcols)
 		if row:
-			return MoviesScenesRow().from_sqliterow(row)
+			return GroupsScenesRow().from_sqliterow(row)
 		else:
 			return None
 
-	def insert(self, movie_id, scene_id, scene_index, commit=True):
-		return self.execute("INSERT INTO movies_scenes (movie_id, scene_id, scene_index) VALUES (?, ?, ?)", [movie_id, scene_id, scene_index], commit)
+	def insert(self, group_id, scene_id, scene_index, commit=True):
+		return self.execute("INSERT INTO groups_scenes (group_id, scene_id, scene_index) VALUES (?, ?, ?)", [group_id, scene_id, scene_index], commit)
 
-	def insert_model(self, model: MoviesScenesRow, commit=True):
-		return self.execute("INSERT INTO movies_scenes (movie_id, scene_id, scene_index) VALUES (?, ?, ?)", model.values_list(False), commit)
+	def insert_model(self, model: GroupsScenesRow, commit=True):
+		return self.execute("INSERT INTO groups_scenes (group_id, scene_id, scene_index) VALUES (?, ?, ?)", model.values_list(False), commit)
 
-	def delete_by_movie_id(self, movie_id, commit=True):
-		return self.execute("DELETE FROM movies_scenes WHERE movie_id = ?", [movie_id, ], commit)
+	def delete_by_group_id(self, group_id, commit=True):
+		return self.execute("DELETE FROM groups_scenes WHERE group_id = ?", [group_id, ], commit)
 
 	def delete_by_scene_id(self, scene_id, commit=True):
-		return self.execute("DELETE FROM movies_scenes WHERE scene_id = ?", [scene_id, ], commit)
+		return self.execute("DELETE FROM groups_scenes WHERE scene_id = ?", [scene_id, ], commit)
 
-	def update_scene_id_by_movie_id(self, movie_id, value, commit=True):
-		return self.execute("UPDATE movies_scenes SET scene_id = ? WHERE movie_id = ?", [value, movie_id], commit)
+	def update_scene_id_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE groups_scenes SET scene_id = ? WHERE group_id = ?", [value, group_id], commit)
 
-	def update_empty_scene_id_by_movie_id(self, movie_id, value, commit=True):
-		return self.execute("UPDATE movies_scenes SET scene_id = ? WHERE movie_id = ? AND (scene_id IS NULL OR scene_id = '' OR scene_id = 0)", [value, movie_id], commit)
+	def update_empty_scene_id_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE groups_scenes SET scene_id = ? WHERE group_id = ? AND (scene_id IS NULL OR scene_id = '' OR scene_id = 0)", [value, group_id], commit)
 
-	def update_scene_index_by_movie_id(self, movie_id, value, commit=True):
-		return self.execute("UPDATE movies_scenes SET scene_index = ? WHERE movie_id = ?", [value, movie_id], commit)
+	def update_scene_index_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE groups_scenes SET scene_index = ? WHERE group_id = ?", [value, group_id], commit)
 
-	def update_empty_scene_index_by_movie_id(self, movie_id, value, commit=True):
-		return self.execute("UPDATE movies_scenes SET scene_index = ? WHERE movie_id = ? AND (scene_index IS NULL OR scene_index = '' OR scene_index = 0)", [value, movie_id], commit)
+	def update_empty_scene_index_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE groups_scenes SET scene_index = ? WHERE group_id = ? AND (scene_index IS NULL OR scene_index = '' OR scene_index = 0)", [value, group_id], commit)
 
-	def update_movie_id_by_scene_id(self, scene_id, value, commit=True):
-		return self.execute("UPDATE movies_scenes SET movie_id = ? WHERE scene_id = ?", [value, scene_id], commit)
+	def update_group_id_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE groups_scenes SET group_id = ? WHERE scene_id = ?", [value, scene_id], commit)
 
-	def update_empty_movie_id_by_scene_id(self, scene_id, value, commit=True):
-		return self.execute("UPDATE movies_scenes SET movie_id = ? WHERE scene_id = ? AND (movie_id IS NULL OR movie_id = '' OR movie_id = 0)", [value, scene_id], commit)
+	def update_empty_group_id_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE groups_scenes SET group_id = ? WHERE scene_id = ? AND (group_id IS NULL OR group_id = '' OR group_id = 0)", [value, scene_id], commit)
 
 	def update_scene_index_by_scene_id(self, scene_id, value, commit=True):
-		return self.execute("UPDATE movies_scenes SET scene_index = ? WHERE scene_id = ?", [value, scene_id], commit)
+		return self.execute("UPDATE groups_scenes SET scene_index = ? WHERE scene_id = ?", [value, scene_id], commit)
 
 	def update_empty_scene_index_by_scene_id(self, scene_id, value, commit=True):
-		return self.execute("UPDATE movies_scenes SET scene_index = ? WHERE scene_id = ? AND (scene_index IS NULL OR scene_index = '' OR scene_index = 0)", [value, scene_id], commit)
+		return self.execute("UPDATE groups_scenes SET scene_index = ? WHERE scene_id = ? AND (scene_index IS NULL OR scene_index = '' OR scene_index = 0)", [value, scene_id], commit)
 
 class PerformersImages(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -2142,6 +2038,10 @@ class GalleriesImages(Table):
 		colvalues['image_id'] = image_id
 		return [GalleriesImagesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_cover(self, cover, colvalues={}, selectcols=['*']):
+		colvalues['cover'] = cover
+		return [GalleriesImagesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_gallery_id(self, gallery_id, colvalues={}, selectcols=['*']):
 		colvalues['gallery_id'] = gallery_id
 		row = self.selectone(colvalues, selectcols)
@@ -2158,11 +2058,19 @@ class GalleriesImages(Table):
 		else:
 			return None
 
-	def insert(self, gallery_id, image_id, commit=True):
-		return self.execute("INSERT INTO galleries_images (gallery_id, image_id) VALUES (?, ?)", [gallery_id, image_id], commit)
+	def selectone_cover(self, cover, colvalues={}, selectcols=['*']):
+		colvalues['cover'] = cover
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GalleriesImagesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, gallery_id, image_id, cover, commit=True):
+		return self.execute("INSERT INTO galleries_images (gallery_id, image_id, cover) VALUES (?, ?, ?)", [gallery_id, image_id, cover], commit)
 
 	def insert_model(self, model: GalleriesImagesRow, commit=True):
-		return self.execute("INSERT INTO galleries_images (gallery_id, image_id) VALUES (?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO galleries_images (gallery_id, image_id, cover) VALUES (?, ?, ?)", model.values_list(False), commit)
 
 	def delete_by_gallery_id(self, gallery_id, commit=True):
 		return self.execute("DELETE FROM galleries_images WHERE gallery_id = ?", [gallery_id, ], commit)
@@ -2176,11 +2084,23 @@ class GalleriesImages(Table):
 	def update_empty_image_id_by_gallery_id(self, gallery_id, value, commit=True):
 		return self.execute("UPDATE galleries_images SET image_id = ? WHERE gallery_id = ? AND (image_id IS NULL OR image_id = '' OR image_id = 0)", [value, gallery_id], commit)
 
+	def update_cover_by_gallery_id(self, gallery_id, value, commit=True):
+		return self.execute("UPDATE galleries_images SET cover = ? WHERE gallery_id = ?", [value, gallery_id], commit)
+
+	def update_empty_cover_by_gallery_id(self, gallery_id, value, commit=True):
+		return self.execute("UPDATE galleries_images SET cover = ? WHERE gallery_id = ? AND (cover IS NULL OR cover = '' OR cover = 0)", [value, gallery_id], commit)
+
 	def update_gallery_id_by_image_id(self, image_id, value, commit=True):
 		return self.execute("UPDATE galleries_images SET gallery_id = ? WHERE image_id = ?", [value, image_id], commit)
 
 	def update_empty_gallery_id_by_image_id(self, image_id, value, commit=True):
 		return self.execute("UPDATE galleries_images SET gallery_id = ? WHERE image_id = ? AND (gallery_id IS NULL OR gallery_id = '' OR gallery_id = 0)", [value, image_id], commit)
+
+	def update_cover_by_image_id(self, image_id, value, commit=True):
+		return self.execute("UPDATE galleries_images SET cover = ? WHERE image_id = ?", [value, image_id], commit)
+
+	def update_empty_cover_by_image_id(self, image_id, value, commit=True):
+		return self.execute("UPDATE galleries_images SET cover = ? WHERE image_id = ? AND (cover IS NULL OR cover = '' OR cover = 0)", [value, image_id], commit)
 
 class PerformersGalleries(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -2466,694 +2386,6 @@ class PerformerAliases(Table):
 
 	def update_empty_alias_by_performer_id(self, performer_id, value, commit=True):
 		return self.execute("UPDATE performer_aliases SET alias = ? WHERE performer_id = ? AND (alias IS NULL OR alias = '' OR alias = 0)", [value, performer_id], commit)
-
-class Performers(Table):
-	def __init__(self, conn: sqlite3.Connection):
-		super().__init__(conn, 'performers')
-
-	def select_id(self, id, colvalues={}, selectcols=['*']):
-		colvalues['id'] = id
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_name(self, name, colvalues={}, selectcols=['*']):
-		colvalues['name'] = name
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_disambiguation(self, disambiguation, colvalues={}, selectcols=['*']):
-		colvalues['disambiguation'] = disambiguation
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_gender(self, gender, colvalues={}, selectcols=['*']):
-		colvalues['gender'] = gender
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_url(self, url, colvalues={}, selectcols=['*']):
-		colvalues['url'] = url
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_twitter(self, twitter, colvalues={}, selectcols=['*']):
-		colvalues['twitter'] = twitter
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_instagram(self, instagram, colvalues={}, selectcols=['*']):
-		colvalues['instagram'] = instagram
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_birthdate(self, birthdate, colvalues={}, selectcols=['*']):
-		colvalues['birthdate'] = birthdate
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_ethnicity(self, ethnicity, colvalues={}, selectcols=['*']):
-		colvalues['ethnicity'] = ethnicity
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_country(self, country, colvalues={}, selectcols=['*']):
-		colvalues['country'] = country
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_eye_color(self, eye_color, colvalues={}, selectcols=['*']):
-		colvalues['eye_color'] = eye_color
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_height(self, height, colvalues={}, selectcols=['*']):
-		colvalues['height'] = height
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_measurements(self, measurements, colvalues={}, selectcols=['*']):
-		colvalues['measurements'] = measurements
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_fake_tits(self, fake_tits, colvalues={}, selectcols=['*']):
-		colvalues['fake_tits'] = fake_tits
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_career_length(self, career_length, colvalues={}, selectcols=['*']):
-		colvalues['career_length'] = career_length
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_tattoos(self, tattoos, colvalues={}, selectcols=['*']):
-		colvalues['tattoos'] = tattoos
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_piercings(self, piercings, colvalues={}, selectcols=['*']):
-		colvalues['piercings'] = piercings
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_favorite(self, favorite, colvalues={}, selectcols=['*']):
-		colvalues['favorite'] = favorite
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_created_at(self, created_at, colvalues={}, selectcols=['*']):
-		colvalues['created_at'] = created_at
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
-		colvalues['updated_at'] = updated_at
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_details(self, details, colvalues={}, selectcols=['*']):
-		colvalues['details'] = details
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_death_date(self, death_date, colvalues={}, selectcols=['*']):
-		colvalues['death_date'] = death_date
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_hair_color(self, hair_color, colvalues={}, selectcols=['*']):
-		colvalues['hair_color'] = hair_color
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_weight(self, weight, colvalues={}, selectcols=['*']):
-		colvalues['weight'] = weight
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_rating(self, rating, colvalues={}, selectcols=['*']):
-		colvalues['rating'] = rating
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
-		colvalues['ignore_auto_tag'] = ignore_auto_tag
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_image_blob(self, image_blob, colvalues={}, selectcols=['*']):
-		colvalues['image_blob'] = image_blob
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_penis_length(self, penis_length, colvalues={}, selectcols=['*']):
-		colvalues['penis_length'] = penis_length
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_circumcised(self, circumcised, colvalues={}, selectcols=['*']):
-		colvalues['circumcised'] = circumcised
-		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def selectone_id(self, id, colvalues={}, selectcols=['*']):
-		colvalues['id'] = id
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_name(self, name, colvalues={}, selectcols=['*']):
-		colvalues['name'] = name
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_disambiguation(self, disambiguation, colvalues={}, selectcols=['*']):
-		colvalues['disambiguation'] = disambiguation
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_gender(self, gender, colvalues={}, selectcols=['*']):
-		colvalues['gender'] = gender
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_url(self, url, colvalues={}, selectcols=['*']):
-		colvalues['url'] = url
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_twitter(self, twitter, colvalues={}, selectcols=['*']):
-		colvalues['twitter'] = twitter
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_instagram(self, instagram, colvalues={}, selectcols=['*']):
-		colvalues['instagram'] = instagram
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_birthdate(self, birthdate, colvalues={}, selectcols=['*']):
-		colvalues['birthdate'] = birthdate
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_ethnicity(self, ethnicity, colvalues={}, selectcols=['*']):
-		colvalues['ethnicity'] = ethnicity
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_country(self, country, colvalues={}, selectcols=['*']):
-		colvalues['country'] = country
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_eye_color(self, eye_color, colvalues={}, selectcols=['*']):
-		colvalues['eye_color'] = eye_color
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_height(self, height, colvalues={}, selectcols=['*']):
-		colvalues['height'] = height
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_measurements(self, measurements, colvalues={}, selectcols=['*']):
-		colvalues['measurements'] = measurements
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_fake_tits(self, fake_tits, colvalues={}, selectcols=['*']):
-		colvalues['fake_tits'] = fake_tits
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_career_length(self, career_length, colvalues={}, selectcols=['*']):
-		colvalues['career_length'] = career_length
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_tattoos(self, tattoos, colvalues={}, selectcols=['*']):
-		colvalues['tattoos'] = tattoos
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_piercings(self, piercings, colvalues={}, selectcols=['*']):
-		colvalues['piercings'] = piercings
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_favorite(self, favorite, colvalues={}, selectcols=['*']):
-		colvalues['favorite'] = favorite
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_created_at(self, created_at, colvalues={}, selectcols=['*']):
-		colvalues['created_at'] = created_at
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
-		colvalues['updated_at'] = updated_at
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_details(self, details, colvalues={}, selectcols=['*']):
-		colvalues['details'] = details
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_death_date(self, death_date, colvalues={}, selectcols=['*']):
-		colvalues['death_date'] = death_date
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_hair_color(self, hair_color, colvalues={}, selectcols=['*']):
-		colvalues['hair_color'] = hair_color
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_weight(self, weight, colvalues={}, selectcols=['*']):
-		colvalues['weight'] = weight
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_rating(self, rating, colvalues={}, selectcols=['*']):
-		colvalues['rating'] = rating
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
-		colvalues['ignore_auto_tag'] = ignore_auto_tag
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_image_blob(self, image_blob, colvalues={}, selectcols=['*']):
-		colvalues['image_blob'] = image_blob
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_penis_length(self, penis_length, colvalues={}, selectcols=['*']):
-		colvalues['penis_length'] = penis_length
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_circumcised(self, circumcised, colvalues={}, selectcols=['*']):
-		colvalues['circumcised'] = circumcised
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return PerformersRow().from_sqliterow(row)
-		else:
-			return None
-
-	def insert(self, name, disambiguation, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised, commit=True):
-		return self.execute("INSERT INTO performers (name, disambiguation, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [name, disambiguation, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised], commit)
-
-	def insert_model(self, model: PerformersRow, commit=True):
-		return self.execute("INSERT INTO performers (name, disambiguation, gender, url, twitter, instagram, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
-
-	def delete_by_id(self, id, commit=True):
-		return self.execute("DELETE FROM performers WHERE id = ?", [id, ], commit)
-
-	def delete_by_name(self, name, commit=True):
-		return self.execute("DELETE FROM performers WHERE name = ?", [name, ], commit)
-
-	def update_disambiguation_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET disambiguation = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_disambiguation_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET disambiguation = ? WHERE id = ? AND (disambiguation IS NULL OR disambiguation = '' OR disambiguation = 0)", [value, id], commit)
-
-	def update_gender_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET gender = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_gender_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET gender = ? WHERE id = ? AND (gender IS NULL OR gender = '' OR gender = 0)", [value, id], commit)
-
-	def update_url_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET url = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_url_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET url = ? WHERE id = ? AND (url IS NULL OR url = '' OR url = 0)", [value, id], commit)
-
-	def update_twitter_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET twitter = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_twitter_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET twitter = ? WHERE id = ? AND (twitter IS NULL OR twitter = '' OR twitter = 0)", [value, id], commit)
-
-	def update_instagram_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET instagram = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_instagram_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET instagram = ? WHERE id = ? AND (instagram IS NULL OR instagram = '' OR instagram = 0)", [value, id], commit)
-
-	def update_birthdate_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET birthdate = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_birthdate_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET birthdate = ? WHERE id = ? AND (birthdate IS NULL OR birthdate = '' OR birthdate = 0)", [value, id], commit)
-
-	def update_ethnicity_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET ethnicity = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_ethnicity_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET ethnicity = ? WHERE id = ? AND (ethnicity IS NULL OR ethnicity = '' OR ethnicity = 0)", [value, id], commit)
-
-	def update_country_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET country = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_country_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET country = ? WHERE id = ? AND (country IS NULL OR country = '' OR country = 0)", [value, id], commit)
-
-	def update_eye_color_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET eye_color = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_eye_color_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET eye_color = ? WHERE id = ? AND (eye_color IS NULL OR eye_color = '' OR eye_color = 0)", [value, id], commit)
-
-	def update_height_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET height = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_height_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET height = ? WHERE id = ? AND (height IS NULL OR height = '' OR height = 0)", [value, id], commit)
-
-	def update_measurements_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET measurements = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_measurements_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET measurements = ? WHERE id = ? AND (measurements IS NULL OR measurements = '' OR measurements = 0)", [value, id], commit)
-
-	def update_fake_tits_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET fake_tits = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_fake_tits_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET fake_tits = ? WHERE id = ? AND (fake_tits IS NULL OR fake_tits = '' OR fake_tits = 0)", [value, id], commit)
-
-	def update_career_length_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET career_length = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_career_length_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET career_length = ? WHERE id = ? AND (career_length IS NULL OR career_length = '' OR career_length = 0)", [value, id], commit)
-
-	def update_tattoos_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET tattoos = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_tattoos_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET tattoos = ? WHERE id = ? AND (tattoos IS NULL OR tattoos = '' OR tattoos = 0)", [value, id], commit)
-
-	def update_piercings_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET piercings = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_piercings_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET piercings = ? WHERE id = ? AND (piercings IS NULL OR piercings = '' OR piercings = 0)", [value, id], commit)
-
-	def update_favorite_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET favorite = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_favorite_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET favorite = ? WHERE id = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, id], commit)
-
-	def update_created_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET created_at = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_created_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET created_at = ? WHERE id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, id], commit)
-
-	def update_updated_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET updated_at = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_updated_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET updated_at = ? WHERE id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, id], commit)
-
-	def update_details_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET details = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_details_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET details = ? WHERE id = ? AND (details IS NULL OR details = '' OR details = 0)", [value, id], commit)
-
-	def update_death_date_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET death_date = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_death_date_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET death_date = ? WHERE id = ? AND (death_date IS NULL OR death_date = '' OR death_date = 0)", [value, id], commit)
-
-	def update_hair_color_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET hair_color = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_hair_color_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET hair_color = ? WHERE id = ? AND (hair_color IS NULL OR hair_color = '' OR hair_color = 0)", [value, id], commit)
-
-	def update_weight_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET weight = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_weight_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET weight = ? WHERE id = ? AND (weight IS NULL OR weight = '' OR weight = 0)", [value, id], commit)
-
-	def update_rating_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET rating = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_rating_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET rating = ? WHERE id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, id], commit)
-
-	def update_ignore_auto_tag_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_ignore_auto_tag_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE id = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, id], commit)
-
-	def update_image_blob_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET image_blob = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_image_blob_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET image_blob = ? WHERE id = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, id], commit)
-
-	def update_penis_length_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET penis_length = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_penis_length_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET penis_length = ? WHERE id = ? AND (penis_length IS NULL OR penis_length = '' OR penis_length = 0)", [value, id], commit)
-
-	def update_circumcised_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET circumcised = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_circumcised_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE performers SET circumcised = ? WHERE id = ? AND (circumcised IS NULL OR circumcised = '' OR circumcised = 0)", [value, id], commit)
-
-	def update_disambiguation_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET disambiguation = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_disambiguation_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET disambiguation = ? WHERE name = ? AND (disambiguation IS NULL OR disambiguation = '' OR disambiguation = 0)", [value, name], commit)
-
-	def update_gender_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET gender = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_gender_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET gender = ? WHERE name = ? AND (gender IS NULL OR gender = '' OR gender = 0)", [value, name], commit)
-
-	def update_url_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET url = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_url_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET url = ? WHERE name = ? AND (url IS NULL OR url = '' OR url = 0)", [value, name], commit)
-
-	def update_twitter_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET twitter = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_twitter_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET twitter = ? WHERE name = ? AND (twitter IS NULL OR twitter = '' OR twitter = 0)", [value, name], commit)
-
-	def update_instagram_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET instagram = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_instagram_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET instagram = ? WHERE name = ? AND (instagram IS NULL OR instagram = '' OR instagram = 0)", [value, name], commit)
-
-	def update_birthdate_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET birthdate = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_birthdate_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET birthdate = ? WHERE name = ? AND (birthdate IS NULL OR birthdate = '' OR birthdate = 0)", [value, name], commit)
-
-	def update_ethnicity_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET ethnicity = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_ethnicity_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET ethnicity = ? WHERE name = ? AND (ethnicity IS NULL OR ethnicity = '' OR ethnicity = 0)", [value, name], commit)
-
-	def update_country_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET country = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_country_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET country = ? WHERE name = ? AND (country IS NULL OR country = '' OR country = 0)", [value, name], commit)
-
-	def update_eye_color_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET eye_color = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_eye_color_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET eye_color = ? WHERE name = ? AND (eye_color IS NULL OR eye_color = '' OR eye_color = 0)", [value, name], commit)
-
-	def update_height_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET height = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_height_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET height = ? WHERE name = ? AND (height IS NULL OR height = '' OR height = 0)", [value, name], commit)
-
-	def update_measurements_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET measurements = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_measurements_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET measurements = ? WHERE name = ? AND (measurements IS NULL OR measurements = '' OR measurements = 0)", [value, name], commit)
-
-	def update_fake_tits_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET fake_tits = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_fake_tits_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET fake_tits = ? WHERE name = ? AND (fake_tits IS NULL OR fake_tits = '' OR fake_tits = 0)", [value, name], commit)
-
-	def update_career_length_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET career_length = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_career_length_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET career_length = ? WHERE name = ? AND (career_length IS NULL OR career_length = '' OR career_length = 0)", [value, name], commit)
-
-	def update_tattoos_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET tattoos = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_tattoos_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET tattoos = ? WHERE name = ? AND (tattoos IS NULL OR tattoos = '' OR tattoos = 0)", [value, name], commit)
-
-	def update_piercings_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET piercings = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_piercings_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET piercings = ? WHERE name = ? AND (piercings IS NULL OR piercings = '' OR piercings = 0)", [value, name], commit)
-
-	def update_favorite_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET favorite = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_favorite_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET favorite = ? WHERE name = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, name], commit)
-
-	def update_created_at_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET created_at = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_created_at_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET created_at = ? WHERE name = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, name], commit)
-
-	def update_updated_at_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET updated_at = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_updated_at_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET updated_at = ? WHERE name = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, name], commit)
-
-	def update_details_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET details = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_details_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET details = ? WHERE name = ? AND (details IS NULL OR details = '' OR details = 0)", [value, name], commit)
-
-	def update_death_date_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET death_date = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_death_date_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET death_date = ? WHERE name = ? AND (death_date IS NULL OR death_date = '' OR death_date = 0)", [value, name], commit)
-
-	def update_hair_color_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET hair_color = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_hair_color_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET hair_color = ? WHERE name = ? AND (hair_color IS NULL OR hair_color = '' OR hair_color = 0)", [value, name], commit)
-
-	def update_weight_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET weight = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_weight_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET weight = ? WHERE name = ? AND (weight IS NULL OR weight = '' OR weight = 0)", [value, name], commit)
-
-	def update_rating_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET rating = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_rating_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET rating = ? WHERE name = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, name], commit)
-
-	def update_ignore_auto_tag_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_ignore_auto_tag_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE name = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, name], commit)
-
-	def update_image_blob_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET image_blob = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_image_blob_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET image_blob = ? WHERE name = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, name], commit)
-
-	def update_penis_length_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET penis_length = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_penis_length_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET penis_length = ? WHERE name = ? AND (penis_length IS NULL OR penis_length = '' OR penis_length = 0)", [value, name], commit)
-
-	def update_circumcised_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET circumcised = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_circumcised_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE performers SET circumcised = ? WHERE name = ? AND (circumcised IS NULL OR circumcised = '' OR circumcised = 0)", [value, name], commit)
 
 class GalleriesChapters(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -3600,403 +2832,6 @@ class SceneMarkers(Table):
 	def update_empty_updated_at_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scene_markers SET updated_at = ? WHERE scene_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, scene_id], commit)
 
-class Movies(Table):
-	def __init__(self, conn: sqlite3.Connection):
-		super().__init__(conn, 'movies')
-
-	def select_id(self, id, colvalues={}, selectcols=['*']):
-		colvalues['id'] = id
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_name(self, name, colvalues={}, selectcols=['*']):
-		colvalues['name'] = name
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_aliases(self, aliases, colvalues={}, selectcols=['*']):
-		colvalues['aliases'] = aliases
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_duration(self, duration, colvalues={}, selectcols=['*']):
-		colvalues['duration'] = duration
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_date(self, date, colvalues={}, selectcols=['*']):
-		colvalues['date'] = date
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_rating(self, rating, colvalues={}, selectcols=['*']):
-		colvalues['rating'] = rating
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
-		colvalues['studio_id'] = studio_id
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_director(self, director, colvalues={}, selectcols=['*']):
-		colvalues['director'] = director
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_synopsis(self, synopsis, colvalues={}, selectcols=['*']):
-		colvalues['synopsis'] = synopsis
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_url(self, url, colvalues={}, selectcols=['*']):
-		colvalues['url'] = url
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_created_at(self, created_at, colvalues={}, selectcols=['*']):
-		colvalues['created_at'] = created_at
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
-		colvalues['updated_at'] = updated_at
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_front_image_blob(self, front_image_blob, colvalues={}, selectcols=['*']):
-		colvalues['front_image_blob'] = front_image_blob
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_back_image_blob(self, back_image_blob, colvalues={}, selectcols=['*']):
-		colvalues['back_image_blob'] = back_image_blob
-		return [MoviesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def selectone_id(self, id, colvalues={}, selectcols=['*']):
-		colvalues['id'] = id
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_name(self, name, colvalues={}, selectcols=['*']):
-		colvalues['name'] = name
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_aliases(self, aliases, colvalues={}, selectcols=['*']):
-		colvalues['aliases'] = aliases
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_duration(self, duration, colvalues={}, selectcols=['*']):
-		colvalues['duration'] = duration
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_date(self, date, colvalues={}, selectcols=['*']):
-		colvalues['date'] = date
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_rating(self, rating, colvalues={}, selectcols=['*']):
-		colvalues['rating'] = rating
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
-		colvalues['studio_id'] = studio_id
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_director(self, director, colvalues={}, selectcols=['*']):
-		colvalues['director'] = director
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_synopsis(self, synopsis, colvalues={}, selectcols=['*']):
-		colvalues['synopsis'] = synopsis
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_url(self, url, colvalues={}, selectcols=['*']):
-		colvalues['url'] = url
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_created_at(self, created_at, colvalues={}, selectcols=['*']):
-		colvalues['created_at'] = created_at
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
-		colvalues['updated_at'] = updated_at
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_front_image_blob(self, front_image_blob, colvalues={}, selectcols=['*']):
-		colvalues['front_image_blob'] = front_image_blob
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_back_image_blob(self, back_image_blob, colvalues={}, selectcols=['*']):
-		colvalues['back_image_blob'] = back_image_blob
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return MoviesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def insert(self, name, aliases, duration, date, rating, studio_id, director, synopsis, url, created_at, updated_at, front_image_blob, back_image_blob, commit=True):
-		return self.execute("INSERT INTO movies (name, aliases, duration, date, rating, studio_id, director, synopsis, url, created_at, updated_at, front_image_blob, back_image_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [name, aliases, duration, date, rating, studio_id, director, synopsis, url, created_at, updated_at, front_image_blob, back_image_blob], commit)
-
-	def insert_model(self, model: MoviesRow, commit=True):
-		return self.execute("INSERT INTO movies (name, aliases, duration, date, rating, studio_id, director, synopsis, url, created_at, updated_at, front_image_blob, back_image_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
-
-	def delete_by_id(self, id, commit=True):
-		return self.execute("DELETE FROM movies WHERE id = ?", [id, ], commit)
-
-	def delete_by_name(self, name, commit=True):
-		return self.execute("DELETE FROM movies WHERE name = ?", [name, ], commit)
-
-	def delete_by_studio_id(self, studio_id, commit=True):
-		return self.execute("DELETE FROM movies WHERE studio_id = ?", [studio_id, ], commit)
-
-	def update_aliases_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET aliases = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_aliases_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET aliases = ? WHERE id = ? AND (aliases IS NULL OR aliases = '' OR aliases = 0)", [value, id], commit)
-
-	def update_duration_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET duration = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_duration_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET duration = ? WHERE id = ? AND (duration IS NULL OR duration = '' OR duration = 0)", [value, id], commit)
-
-	def update_date_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET date = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_date_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET date = ? WHERE id = ? AND (date IS NULL OR date = '' OR date = 0)", [value, id], commit)
-
-	def update_rating_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET rating = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_rating_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET rating = ? WHERE id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, id], commit)
-
-	def update_studio_id_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET studio_id = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_studio_id_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET studio_id = ? WHERE id = ? AND (studio_id IS NULL OR studio_id = '' OR studio_id = 0)", [value, id], commit)
-
-	def update_director_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET director = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_director_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET director = ? WHERE id = ? AND (director IS NULL OR director = '' OR director = 0)", [value, id], commit)
-
-	def update_synopsis_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET synopsis = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_synopsis_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET synopsis = ? WHERE id = ? AND (synopsis IS NULL OR synopsis = '' OR synopsis = 0)", [value, id], commit)
-
-	def update_url_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET url = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_url_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET url = ? WHERE id = ? AND (url IS NULL OR url = '' OR url = 0)", [value, id], commit)
-
-	def update_created_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET created_at = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_created_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET created_at = ? WHERE id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, id], commit)
-
-	def update_updated_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET updated_at = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_updated_at_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET updated_at = ? WHERE id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, id], commit)
-
-	def update_front_image_blob_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET front_image_blob = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_front_image_blob_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET front_image_blob = ? WHERE id = ? AND (front_image_blob IS NULL OR front_image_blob = '' OR front_image_blob = 0)", [value, id], commit)
-
-	def update_back_image_blob_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET back_image_blob = ? WHERE id = ?", [value, id], commit)
-
-	def update_empty_back_image_blob_by_id(self, id, value, commit=True):
-		return self.execute("UPDATE movies SET back_image_blob = ? WHERE id = ? AND (back_image_blob IS NULL OR back_image_blob = '' OR back_image_blob = 0)", [value, id], commit)
-
-	def update_aliases_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET aliases = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_aliases_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET aliases = ? WHERE name = ? AND (aliases IS NULL OR aliases = '' OR aliases = 0)", [value, name], commit)
-
-	def update_duration_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET duration = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_duration_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET duration = ? WHERE name = ? AND (duration IS NULL OR duration = '' OR duration = 0)", [value, name], commit)
-
-	def update_date_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET date = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_date_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET date = ? WHERE name = ? AND (date IS NULL OR date = '' OR date = 0)", [value, name], commit)
-
-	def update_rating_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET rating = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_rating_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET rating = ? WHERE name = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, name], commit)
-
-	def update_studio_id_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET studio_id = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_studio_id_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET studio_id = ? WHERE name = ? AND (studio_id IS NULL OR studio_id = '' OR studio_id = 0)", [value, name], commit)
-
-	def update_director_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET director = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_director_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET director = ? WHERE name = ? AND (director IS NULL OR director = '' OR director = 0)", [value, name], commit)
-
-	def update_synopsis_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET synopsis = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_synopsis_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET synopsis = ? WHERE name = ? AND (synopsis IS NULL OR synopsis = '' OR synopsis = 0)", [value, name], commit)
-
-	def update_url_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET url = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_url_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET url = ? WHERE name = ? AND (url IS NULL OR url = '' OR url = 0)", [value, name], commit)
-
-	def update_created_at_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET created_at = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_created_at_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET created_at = ? WHERE name = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, name], commit)
-
-	def update_updated_at_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET updated_at = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_updated_at_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET updated_at = ? WHERE name = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, name], commit)
-
-	def update_front_image_blob_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET front_image_blob = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_front_image_blob_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET front_image_blob = ? WHERE name = ? AND (front_image_blob IS NULL OR front_image_blob = '' OR front_image_blob = 0)", [value, name], commit)
-
-	def update_back_image_blob_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET back_image_blob = ? WHERE name = ?", [value, name], commit)
-
-	def update_empty_back_image_blob_by_name(self, name, value, commit=True):
-		return self.execute("UPDATE movies SET back_image_blob = ? WHERE name = ? AND (back_image_blob IS NULL OR back_image_blob = '' OR back_image_blob = 0)", [value, name], commit)
-
-	def update_aliases_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET aliases = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_aliases_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET aliases = ? WHERE studio_id = ? AND (aliases IS NULL OR aliases = '' OR aliases = 0)", [value, studio_id], commit)
-
-	def update_duration_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET duration = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_duration_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET duration = ? WHERE studio_id = ? AND (duration IS NULL OR duration = '' OR duration = 0)", [value, studio_id], commit)
-
-	def update_date_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET date = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_date_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET date = ? WHERE studio_id = ? AND (date IS NULL OR date = '' OR date = 0)", [value, studio_id], commit)
-
-	def update_rating_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET rating = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_rating_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET rating = ? WHERE studio_id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, studio_id], commit)
-
-	def update_director_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET director = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_director_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET director = ? WHERE studio_id = ? AND (director IS NULL OR director = '' OR director = 0)", [value, studio_id], commit)
-
-	def update_synopsis_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET synopsis = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_synopsis_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET synopsis = ? WHERE studio_id = ? AND (synopsis IS NULL OR synopsis = '' OR synopsis = 0)", [value, studio_id], commit)
-
-	def update_url_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET url = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_url_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET url = ? WHERE studio_id = ? AND (url IS NULL OR url = '' OR url = 0)", [value, studio_id], commit)
-
-	def update_created_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET created_at = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_created_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET created_at = ? WHERE studio_id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, studio_id], commit)
-
-	def update_updated_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET updated_at = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_updated_at_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET updated_at = ? WHERE studio_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, studio_id], commit)
-
-	def update_front_image_blob_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET front_image_blob = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_front_image_blob_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET front_image_blob = ? WHERE studio_id = ? AND (front_image_blob IS NULL OR front_image_blob = '' OR front_image_blob = 0)", [value, studio_id], commit)
-
-	def update_back_image_blob_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET back_image_blob = ? WHERE studio_id = ?", [value, studio_id], commit)
-
-	def update_empty_back_image_blob_by_studio_id(self, studio_id, value, commit=True):
-		return self.execute("UPDATE movies SET back_image_blob = ? WHERE studio_id = ? AND (back_image_blob IS NULL OR back_image_blob = '' OR back_image_blob = 0)", [value, studio_id], commit)
-
 class Studios(Table):
 	def __init__(self, conn: sqlite3.Connection):
 		super().__init__(conn, 'studios')
@@ -4039,6 +2874,10 @@ class Studios(Table):
 
 	def select_image_blob(self, image_blob, colvalues={}, selectcols=['*']):
 		colvalues['image_blob'] = image_blob
+		return [StudiosRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_favorite(self, favorite, colvalues={}, selectcols=['*']):
+		colvalues['favorite'] = favorite
 		return [StudiosRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
 	def selectone_id(self, id, colvalues={}, selectcols=['*']):
@@ -4121,11 +2960,19 @@ class Studios(Table):
 		else:
 			return None
 
-	def insert(self, name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob, commit=True):
-		return self.execute("INSERT INTO studios (name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob], commit)
+	def selectone_favorite(self, favorite, colvalues={}, selectcols=['*']):
+		colvalues['favorite'] = favorite
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return StudiosRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob, favorite, commit=True):
+		return self.execute("INSERT INTO studios (name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob, favorite], commit)
 
 	def insert_model(self, model: StudiosRow, commit=True):
-		return self.execute("INSERT INTO studios (name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO studios (name, url, parent_id, created_at, updated_at, details, rating, ignore_auto_tag, image_blob, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
 	def delete_by_id(self, id, commit=True):
 		return self.execute("DELETE FROM studios WHERE id = ?", [id, ], commit)
@@ -4184,6 +3031,12 @@ class Studios(Table):
 	def update_empty_image_blob_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE studios SET image_blob = ? WHERE id = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, id], commit)
 
+	def update_favorite_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE studios SET favorite = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_favorite_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE studios SET favorite = ? WHERE id = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, id], commit)
+
 	def update_url_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE studios SET url = ? WHERE name = ?", [value, name], commit)
 
@@ -4232,6 +3085,12 @@ class Studios(Table):
 	def update_empty_image_blob_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE studios SET image_blob = ? WHERE name = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, name], commit)
 
+	def update_favorite_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE studios SET favorite = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_favorite_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE studios SET favorite = ? WHERE name = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, name], commit)
+
 	def update_url_by_parent_id(self, parent_id, value, commit=True):
 		return self.execute("UPDATE studios SET url = ? WHERE parent_id = ?", [value, parent_id], commit)
 
@@ -4273,6 +3132,12 @@ class Studios(Table):
 
 	def update_empty_image_blob_by_parent_id(self, parent_id, value, commit=True):
 		return self.execute("UPDATE studios SET image_blob = ? WHERE parent_id = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, parent_id], commit)
+
+	def update_favorite_by_parent_id(self, parent_id, value, commit=True):
+		return self.execute("UPDATE studios SET favorite = ? WHERE parent_id = ?", [value, parent_id], commit)
+
+	def update_empty_favorite_by_parent_id(self, parent_id, value, commit=True):
+		return self.execute("UPDATE studios SET favorite = ? WHERE parent_id = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, parent_id], commit)
 
 class SavedFilters(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -5167,92 +4032,6 @@ class Galleries(Table):
 	def update_empty_photographer_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE galleries SET photographer = ? WHERE studio_id = ? AND (photographer IS NULL OR photographer = '' OR photographer = 0)", [value, studio_id], commit)
 
-class ScenesViewDates(Table):
-	def __init__(self, conn: sqlite3.Connection):
-		super().__init__(conn, 'scenes_view_dates')
-
-	def select_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
-		colvalues['scene_id'] = scene_id
-		return [ScenesViewDatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_view_date(self, view_date, colvalues={}, selectcols=['*']):
-		colvalues['view_date'] = view_date
-		return [ScenesViewDatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def selectone_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
-		colvalues['scene_id'] = scene_id
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesViewDatesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_view_date(self, view_date, colvalues={}, selectcols=['*']):
-		colvalues['view_date'] = view_date
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesViewDatesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def insert(self, scene_id, view_date, commit=True):
-		return self.execute("INSERT INTO scenes_view_dates (scene_id, view_date) VALUES (?, ?)", [scene_id, view_date], commit)
-
-	def insert_model(self, model: ScenesViewDatesRow, commit=True):
-		return self.execute("INSERT INTO scenes_view_dates (scene_id, view_date) VALUES (?, ?)", model.values_list(False), commit)
-
-	def delete_by_scene_id(self, scene_id, commit=True):
-		return self.execute("DELETE FROM scenes_view_dates WHERE scene_id = ?", [scene_id, ], commit)
-
-	def update_view_date_by_scene_id(self, scene_id, value, commit=True):
-		return self.execute("UPDATE scenes_view_dates SET view_date = ? WHERE scene_id = ?", [value, scene_id], commit)
-
-	def update_empty_view_date_by_scene_id(self, scene_id, value, commit=True):
-		return self.execute("UPDATE scenes_view_dates SET view_date = ? WHERE scene_id = ? AND (view_date IS NULL OR view_date = '' OR view_date = 0)", [value, scene_id], commit)
-
-class ScenesODates(Table):
-	def __init__(self, conn: sqlite3.Connection):
-		super().__init__(conn, 'scenes_o_dates')
-
-	def select_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
-		colvalues['scene_id'] = scene_id
-		return [ScenesODatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def select_o_date(self, o_date, colvalues={}, selectcols=['*']):
-		colvalues['o_date'] = o_date
-		return [ScenesODatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
-
-	def selectone_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
-		colvalues['scene_id'] = scene_id
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesODatesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def selectone_o_date(self, o_date, colvalues={}, selectcols=['*']):
-		colvalues['o_date'] = o_date
-		row = self.selectone(colvalues, selectcols)
-		if row:
-			return ScenesODatesRow().from_sqliterow(row)
-		else:
-			return None
-
-	def insert(self, scene_id, o_date, commit=True):
-		return self.execute("INSERT INTO scenes_o_dates (scene_id, o_date) VALUES (?, ?)", [scene_id, o_date], commit)
-
-	def insert_model(self, model: ScenesODatesRow, commit=True):
-		return self.execute("INSERT INTO scenes_o_dates (scene_id, o_date) VALUES (?, ?)", model.values_list(False), commit)
-
-	def delete_by_scene_id(self, scene_id, commit=True):
-		return self.execute("DELETE FROM scenes_o_dates WHERE scene_id = ?", [scene_id, ], commit)
-
-	def update_o_date_by_scene_id(self, scene_id, value, commit=True):
-		return self.execute("UPDATE scenes_o_dates SET o_date = ? WHERE scene_id = ?", [value, scene_id], commit)
-
-	def update_empty_o_date_by_scene_id(self, scene_id, value, commit=True):
-		return self.execute("UPDATE scenes_o_dates SET o_date = ? WHERE scene_id = ? AND (o_date IS NULL OR o_date = '' OR o_date = 0)", [value, scene_id], commit)
-
 class Scenes(Table):
 	def __init__(self, conn: sqlite3.Connection):
 		super().__init__(conn, 'scenes')
@@ -5586,4 +4365,1527 @@ class Scenes(Table):
 
 	def update_empty_cover_blob_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE scenes SET cover_blob = ? WHERE studio_id = ? AND (cover_blob IS NULL OR cover_blob = '' OR cover_blob = 0)", [value, studio_id], commit)
+
+class GroupUrls(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'group_urls')
+
+	def select_group_id(self, group_id, colvalues={}, selectcols=['*']):
+		colvalues['group_id'] = group_id
+		return [GroupUrlsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_position(self, position, colvalues={}, selectcols=['*']):
+		colvalues['position'] = position
+		return [GroupUrlsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_url(self, url, colvalues={}, selectcols=['*']):
+		colvalues['url'] = url
+		return [GroupUrlsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_group_id(self, group_id, colvalues={}, selectcols=['*']):
+		colvalues['group_id'] = group_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupUrlsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_position(self, position, colvalues={}, selectcols=['*']):
+		colvalues['position'] = position
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupUrlsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_url(self, url, colvalues={}, selectcols=['*']):
+		colvalues['url'] = url
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupUrlsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, group_id, position, url, commit=True):
+		return self.execute("INSERT INTO group_urls (group_id, position, url) VALUES (?, ?, ?)", [group_id, position, url], commit)
+
+	def insert_model(self, model: GroupUrlsRow, commit=True):
+		return self.execute("INSERT INTO group_urls (group_id, position, url) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_group_id(self, group_id, commit=True):
+		return self.execute("DELETE FROM group_urls WHERE group_id = ?", [group_id, ], commit)
+
+	def update_position_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE group_urls SET position = ? WHERE group_id = ?", [value, group_id], commit)
+
+	def update_empty_position_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE group_urls SET position = ? WHERE group_id = ? AND (position IS NULL OR position = '' OR position = 0)", [value, group_id], commit)
+
+	def update_url_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE group_urls SET url = ? WHERE group_id = ?", [value, group_id], commit)
+
+	def update_empty_url_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE group_urls SET url = ? WHERE group_id = ? AND (url IS NULL OR url = '' OR url = 0)", [value, group_id], commit)
+
+class Groups(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'groups')
+
+	def select_id(self, id, colvalues={}, selectcols=['*']):
+		colvalues['id'] = id
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_name(self, name, colvalues={}, selectcols=['*']):
+		colvalues['name'] = name
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_aliases(self, aliases, colvalues={}, selectcols=['*']):
+		colvalues['aliases'] = aliases
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_duration(self, duration, colvalues={}, selectcols=['*']):
+		colvalues['duration'] = duration
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_date(self, date, colvalues={}, selectcols=['*']):
+		colvalues['date'] = date
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_rating(self, rating, colvalues={}, selectcols=['*']):
+		colvalues['rating'] = rating
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
+		colvalues['studio_id'] = studio_id
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_director(self, director, colvalues={}, selectcols=['*']):
+		colvalues['director'] = director
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_description(self, description, colvalues={}, selectcols=['*']):
+		colvalues['description'] = description
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_created_at(self, created_at, colvalues={}, selectcols=['*']):
+		colvalues['created_at'] = created_at
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_front_image_blob(self, front_image_blob, colvalues={}, selectcols=['*']):
+		colvalues['front_image_blob'] = front_image_blob
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_back_image_blob(self, back_image_blob, colvalues={}, selectcols=['*']):
+		colvalues['back_image_blob'] = back_image_blob
+		return [GroupsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_id(self, id, colvalues={}, selectcols=['*']):
+		colvalues['id'] = id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_name(self, name, colvalues={}, selectcols=['*']):
+		colvalues['name'] = name
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_aliases(self, aliases, colvalues={}, selectcols=['*']):
+		colvalues['aliases'] = aliases
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_duration(self, duration, colvalues={}, selectcols=['*']):
+		colvalues['duration'] = duration
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_date(self, date, colvalues={}, selectcols=['*']):
+		colvalues['date'] = date
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_rating(self, rating, colvalues={}, selectcols=['*']):
+		colvalues['rating'] = rating
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
+		colvalues['studio_id'] = studio_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_director(self, director, colvalues={}, selectcols=['*']):
+		colvalues['director'] = director
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_description(self, description, colvalues={}, selectcols=['*']):
+		colvalues['description'] = description
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_created_at(self, created_at, colvalues={}, selectcols=['*']):
+		colvalues['created_at'] = created_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_front_image_blob(self, front_image_blob, colvalues={}, selectcols=['*']):
+		colvalues['front_image_blob'] = front_image_blob
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_back_image_blob(self, back_image_blob, colvalues={}, selectcols=['*']):
+		colvalues['back_image_blob'] = back_image_blob
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, name, aliases, duration, date, rating, studio_id, director, description, created_at, updated_at, front_image_blob, back_image_blob, commit=True):
+		return self.execute("INSERT INTO groups (name, aliases, duration, date, rating, studio_id, director, description, created_at, updated_at, front_image_blob, back_image_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [name, aliases, duration, date, rating, studio_id, director, description, created_at, updated_at, front_image_blob, back_image_blob], commit)
+
+	def insert_model(self, model: GroupsRow, commit=True):
+		return self.execute("INSERT INTO groups (name, aliases, duration, date, rating, studio_id, director, description, created_at, updated_at, front_image_blob, back_image_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM groups WHERE id = ?", [id, ], commit)
+
+	def delete_by_name(self, name, commit=True):
+		return self.execute("DELETE FROM groups WHERE name = ?", [name, ], commit)
+
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM groups WHERE studio_id = ?", [studio_id, ], commit)
+
+	def update_aliases_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET aliases = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_aliases_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET aliases = ? WHERE id = ? AND (aliases IS NULL OR aliases = '' OR aliases = 0)", [value, id], commit)
+
+	def update_duration_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET duration = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_duration_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET duration = ? WHERE id = ? AND (duration IS NULL OR duration = '' OR duration = 0)", [value, id], commit)
+
+	def update_date_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET date = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_date_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET date = ? WHERE id = ? AND (date IS NULL OR date = '' OR date = 0)", [value, id], commit)
+
+	def update_rating_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET rating = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_rating_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET rating = ? WHERE id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, id], commit)
+
+	def update_studio_id_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET studio_id = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_studio_id_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET studio_id = ? WHERE id = ? AND (studio_id IS NULL OR studio_id = '' OR studio_id = 0)", [value, id], commit)
+
+	def update_director_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET director = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_director_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET director = ? WHERE id = ? AND (director IS NULL OR director = '' OR director = 0)", [value, id], commit)
+
+	def update_description_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET description = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_description_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET description = ? WHERE id = ? AND (description IS NULL OR description = '' OR description = 0)", [value, id], commit)
+
+	def update_created_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET created_at = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_created_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET created_at = ? WHERE id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, id], commit)
+
+	def update_updated_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET updated_at = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_updated_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET updated_at = ? WHERE id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, id], commit)
+
+	def update_front_image_blob_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET front_image_blob = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_front_image_blob_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET front_image_blob = ? WHERE id = ? AND (front_image_blob IS NULL OR front_image_blob = '' OR front_image_blob = 0)", [value, id], commit)
+
+	def update_back_image_blob_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET back_image_blob = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_back_image_blob_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE groups SET back_image_blob = ? WHERE id = ? AND (back_image_blob IS NULL OR back_image_blob = '' OR back_image_blob = 0)", [value, id], commit)
+
+	def update_aliases_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET aliases = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_aliases_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET aliases = ? WHERE name = ? AND (aliases IS NULL OR aliases = '' OR aliases = 0)", [value, name], commit)
+
+	def update_duration_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET duration = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_duration_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET duration = ? WHERE name = ? AND (duration IS NULL OR duration = '' OR duration = 0)", [value, name], commit)
+
+	def update_date_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET date = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_date_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET date = ? WHERE name = ? AND (date IS NULL OR date = '' OR date = 0)", [value, name], commit)
+
+	def update_rating_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET rating = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_rating_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET rating = ? WHERE name = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, name], commit)
+
+	def update_studio_id_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET studio_id = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_studio_id_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET studio_id = ? WHERE name = ? AND (studio_id IS NULL OR studio_id = '' OR studio_id = 0)", [value, name], commit)
+
+	def update_director_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET director = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_director_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET director = ? WHERE name = ? AND (director IS NULL OR director = '' OR director = 0)", [value, name], commit)
+
+	def update_description_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET description = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_description_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET description = ? WHERE name = ? AND (description IS NULL OR description = '' OR description = 0)", [value, name], commit)
+
+	def update_created_at_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET created_at = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_created_at_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET created_at = ? WHERE name = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, name], commit)
+
+	def update_updated_at_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET updated_at = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_updated_at_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET updated_at = ? WHERE name = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, name], commit)
+
+	def update_front_image_blob_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET front_image_blob = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_front_image_blob_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET front_image_blob = ? WHERE name = ? AND (front_image_blob IS NULL OR front_image_blob = '' OR front_image_blob = 0)", [value, name], commit)
+
+	def update_back_image_blob_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET back_image_blob = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_back_image_blob_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE groups SET back_image_blob = ? WHERE name = ? AND (back_image_blob IS NULL OR back_image_blob = '' OR back_image_blob = 0)", [value, name], commit)
+
+	def update_aliases_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET aliases = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_aliases_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET aliases = ? WHERE studio_id = ? AND (aliases IS NULL OR aliases = '' OR aliases = 0)", [value, studio_id], commit)
+
+	def update_duration_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET duration = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_duration_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET duration = ? WHERE studio_id = ? AND (duration IS NULL OR duration = '' OR duration = 0)", [value, studio_id], commit)
+
+	def update_date_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET date = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_date_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET date = ? WHERE studio_id = ? AND (date IS NULL OR date = '' OR date = 0)", [value, studio_id], commit)
+
+	def update_rating_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET rating = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_rating_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET rating = ? WHERE studio_id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, studio_id], commit)
+
+	def update_director_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET director = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_director_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET director = ? WHERE studio_id = ? AND (director IS NULL OR director = '' OR director = 0)", [value, studio_id], commit)
+
+	def update_description_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET description = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_description_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET description = ? WHERE studio_id = ? AND (description IS NULL OR description = '' OR description = 0)", [value, studio_id], commit)
+
+	def update_created_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET created_at = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_created_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET created_at = ? WHERE studio_id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, studio_id], commit)
+
+	def update_updated_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET updated_at = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_updated_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET updated_at = ? WHERE studio_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, studio_id], commit)
+
+	def update_front_image_blob_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET front_image_blob = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_front_image_blob_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET front_image_blob = ? WHERE studio_id = ? AND (front_image_blob IS NULL OR front_image_blob = '' OR front_image_blob = 0)", [value, studio_id], commit)
+
+	def update_back_image_blob_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET back_image_blob = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_back_image_blob_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE groups SET back_image_blob = ? WHERE studio_id = ? AND (back_image_blob IS NULL OR back_image_blob = '' OR back_image_blob = 0)", [value, studio_id], commit)
+
+class GroupsTags(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'groups_tags')
+
+	def select_group_id(self, group_id, colvalues={}, selectcols=['*']):
+		colvalues['group_id'] = group_id
+		return [GroupsTagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_tag_id(self, tag_id, colvalues={}, selectcols=['*']):
+		colvalues['tag_id'] = tag_id
+		return [GroupsTagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_group_id(self, group_id, colvalues={}, selectcols=['*']):
+		colvalues['group_id'] = group_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsTagsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_tag_id(self, tag_id, colvalues={}, selectcols=['*']):
+		colvalues['tag_id'] = tag_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsTagsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, group_id, tag_id, commit=True):
+		return self.execute("INSERT INTO groups_tags (group_id, tag_id) VALUES (?, ?)", [group_id, tag_id], commit)
+
+	def insert_model(self, model: GroupsTagsRow, commit=True):
+		return self.execute("INSERT INTO groups_tags (group_id, tag_id) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_group_id(self, group_id, commit=True):
+		return self.execute("DELETE FROM groups_tags WHERE group_id = ?", [group_id, ], commit)
+
+	def delete_by_tag_id(self, tag_id, commit=True):
+		return self.execute("DELETE FROM groups_tags WHERE tag_id = ?", [tag_id, ], commit)
+
+	def update_tag_id_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE groups_tags SET tag_id = ? WHERE group_id = ?", [value, group_id], commit)
+
+	def update_empty_tag_id_by_group_id(self, group_id, value, commit=True):
+		return self.execute("UPDATE groups_tags SET tag_id = ? WHERE group_id = ? AND (tag_id IS NULL OR tag_id = '' OR tag_id = 0)", [value, group_id], commit)
+
+	def update_group_id_by_tag_id(self, tag_id, value, commit=True):
+		return self.execute("UPDATE groups_tags SET group_id = ? WHERE tag_id = ?", [value, tag_id], commit)
+
+	def update_empty_group_id_by_tag_id(self, tag_id, value, commit=True):
+		return self.execute("UPDATE groups_tags SET group_id = ? WHERE tag_id = ? AND (group_id IS NULL OR group_id = '' OR group_id = 0)", [value, tag_id], commit)
+
+class PerformerUrls(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'performer_urls')
+
+	def select_performer_id(self, performer_id, colvalues={}, selectcols=['*']):
+		colvalues['performer_id'] = performer_id
+		return [PerformerUrlsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_position(self, position, colvalues={}, selectcols=['*']):
+		colvalues['position'] = position
+		return [PerformerUrlsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_url(self, url, colvalues={}, selectcols=['*']):
+		colvalues['url'] = url
+		return [PerformerUrlsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_performer_id(self, performer_id, colvalues={}, selectcols=['*']):
+		colvalues['performer_id'] = performer_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformerUrlsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_position(self, position, colvalues={}, selectcols=['*']):
+		colvalues['position'] = position
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformerUrlsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_url(self, url, colvalues={}, selectcols=['*']):
+		colvalues['url'] = url
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformerUrlsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, performer_id, position, url, commit=True):
+		return self.execute("INSERT INTO performer_urls (performer_id, position, url) VALUES (?, ?, ?)", [performer_id, position, url], commit)
+
+	def insert_model(self, model: PerformerUrlsRow, commit=True):
+		return self.execute("INSERT INTO performer_urls (performer_id, position, url) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_performer_id(self, performer_id, commit=True):
+		return self.execute("DELETE FROM performer_urls WHERE performer_id = ?", [performer_id, ], commit)
+
+	def update_position_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_urls SET position = ? WHERE performer_id = ?", [value, performer_id], commit)
+
+	def update_empty_position_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_urls SET position = ? WHERE performer_id = ? AND (position IS NULL OR position = '' OR position = 0)", [value, performer_id], commit)
+
+	def update_url_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_urls SET url = ? WHERE performer_id = ?", [value, performer_id], commit)
+
+	def update_empty_url_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_urls SET url = ? WHERE performer_id = ? AND (url IS NULL OR url = '' OR url = 0)", [value, performer_id], commit)
+
+class Performers(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'performers')
+
+	def select_id(self, id, colvalues={}, selectcols=['*']):
+		colvalues['id'] = id
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_name(self, name, colvalues={}, selectcols=['*']):
+		colvalues['name'] = name
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_disambiguation(self, disambiguation, colvalues={}, selectcols=['*']):
+		colvalues['disambiguation'] = disambiguation
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_gender(self, gender, colvalues={}, selectcols=['*']):
+		colvalues['gender'] = gender
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_birthdate(self, birthdate, colvalues={}, selectcols=['*']):
+		colvalues['birthdate'] = birthdate
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_ethnicity(self, ethnicity, colvalues={}, selectcols=['*']):
+		colvalues['ethnicity'] = ethnicity
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_country(self, country, colvalues={}, selectcols=['*']):
+		colvalues['country'] = country
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_eye_color(self, eye_color, colvalues={}, selectcols=['*']):
+		colvalues['eye_color'] = eye_color
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_height(self, height, colvalues={}, selectcols=['*']):
+		colvalues['height'] = height
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_measurements(self, measurements, colvalues={}, selectcols=['*']):
+		colvalues['measurements'] = measurements
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_fake_tits(self, fake_tits, colvalues={}, selectcols=['*']):
+		colvalues['fake_tits'] = fake_tits
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_career_length(self, career_length, colvalues={}, selectcols=['*']):
+		colvalues['career_length'] = career_length
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_tattoos(self, tattoos, colvalues={}, selectcols=['*']):
+		colvalues['tattoos'] = tattoos
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_piercings(self, piercings, colvalues={}, selectcols=['*']):
+		colvalues['piercings'] = piercings
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_favorite(self, favorite, colvalues={}, selectcols=['*']):
+		colvalues['favorite'] = favorite
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_created_at(self, created_at, colvalues={}, selectcols=['*']):
+		colvalues['created_at'] = created_at
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_details(self, details, colvalues={}, selectcols=['*']):
+		colvalues['details'] = details
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_death_date(self, death_date, colvalues={}, selectcols=['*']):
+		colvalues['death_date'] = death_date
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_hair_color(self, hair_color, colvalues={}, selectcols=['*']):
+		colvalues['hair_color'] = hair_color
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_weight(self, weight, colvalues={}, selectcols=['*']):
+		colvalues['weight'] = weight
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_rating(self, rating, colvalues={}, selectcols=['*']):
+		colvalues['rating'] = rating
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
+		colvalues['ignore_auto_tag'] = ignore_auto_tag
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_image_blob(self, image_blob, colvalues={}, selectcols=['*']):
+		colvalues['image_blob'] = image_blob
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_penis_length(self, penis_length, colvalues={}, selectcols=['*']):
+		colvalues['penis_length'] = penis_length
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_circumcised(self, circumcised, colvalues={}, selectcols=['*']):
+		colvalues['circumcised'] = circumcised
+		return [PerformersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_id(self, id, colvalues={}, selectcols=['*']):
+		colvalues['id'] = id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_name(self, name, colvalues={}, selectcols=['*']):
+		colvalues['name'] = name
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_disambiguation(self, disambiguation, colvalues={}, selectcols=['*']):
+		colvalues['disambiguation'] = disambiguation
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_gender(self, gender, colvalues={}, selectcols=['*']):
+		colvalues['gender'] = gender
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_birthdate(self, birthdate, colvalues={}, selectcols=['*']):
+		colvalues['birthdate'] = birthdate
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_ethnicity(self, ethnicity, colvalues={}, selectcols=['*']):
+		colvalues['ethnicity'] = ethnicity
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_country(self, country, colvalues={}, selectcols=['*']):
+		colvalues['country'] = country
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_eye_color(self, eye_color, colvalues={}, selectcols=['*']):
+		colvalues['eye_color'] = eye_color
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_height(self, height, colvalues={}, selectcols=['*']):
+		colvalues['height'] = height
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_measurements(self, measurements, colvalues={}, selectcols=['*']):
+		colvalues['measurements'] = measurements
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_fake_tits(self, fake_tits, colvalues={}, selectcols=['*']):
+		colvalues['fake_tits'] = fake_tits
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_career_length(self, career_length, colvalues={}, selectcols=['*']):
+		colvalues['career_length'] = career_length
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_tattoos(self, tattoos, colvalues={}, selectcols=['*']):
+		colvalues['tattoos'] = tattoos
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_piercings(self, piercings, colvalues={}, selectcols=['*']):
+		colvalues['piercings'] = piercings
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_favorite(self, favorite, colvalues={}, selectcols=['*']):
+		colvalues['favorite'] = favorite
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_created_at(self, created_at, colvalues={}, selectcols=['*']):
+		colvalues['created_at'] = created_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_details(self, details, colvalues={}, selectcols=['*']):
+		colvalues['details'] = details
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_death_date(self, death_date, colvalues={}, selectcols=['*']):
+		colvalues['death_date'] = death_date
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_hair_color(self, hair_color, colvalues={}, selectcols=['*']):
+		colvalues['hair_color'] = hair_color
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_weight(self, weight, colvalues={}, selectcols=['*']):
+		colvalues['weight'] = weight
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_rating(self, rating, colvalues={}, selectcols=['*']):
+		colvalues['rating'] = rating
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_ignore_auto_tag(self, ignore_auto_tag, colvalues={}, selectcols=['*']):
+		colvalues['ignore_auto_tag'] = ignore_auto_tag
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_image_blob(self, image_blob, colvalues={}, selectcols=['*']):
+		colvalues['image_blob'] = image_blob
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_penis_length(self, penis_length, colvalues={}, selectcols=['*']):
+		colvalues['penis_length'] = penis_length
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_circumcised(self, circumcised, colvalues={}, selectcols=['*']):
+		colvalues['circumcised'] = circumcised
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, name, disambiguation, gender, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised, commit=True):
+		return self.execute("INSERT INTO performers (name, disambiguation, gender, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [name, disambiguation, gender, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised], commit)
+
+	def insert_model(self, model: PerformersRow, commit=True):
+		return self.execute("INSERT INTO performers (name, disambiguation, gender, birthdate, ethnicity, country, eye_color, height, measurements, fake_tits, career_length, tattoos, piercings, favorite, created_at, updated_at, details, death_date, hair_color, weight, rating, ignore_auto_tag, image_blob, penis_length, circumcised) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_id(self, id, commit=True):
+		return self.execute("DELETE FROM performers WHERE id = ?", [id, ], commit)
+
+	def delete_by_name(self, name, commit=True):
+		return self.execute("DELETE FROM performers WHERE name = ?", [name, ], commit)
+
+	def update_disambiguation_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET disambiguation = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_disambiguation_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET disambiguation = ? WHERE id = ? AND (disambiguation IS NULL OR disambiguation = '' OR disambiguation = 0)", [value, id], commit)
+
+	def update_gender_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET gender = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_gender_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET gender = ? WHERE id = ? AND (gender IS NULL OR gender = '' OR gender = 0)", [value, id], commit)
+
+	def update_birthdate_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET birthdate = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_birthdate_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET birthdate = ? WHERE id = ? AND (birthdate IS NULL OR birthdate = '' OR birthdate = 0)", [value, id], commit)
+
+	def update_ethnicity_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET ethnicity = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_ethnicity_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET ethnicity = ? WHERE id = ? AND (ethnicity IS NULL OR ethnicity = '' OR ethnicity = 0)", [value, id], commit)
+
+	def update_country_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET country = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_country_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET country = ? WHERE id = ? AND (country IS NULL OR country = '' OR country = 0)", [value, id], commit)
+
+	def update_eye_color_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET eye_color = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_eye_color_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET eye_color = ? WHERE id = ? AND (eye_color IS NULL OR eye_color = '' OR eye_color = 0)", [value, id], commit)
+
+	def update_height_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET height = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_height_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET height = ? WHERE id = ? AND (height IS NULL OR height = '' OR height = 0)", [value, id], commit)
+
+	def update_measurements_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET measurements = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_measurements_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET measurements = ? WHERE id = ? AND (measurements IS NULL OR measurements = '' OR measurements = 0)", [value, id], commit)
+
+	def update_fake_tits_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET fake_tits = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_fake_tits_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET fake_tits = ? WHERE id = ? AND (fake_tits IS NULL OR fake_tits = '' OR fake_tits = 0)", [value, id], commit)
+
+	def update_career_length_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET career_length = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_career_length_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET career_length = ? WHERE id = ? AND (career_length IS NULL OR career_length = '' OR career_length = 0)", [value, id], commit)
+
+	def update_tattoos_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET tattoos = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_tattoos_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET tattoos = ? WHERE id = ? AND (tattoos IS NULL OR tattoos = '' OR tattoos = 0)", [value, id], commit)
+
+	def update_piercings_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET piercings = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_piercings_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET piercings = ? WHERE id = ? AND (piercings IS NULL OR piercings = '' OR piercings = 0)", [value, id], commit)
+
+	def update_favorite_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET favorite = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_favorite_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET favorite = ? WHERE id = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, id], commit)
+
+	def update_created_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET created_at = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_created_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET created_at = ? WHERE id = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, id], commit)
+
+	def update_updated_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET updated_at = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_updated_at_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET updated_at = ? WHERE id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, id], commit)
+
+	def update_details_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET details = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_details_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET details = ? WHERE id = ? AND (details IS NULL OR details = '' OR details = 0)", [value, id], commit)
+
+	def update_death_date_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET death_date = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_death_date_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET death_date = ? WHERE id = ? AND (death_date IS NULL OR death_date = '' OR death_date = 0)", [value, id], commit)
+
+	def update_hair_color_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET hair_color = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_hair_color_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET hair_color = ? WHERE id = ? AND (hair_color IS NULL OR hair_color = '' OR hair_color = 0)", [value, id], commit)
+
+	def update_weight_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET weight = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_weight_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET weight = ? WHERE id = ? AND (weight IS NULL OR weight = '' OR weight = 0)", [value, id], commit)
+
+	def update_rating_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET rating = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_rating_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET rating = ? WHERE id = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, id], commit)
+
+	def update_ignore_auto_tag_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_ignore_auto_tag_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE id = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, id], commit)
+
+	def update_image_blob_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET image_blob = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_image_blob_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET image_blob = ? WHERE id = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, id], commit)
+
+	def update_penis_length_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET penis_length = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_penis_length_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET penis_length = ? WHERE id = ? AND (penis_length IS NULL OR penis_length = '' OR penis_length = 0)", [value, id], commit)
+
+	def update_circumcised_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET circumcised = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_circumcised_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE performers SET circumcised = ? WHERE id = ? AND (circumcised IS NULL OR circumcised = '' OR circumcised = 0)", [value, id], commit)
+
+	def update_disambiguation_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET disambiguation = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_disambiguation_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET disambiguation = ? WHERE name = ? AND (disambiguation IS NULL OR disambiguation = '' OR disambiguation = 0)", [value, name], commit)
+
+	def update_gender_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET gender = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_gender_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET gender = ? WHERE name = ? AND (gender IS NULL OR gender = '' OR gender = 0)", [value, name], commit)
+
+	def update_birthdate_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET birthdate = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_birthdate_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET birthdate = ? WHERE name = ? AND (birthdate IS NULL OR birthdate = '' OR birthdate = 0)", [value, name], commit)
+
+	def update_ethnicity_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET ethnicity = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_ethnicity_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET ethnicity = ? WHERE name = ? AND (ethnicity IS NULL OR ethnicity = '' OR ethnicity = 0)", [value, name], commit)
+
+	def update_country_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET country = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_country_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET country = ? WHERE name = ? AND (country IS NULL OR country = '' OR country = 0)", [value, name], commit)
+
+	def update_eye_color_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET eye_color = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_eye_color_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET eye_color = ? WHERE name = ? AND (eye_color IS NULL OR eye_color = '' OR eye_color = 0)", [value, name], commit)
+
+	def update_height_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET height = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_height_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET height = ? WHERE name = ? AND (height IS NULL OR height = '' OR height = 0)", [value, name], commit)
+
+	def update_measurements_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET measurements = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_measurements_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET measurements = ? WHERE name = ? AND (measurements IS NULL OR measurements = '' OR measurements = 0)", [value, name], commit)
+
+	def update_fake_tits_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET fake_tits = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_fake_tits_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET fake_tits = ? WHERE name = ? AND (fake_tits IS NULL OR fake_tits = '' OR fake_tits = 0)", [value, name], commit)
+
+	def update_career_length_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET career_length = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_career_length_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET career_length = ? WHERE name = ? AND (career_length IS NULL OR career_length = '' OR career_length = 0)", [value, name], commit)
+
+	def update_tattoos_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET tattoos = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_tattoos_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET tattoos = ? WHERE name = ? AND (tattoos IS NULL OR tattoos = '' OR tattoos = 0)", [value, name], commit)
+
+	def update_piercings_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET piercings = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_piercings_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET piercings = ? WHERE name = ? AND (piercings IS NULL OR piercings = '' OR piercings = 0)", [value, name], commit)
+
+	def update_favorite_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET favorite = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_favorite_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET favorite = ? WHERE name = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, name], commit)
+
+	def update_created_at_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET created_at = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_created_at_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET created_at = ? WHERE name = ? AND (created_at IS NULL OR created_at = '' OR created_at = 0)", [value, name], commit)
+
+	def update_updated_at_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET updated_at = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_updated_at_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET updated_at = ? WHERE name = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, name], commit)
+
+	def update_details_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET details = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_details_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET details = ? WHERE name = ? AND (details IS NULL OR details = '' OR details = 0)", [value, name], commit)
+
+	def update_death_date_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET death_date = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_death_date_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET death_date = ? WHERE name = ? AND (death_date IS NULL OR death_date = '' OR death_date = 0)", [value, name], commit)
+
+	def update_hair_color_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET hair_color = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_hair_color_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET hair_color = ? WHERE name = ? AND (hair_color IS NULL OR hair_color = '' OR hair_color = 0)", [value, name], commit)
+
+	def update_weight_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET weight = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_weight_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET weight = ? WHERE name = ? AND (weight IS NULL OR weight = '' OR weight = 0)", [value, name], commit)
+
+	def update_rating_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET rating = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_rating_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET rating = ? WHERE name = ? AND (rating IS NULL OR rating = '' OR rating = 0)", [value, name], commit)
+
+	def update_ignore_auto_tag_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_ignore_auto_tag_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET ignore_auto_tag = ? WHERE name = ? AND (ignore_auto_tag IS NULL OR ignore_auto_tag = '' OR ignore_auto_tag = 0)", [value, name], commit)
+
+	def update_image_blob_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET image_blob = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_image_blob_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET image_blob = ? WHERE name = ? AND (image_blob IS NULL OR image_blob = '' OR image_blob = 0)", [value, name], commit)
+
+	def update_penis_length_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET penis_length = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_penis_length_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET penis_length = ? WHERE name = ? AND (penis_length IS NULL OR penis_length = '' OR penis_length = 0)", [value, name], commit)
+
+	def update_circumcised_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET circumcised = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_circumcised_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE performers SET circumcised = ? WHERE name = ? AND (circumcised IS NULL OR circumcised = '' OR circumcised = 0)", [value, name], commit)
+
+class StudiosTags(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'studios_tags')
+
+	def select_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
+		colvalues['studio_id'] = studio_id
+		return [StudiosTagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_tag_id(self, tag_id, colvalues={}, selectcols=['*']):
+		colvalues['tag_id'] = tag_id
+		return [StudiosTagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
+		colvalues['studio_id'] = studio_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return StudiosTagsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_tag_id(self, tag_id, colvalues={}, selectcols=['*']):
+		colvalues['tag_id'] = tag_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return StudiosTagsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, studio_id, tag_id, commit=True):
+		return self.execute("INSERT INTO studios_tags (studio_id, tag_id) VALUES (?, ?)", [studio_id, tag_id], commit)
+
+	def insert_model(self, model: StudiosTagsRow, commit=True):
+		return self.execute("INSERT INTO studios_tags (studio_id, tag_id) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_studio_id(self, studio_id, commit=True):
+		return self.execute("DELETE FROM studios_tags WHERE studio_id = ?", [studio_id, ], commit)
+
+	def delete_by_tag_id(self, tag_id, commit=True):
+		return self.execute("DELETE FROM studios_tags WHERE tag_id = ?", [tag_id, ], commit)
+
+	def update_tag_id_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE studios_tags SET tag_id = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_tag_id_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE studios_tags SET tag_id = ? WHERE studio_id = ? AND (tag_id IS NULL OR tag_id = '' OR tag_id = 0)", [value, studio_id], commit)
+
+	def update_studio_id_by_tag_id(self, tag_id, value, commit=True):
+		return self.execute("UPDATE studios_tags SET studio_id = ? WHERE tag_id = ?", [value, tag_id], commit)
+
+	def update_empty_studio_id_by_tag_id(self, tag_id, value, commit=True):
+		return self.execute("UPDATE studios_tags SET studio_id = ? WHERE tag_id = ? AND (studio_id IS NULL OR studio_id = '' OR studio_id = 0)", [value, tag_id], commit)
+
+class ScenesViewDates(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'scenes_view_dates')
+
+	def select_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		return [ScenesViewDatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_view_date(self, view_date, colvalues={}, selectcols=['*']):
+		colvalues['view_date'] = view_date
+		return [ScenesViewDatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesViewDatesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_view_date(self, view_date, colvalues={}, selectcols=['*']):
+		colvalues['view_date'] = view_date
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesViewDatesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, scene_id, view_date, commit=True):
+		return self.execute("INSERT INTO scenes_view_dates (scene_id, view_date) VALUES (?, ?)", [scene_id, view_date], commit)
+
+	def insert_model(self, model: ScenesViewDatesRow, commit=True):
+		return self.execute("INSERT INTO scenes_view_dates (scene_id, view_date) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scenes_view_dates WHERE scene_id = ?", [scene_id, ], commit)
+
+	def update_view_date_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scenes_view_dates SET view_date = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_view_date_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scenes_view_dates SET view_date = ? WHERE scene_id = ? AND (view_date IS NULL OR view_date = '' OR view_date = 0)", [value, scene_id], commit)
+
+class ScenesODates(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'scenes_o_dates')
+
+	def select_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		return [ScenesODatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_o_date(self, o_date, colvalues={}, selectcols=['*']):
+		colvalues['o_date'] = o_date
+		return [ScenesODatesRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
+		colvalues['scene_id'] = scene_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesODatesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_o_date(self, o_date, colvalues={}, selectcols=['*']):
+		colvalues['o_date'] = o_date
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return ScenesODatesRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, scene_id, o_date, commit=True):
+		return self.execute("INSERT INTO scenes_o_dates (scene_id, o_date) VALUES (?, ?)", [scene_id, o_date], commit)
+
+	def insert_model(self, model: ScenesODatesRow, commit=True):
+		return self.execute("INSERT INTO scenes_o_dates (scene_id, o_date) VALUES (?, ?)", model.values_list(False), commit)
+
+	def delete_by_scene_id(self, scene_id, commit=True):
+		return self.execute("DELETE FROM scenes_o_dates WHERE scene_id = ?", [scene_id, ], commit)
+
+	def update_o_date_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scenes_o_dates SET o_date = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_o_date_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scenes_o_dates SET o_date = ? WHERE scene_id = ? AND (o_date IS NULL OR o_date = '' OR o_date = 0)", [value, scene_id], commit)
+
+class GroupsRelations(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'groups_relations')
+
+	def select_containing_id(self, containing_id, colvalues={}, selectcols=['*']):
+		colvalues['containing_id'] = containing_id
+		return [GroupsRelationsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_sub_id(self, sub_id, colvalues={}, selectcols=['*']):
+		colvalues['sub_id'] = sub_id
+		return [GroupsRelationsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_order_index(self, order_index, colvalues={}, selectcols=['*']):
+		colvalues['order_index'] = order_index
+		return [GroupsRelationsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_description(self, description, colvalues={}, selectcols=['*']):
+		colvalues['description'] = description
+		return [GroupsRelationsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_containing_id(self, containing_id, colvalues={}, selectcols=['*']):
+		colvalues['containing_id'] = containing_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRelationsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_sub_id(self, sub_id, colvalues={}, selectcols=['*']):
+		colvalues['sub_id'] = sub_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRelationsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_order_index(self, order_index, colvalues={}, selectcols=['*']):
+		colvalues['order_index'] = order_index
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRelationsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_description(self, description, colvalues={}, selectcols=['*']):
+		colvalues['description'] = description
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return GroupsRelationsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, containing_id, sub_id, order_index, description, commit=True):
+		return self.execute("INSERT INTO groups_relations (containing_id, sub_id, order_index, description) VALUES (?, ?, ?, ?)", [containing_id, sub_id, order_index, description], commit)
+
+	def insert_model(self, model: GroupsRelationsRow, commit=True):
+		return self.execute("INSERT INTO groups_relations (containing_id, sub_id, order_index, description) VALUES (?, ?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_containing_id(self, containing_id, commit=True):
+		return self.execute("DELETE FROM groups_relations WHERE containing_id = ?", [containing_id, ], commit)
+
+	def delete_by_sub_id(self, sub_id, commit=True):
+		return self.execute("DELETE FROM groups_relations WHERE sub_id = ?", [sub_id, ], commit)
+
+	def update_sub_id_by_containing_id(self, containing_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET sub_id = ? WHERE containing_id = ?", [value, containing_id], commit)
+
+	def update_empty_sub_id_by_containing_id(self, containing_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET sub_id = ? WHERE containing_id = ? AND (sub_id IS NULL OR sub_id = '' OR sub_id = 0)", [value, containing_id], commit)
+
+	def update_order_index_by_containing_id(self, containing_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET order_index = ? WHERE containing_id = ?", [value, containing_id], commit)
+
+	def update_empty_order_index_by_containing_id(self, containing_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET order_index = ? WHERE containing_id = ? AND (order_index IS NULL OR order_index = '' OR order_index = 0)", [value, containing_id], commit)
+
+	def update_description_by_containing_id(self, containing_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET description = ? WHERE containing_id = ?", [value, containing_id], commit)
+
+	def update_empty_description_by_containing_id(self, containing_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET description = ? WHERE containing_id = ? AND (description IS NULL OR description = '' OR description = 0)", [value, containing_id], commit)
+
+	def update_containing_id_by_sub_id(self, sub_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET containing_id = ? WHERE sub_id = ?", [value, sub_id], commit)
+
+	def update_empty_containing_id_by_sub_id(self, sub_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET containing_id = ? WHERE sub_id = ? AND (containing_id IS NULL OR containing_id = '' OR containing_id = 0)", [value, sub_id], commit)
+
+	def update_order_index_by_sub_id(self, sub_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET order_index = ? WHERE sub_id = ?", [value, sub_id], commit)
+
+	def update_empty_order_index_by_sub_id(self, sub_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET order_index = ? WHERE sub_id = ? AND (order_index IS NULL OR order_index = '' OR order_index = 0)", [value, sub_id], commit)
+
+	def update_description_by_sub_id(self, sub_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET description = ? WHERE sub_id = ?", [value, sub_id], commit)
+
+	def update_empty_description_by_sub_id(self, sub_id, value, commit=True):
+		return self.execute("UPDATE groups_relations SET description = ? WHERE sub_id = ? AND (description IS NULL OR description = '' OR description = 0)", [value, sub_id], commit)
+
+class SqliteStat1(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'sqlite_stat1')
+
+	def select_tbl(self, tbl, colvalues={}, selectcols=['*']):
+		colvalues['tbl'] = tbl
+		return [SqliteStat1Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_idx(self, idx, colvalues={}, selectcols=['*']):
+		colvalues['idx'] = idx
+		return [SqliteStat1Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_stat(self, stat, colvalues={}, selectcols=['*']):
+		colvalues['stat'] = stat
+		return [SqliteStat1Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_tbl(self, tbl, colvalues={}, selectcols=['*']):
+		colvalues['tbl'] = tbl
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat1Row().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_idx(self, idx, colvalues={}, selectcols=['*']):
+		colvalues['idx'] = idx
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat1Row().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_stat(self, stat, colvalues={}, selectcols=['*']):
+		colvalues['stat'] = stat
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat1Row().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, tbl, idx, stat, commit=True):
+		return self.execute("INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES (?, ?, ?)", [tbl, idx, stat], commit)
+
+	def insert_model(self, model: SqliteStat1Row, commit=True):
+		return self.execute("INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+class SqliteStat4(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'sqlite_stat4')
+
+	def select_tbl(self, tbl, colvalues={}, selectcols=['*']):
+		colvalues['tbl'] = tbl
+		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_idx(self, idx, colvalues={}, selectcols=['*']):
+		colvalues['idx'] = idx
+		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_neq(self, neq, colvalues={}, selectcols=['*']):
+		colvalues['neq'] = neq
+		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_nlt(self, nlt, colvalues={}, selectcols=['*']):
+		colvalues['nlt'] = nlt
+		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_ndlt(self, ndlt, colvalues={}, selectcols=['*']):
+		colvalues['ndlt'] = ndlt
+		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_sample(self, sample, colvalues={}, selectcols=['*']):
+		colvalues['sample'] = sample
+		return [SqliteStat4Row().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_tbl(self, tbl, colvalues={}, selectcols=['*']):
+		colvalues['tbl'] = tbl
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat4Row().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_idx(self, idx, colvalues={}, selectcols=['*']):
+		colvalues['idx'] = idx
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat4Row().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_neq(self, neq, colvalues={}, selectcols=['*']):
+		colvalues['neq'] = neq
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat4Row().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_nlt(self, nlt, colvalues={}, selectcols=['*']):
+		colvalues['nlt'] = nlt
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat4Row().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_ndlt(self, ndlt, colvalues={}, selectcols=['*']):
+		colvalues['ndlt'] = ndlt
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat4Row().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_sample(self, sample, colvalues={}, selectcols=['*']):
+		colvalues['sample'] = sample
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SqliteStat4Row().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, tbl, idx, neq, nlt, ndlt, sample, commit=True):
+		return self.execute("INSERT INTO sqlite_stat4 (tbl, idx, neq, nlt, ndlt, sample) VALUES (?, ?, ?, ?, ?, ?)", [tbl, idx, neq, nlt, ndlt, sample], commit)
+
+	def insert_model(self, model: SqliteStat4Row, commit=True):
+		return self.execute("INSERT INTO sqlite_stat4 (tbl, idx, neq, nlt, ndlt, sample) VALUES (?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 

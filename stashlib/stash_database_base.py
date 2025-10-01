@@ -4,7 +4,7 @@ from .stash_tables import *
 
 class StashDatabaseBase(Database):
 
-	SCHEMA_VERSION = 55
+	SCHEMA_VERSION = 67
 
 	def __init__(self, db_path):
 		super().__init__(db_path)
@@ -23,12 +23,10 @@ class StashDatabaseBase(Database):
 		self.images_files = ImagesFiles(self.conn)
 		self.galleries_files = GalleriesFiles(self.conn)
 		self.scenes_files = ScenesFiles(self.conn)
-		self.sqlite_stat1 = SqliteStat1(self.conn)
-		self.sqlite_stat4 = SqliteStat4(self.conn)
 		self.performers_scenes = PerformersScenes(self.conn)
 		self.scene_markers_tags = SceneMarkersTags(self.conn)
 		self.scenes_tags = ScenesTags(self.conn)
-		self.movies_scenes = MoviesScenes(self.conn)
+		self.groups_scenes = GroupsScenes(self.conn)
 		self.performers_images = PerformersImages(self.conn)
 		self.images_tags = ImagesTags(self.conn)
 		self.scene_stash_ids = SceneStashIds(self.conn)
@@ -40,18 +38,25 @@ class StashDatabaseBase(Database):
 		self.tag_aliases = TagAliases(self.conn)
 		self.studio_aliases = StudioAliases(self.conn)
 		self.performer_aliases = PerformerAliases(self.conn)
-		self.performers = Performers(self.conn)
 		self.galleries_chapters = GalleriesChapters(self.conn)
 		self.blobs = Blobs(self.conn)
 		self.scene_urls = SceneUrls(self.conn)
 		self.scene_markers = SceneMarkers(self.conn)
-		self.movies = Movies(self.conn)
 		self.studios = Studios(self.conn)
 		self.saved_filters = SavedFilters(self.conn)
 		self.image_urls = ImageUrls(self.conn)
 		self.images = Images(self.conn)
 		self.gallery_urls = GalleryUrls(self.conn)
 		self.galleries = Galleries(self.conn)
+		self.scenes = Scenes(self.conn)
+		self.group_urls = GroupUrls(self.conn)
+		self.groups = Groups(self.conn)
+		self.groups_tags = GroupsTags(self.conn)
+		self.performer_urls = PerformerUrls(self.conn)
+		self.performers = Performers(self.conn)
+		self.studios_tags = StudiosTags(self.conn)
 		self.scenes_view_dates = ScenesViewDates(self.conn)
 		self.scenes_o_dates = ScenesODates(self.conn)
-		self.scenes = Scenes(self.conn)
+		self.groups_relations = GroupsRelations(self.conn)
+		self.sqlite_stat1 = SqliteStat1(self.conn)
+		self.sqlite_stat4 = SqliteStat4(self.conn)

@@ -3,6 +3,7 @@ A python library for querying and updating a stash sqlite database
 pystashlib and Stash compatibility table:
 | pystashlib | Stash version | Stash schema |
 | ------------- | ------------- | ------------- |
+| v0.6.0 | v0.27.0 | 67 |
 | v0.5.0 | v0.25.0-v0.25.1 | 55 |
 | v0.4.0-v0.4.5 | v0.24.0-v0.24.3 | 54 |
 | v0.3.0-v0.3.1 | v0.17.0-v0.17.2 | 36 |
