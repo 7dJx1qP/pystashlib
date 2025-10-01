@@ -14,6 +14,9 @@ pystashlib and Stash compatibility table:
 
 # Changelog
 
+## v0.6.0
+* Update to support Stash v0.27.0
+
 ## v0.5.0
 * Update to support Stash v0.25.0
 
