@@ -72,6 +72,10 @@ class Tags(Table):
 		colvalues['favorite'] = favorite
 		return [TagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_sort_name(self, sort_name, colvalues={}, selectcols=['*']):
+		colvalues['sort_name'] = sort_name
+		return [TagsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_id(self, id, colvalues={}, selectcols=['*']):
 		colvalues['id'] = id
 		row = self.selectone(colvalues, selectcols)
@@ -136,11 +140,19 @@ class Tags(Table):
 		else:
 			return None
 
-	def insert(self, name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite, commit=True):
-		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)", [name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite], commit)
+	def selectone_sort_name(self, sort_name, colvalues={}, selectcols=['*']):
+		colvalues['sort_name'] = sort_name
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return TagsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite, sort_name, commit=True):
+		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite, sort_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite, sort_name], commit)
 
 	def insert_model(self, model: TagsRow, commit=True):
-		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO tags (name, created_at, updated_at, ignore_auto_tag, description, image_blob, favorite, sort_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
 	def delete_by_id(self, id, commit=True):
 		return self.execute("DELETE FROM tags WHERE id = ?", [id, ], commit)
@@ -184,6 +196,12 @@ class Tags(Table):
 	def update_empty_favorite_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE tags SET favorite = ? WHERE id = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, id], commit)
 
+	def update_sort_name_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE tags SET sort_name = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_sort_name_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE tags SET sort_name = ? WHERE id = ? AND (sort_name IS NULL OR sort_name = '' OR sort_name = 0)", [value, id], commit)
+
 	def update_created_at_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE tags SET created_at = ? WHERE name = ?", [value, name], commit)
 
@@ -219,6 +237,12 @@ class Tags(Table):
 
 	def update_empty_favorite_by_name(self, name, value, commit=True):
 		return self.execute("UPDATE tags SET favorite = ? WHERE name = ? AND (favorite IS NULL OR favorite = '' OR favorite = 0)", [value, name], commit)
+
+	def update_sort_name_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE tags SET sort_name = ? WHERE name = ?", [value, name], commit)
+
+	def update_empty_sort_name_by_name(self, name, value, commit=True):
+		return self.execute("UPDATE tags SET sort_name = ? WHERE name = ? AND (sort_name IS NULL OR sort_name = '' OR sort_name = 0)", [value, name], commit)
 
 class SqliteSequence(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -279,6 +303,10 @@ class PerformerStashIds(Table):
 		colvalues['stash_id'] = stash_id
 		return [PerformerStashIdsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		return [PerformerStashIdsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_performer_id(self, performer_id, colvalues={}, selectcols=['*']):
 		colvalues['performer_id'] = performer_id
 		row = self.selectone(colvalues, selectcols)
@@ -303,11 +331,19 @@ class PerformerStashIds(Table):
 		else:
 			return None
 
-	def insert(self, performer_id, endpoint, stash_id, commit=True):
-		return self.execute("INSERT INTO performer_stash_ids (performer_id, endpoint, stash_id) VALUES (?, ?, ?)", [performer_id, endpoint, stash_id], commit)
+	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformerStashIdsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, performer_id, endpoint, stash_id, updated_at, commit=True):
+		return self.execute("INSERT INTO performer_stash_ids (performer_id, endpoint, stash_id, updated_at) VALUES (?, ?, ?, ?)", [performer_id, endpoint, stash_id, updated_at], commit)
 
 	def insert_model(self, model: PerformerStashIdsRow, commit=True):
-		return self.execute("INSERT INTO performer_stash_ids (performer_id, endpoint, stash_id) VALUES (?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO performer_stash_ids (performer_id, endpoint, stash_id, updated_at) VALUES (?, ?, ?, ?)", model.values_list(False), commit)
 
 	def delete_by_performer_id(self, performer_id, commit=True):
 		return self.execute("DELETE FROM performer_stash_ids WHERE performer_id = ?", [performer_id, ], commit)
@@ -327,6 +363,12 @@ class PerformerStashIds(Table):
 	def update_empty_stash_id_by_performer_id(self, performer_id, value, commit=True):
 		return self.execute("UPDATE performer_stash_ids SET stash_id = ? WHERE performer_id = ? AND (stash_id IS NULL OR stash_id = '' OR stash_id = 0)", [value, performer_id], commit)
 
+	def update_updated_at_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_stash_ids SET updated_at = ? WHERE performer_id = ?", [value, performer_id], commit)
+
+	def update_empty_updated_at_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_stash_ids SET updated_at = ? WHERE performer_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, performer_id], commit)
+
 	def update_performer_id_by_stash_id(self, stash_id, value, commit=True):
 		return self.execute("UPDATE performer_stash_ids SET performer_id = ? WHERE stash_id = ?", [value, stash_id], commit)
 
@@ -338,6 +380,12 @@ class PerformerStashIds(Table):
 
 	def update_empty_endpoint_by_stash_id(self, stash_id, value, commit=True):
 		return self.execute("UPDATE performer_stash_ids SET endpoint = ? WHERE stash_id = ? AND (endpoint IS NULL OR endpoint = '' OR endpoint = 0)", [value, stash_id], commit)
+
+	def update_updated_at_by_stash_id(self, stash_id, value, commit=True):
+		return self.execute("UPDATE performer_stash_ids SET updated_at = ? WHERE stash_id = ?", [value, stash_id], commit)
+
+	def update_empty_updated_at_by_stash_id(self, stash_id, value, commit=True):
+		return self.execute("UPDATE performer_stash_ids SET updated_at = ? WHERE stash_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, stash_id], commit)
 
 class StudioStashIds(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -353,6 +401,10 @@ class StudioStashIds(Table):
 
 	def select_stash_id(self, stash_id, colvalues={}, selectcols=['*']):
 		colvalues['stash_id'] = stash_id
+		return [StudioStashIdsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
 		return [StudioStashIdsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
 	def selectone_studio_id(self, studio_id, colvalues={}, selectcols=['*']):
@@ -379,11 +431,19 @@ class StudioStashIds(Table):
 		else:
 			return None
 
-	def insert(self, studio_id, endpoint, stash_id, commit=True):
-		return self.execute("INSERT INTO studio_stash_ids (studio_id, endpoint, stash_id) VALUES (?, ?, ?)", [studio_id, endpoint, stash_id], commit)
+	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return StudioStashIdsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, studio_id, endpoint, stash_id, updated_at, commit=True):
+		return self.execute("INSERT INTO studio_stash_ids (studio_id, endpoint, stash_id, updated_at) VALUES (?, ?, ?, ?)", [studio_id, endpoint, stash_id, updated_at], commit)
 
 	def insert_model(self, model: StudioStashIdsRow, commit=True):
-		return self.execute("INSERT INTO studio_stash_ids (studio_id, endpoint, stash_id) VALUES (?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO studio_stash_ids (studio_id, endpoint, stash_id, updated_at) VALUES (?, ?, ?, ?)", model.values_list(False), commit)
 
 	def delete_by_studio_id(self, studio_id, commit=True):
 		return self.execute("DELETE FROM studio_stash_ids WHERE studio_id = ?", [studio_id, ], commit)
@@ -403,6 +463,12 @@ class StudioStashIds(Table):
 	def update_empty_stash_id_by_studio_id(self, studio_id, value, commit=True):
 		return self.execute("UPDATE studio_stash_ids SET stash_id = ? WHERE studio_id = ? AND (stash_id IS NULL OR stash_id = '' OR stash_id = 0)", [value, studio_id], commit)
 
+	def update_updated_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE studio_stash_ids SET updated_at = ? WHERE studio_id = ?", [value, studio_id], commit)
+
+	def update_empty_updated_at_by_studio_id(self, studio_id, value, commit=True):
+		return self.execute("UPDATE studio_stash_ids SET updated_at = ? WHERE studio_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, studio_id], commit)
+
 	def update_studio_id_by_stash_id(self, stash_id, value, commit=True):
 		return self.execute("UPDATE studio_stash_ids SET studio_id = ? WHERE stash_id = ?", [value, stash_id], commit)
 
@@ -414,6 +480,12 @@ class StudioStashIds(Table):
 
 	def update_empty_endpoint_by_stash_id(self, stash_id, value, commit=True):
 		return self.execute("UPDATE studio_stash_ids SET endpoint = ? WHERE stash_id = ? AND (endpoint IS NULL OR endpoint = '' OR endpoint = 0)", [value, stash_id], commit)
+
+	def update_updated_at_by_stash_id(self, stash_id, value, commit=True):
+		return self.execute("UPDATE studio_stash_ids SET updated_at = ? WHERE stash_id = ?", [value, stash_id], commit)
+
+	def update_empty_updated_at_by_stash_id(self, stash_id, value, commit=True):
+		return self.execute("UPDATE studio_stash_ids SET updated_at = ? WHERE stash_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, stash_id], commit)
 
 class TagsRelations(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -1914,6 +1986,10 @@ class SceneStashIds(Table):
 		colvalues['stash_id'] = stash_id
 		return [SceneStashIdsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		return [SceneStashIdsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_scene_id(self, scene_id, colvalues={}, selectcols=['*']):
 		colvalues['scene_id'] = scene_id
 		row = self.selectone(colvalues, selectcols)
@@ -1938,11 +2014,19 @@ class SceneStashIds(Table):
 		else:
 			return None
 
-	def insert(self, scene_id, endpoint, stash_id, commit=True):
-		return self.execute("INSERT INTO scene_stash_ids (scene_id, endpoint, stash_id) VALUES (?, ?, ?)", [scene_id, endpoint, stash_id], commit)
+	def selectone_updated_at(self, updated_at, colvalues={}, selectcols=['*']):
+		colvalues['updated_at'] = updated_at
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SceneStashIdsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, scene_id, endpoint, stash_id, updated_at, commit=True):
+		return self.execute("INSERT INTO scene_stash_ids (scene_id, endpoint, stash_id, updated_at) VALUES (?, ?, ?, ?)", [scene_id, endpoint, stash_id, updated_at], commit)
 
 	def insert_model(self, model: SceneStashIdsRow, commit=True):
-		return self.execute("INSERT INTO scene_stash_ids (scene_id, endpoint, stash_id) VALUES (?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO scene_stash_ids (scene_id, endpoint, stash_id, updated_at) VALUES (?, ?, ?, ?)", model.values_list(False), commit)
 
 	def delete_by_scene_id(self, scene_id, commit=True):
 		return self.execute("DELETE FROM scene_stash_ids WHERE scene_id = ?", [scene_id, ], commit)
@@ -1962,6 +2046,12 @@ class SceneStashIds(Table):
 	def update_empty_stash_id_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scene_stash_ids SET stash_id = ? WHERE scene_id = ? AND (stash_id IS NULL OR stash_id = '' OR stash_id = 0)", [value, scene_id], commit)
 
+	def update_updated_at_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_stash_ids SET updated_at = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_updated_at_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_stash_ids SET updated_at = ? WHERE scene_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, scene_id], commit)
+
 	def update_scene_id_by_stash_id(self, stash_id, value, commit=True):
 		return self.execute("UPDATE scene_stash_ids SET scene_id = ? WHERE stash_id = ?", [value, stash_id], commit)
 
@@ -1973,6 +2063,12 @@ class SceneStashIds(Table):
 
 	def update_empty_endpoint_by_stash_id(self, stash_id, value, commit=True):
 		return self.execute("UPDATE scene_stash_ids SET endpoint = ? WHERE stash_id = ? AND (endpoint IS NULL OR endpoint = '' OR endpoint = 0)", [value, stash_id], commit)
+
+	def update_updated_at_by_stash_id(self, stash_id, value, commit=True):
+		return self.execute("UPDATE scene_stash_ids SET updated_at = ? WHERE stash_id = ?", [value, stash_id], commit)
+
+	def update_empty_updated_at_by_stash_id(self, stash_id, value, commit=True):
+		return self.execute("UPDATE scene_stash_ids SET updated_at = ? WHERE stash_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, stash_id], commit)
 
 class ScenesGalleries(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -2665,6 +2761,10 @@ class SceneMarkers(Table):
 		colvalues['updated_at'] = updated_at
 		return [SceneMarkersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
 
+	def select_end_seconds(self, end_seconds, colvalues={}, selectcols=['*']):
+		colvalues['end_seconds'] = end_seconds
+		return [SceneMarkersRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
 	def selectone_id(self, id, colvalues={}, selectcols=['*']):
 		colvalues['id'] = id
 		row = self.selectone(colvalues, selectcols)
@@ -2721,11 +2821,19 @@ class SceneMarkers(Table):
 		else:
 			return None
 
-	def insert(self, title, seconds, primary_tag_id, scene_id, created_at, updated_at, commit=True):
-		return self.execute("INSERT INTO scene_markers (title, seconds, primary_tag_id, scene_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", [title, seconds, primary_tag_id, scene_id, created_at, updated_at], commit)
+	def selectone_end_seconds(self, end_seconds, colvalues={}, selectcols=['*']):
+		colvalues['end_seconds'] = end_seconds
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return SceneMarkersRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, title, seconds, primary_tag_id, scene_id, created_at, updated_at, end_seconds, commit=True):
+		return self.execute("INSERT INTO scene_markers (title, seconds, primary_tag_id, scene_id, created_at, updated_at, end_seconds) VALUES (?, ?, ?, ?, ?, ?, ?)", [title, seconds, primary_tag_id, scene_id, created_at, updated_at, end_seconds], commit)
 
 	def insert_model(self, model: SceneMarkersRow, commit=True):
-		return self.execute("INSERT INTO scene_markers (title, seconds, primary_tag_id, scene_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
+		return self.execute("INSERT INTO scene_markers (title, seconds, primary_tag_id, scene_id, created_at, updated_at, end_seconds) VALUES (?, ?, ?, ?, ?, ?, ?)", model.values_list(False), commit)
 
 	def delete_by_id(self, id, commit=True):
 		return self.execute("DELETE FROM scene_markers WHERE id = ?", [id, ], commit)
@@ -2772,6 +2880,12 @@ class SceneMarkers(Table):
 	def update_empty_updated_at_by_id(self, id, value, commit=True):
 		return self.execute("UPDATE scene_markers SET updated_at = ? WHERE id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, id], commit)
 
+	def update_end_seconds_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scene_markers SET end_seconds = ? WHERE id = ?", [value, id], commit)
+
+	def update_empty_end_seconds_by_id(self, id, value, commit=True):
+		return self.execute("UPDATE scene_markers SET end_seconds = ? WHERE id = ? AND (end_seconds IS NULL OR end_seconds = '' OR end_seconds = 0)", [value, id], commit)
+
 	def update_title_by_primary_tag_id(self, primary_tag_id, value, commit=True):
 		return self.execute("UPDATE scene_markers SET title = ? WHERE primary_tag_id = ?", [value, primary_tag_id], commit)
 
@@ -2802,6 +2916,12 @@ class SceneMarkers(Table):
 	def update_empty_updated_at_by_primary_tag_id(self, primary_tag_id, value, commit=True):
 		return self.execute("UPDATE scene_markers SET updated_at = ? WHERE primary_tag_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, primary_tag_id], commit)
 
+	def update_end_seconds_by_primary_tag_id(self, primary_tag_id, value, commit=True):
+		return self.execute("UPDATE scene_markers SET end_seconds = ? WHERE primary_tag_id = ?", [value, primary_tag_id], commit)
+
+	def update_empty_end_seconds_by_primary_tag_id(self, primary_tag_id, value, commit=True):
+		return self.execute("UPDATE scene_markers SET end_seconds = ? WHERE primary_tag_id = ? AND (end_seconds IS NULL OR end_seconds = '' OR end_seconds = 0)", [value, primary_tag_id], commit)
+
 	def update_title_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scene_markers SET title = ? WHERE scene_id = ?", [value, scene_id], commit)
 
@@ -2831,6 +2951,12 @@ class SceneMarkers(Table):
 
 	def update_empty_updated_at_by_scene_id(self, scene_id, value, commit=True):
 		return self.execute("UPDATE scene_markers SET updated_at = ? WHERE scene_id = ? AND (updated_at IS NULL OR updated_at = '' OR updated_at = 0)", [value, scene_id], commit)
+
+	def update_end_seconds_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_markers SET end_seconds = ? WHERE scene_id = ?", [value, scene_id], commit)
+
+	def update_empty_end_seconds_by_scene_id(self, scene_id, value, commit=True):
+		return self.execute("UPDATE scene_markers SET end_seconds = ? WHERE scene_id = ? AND (end_seconds IS NULL OR end_seconds = '' OR end_seconds = 0)", [value, scene_id], commit)
 
 class Studios(Table):
 	def __init__(self, conn: sqlite3.Connection):
@@ -5760,6 +5886,67 @@ class GroupsRelations(Table):
 
 	def update_empty_description_by_sub_id(self, sub_id, value, commit=True):
 		return self.execute("UPDATE groups_relations SET description = ? WHERE sub_id = ? AND (description IS NULL OR description = '' OR description = 0)", [value, sub_id], commit)
+
+class PerformerCustomFields(Table):
+	def __init__(self, conn: sqlite3.Connection):
+		super().__init__(conn, 'performer_custom_fields')
+
+	def select_performer_id(self, performer_id, colvalues={}, selectcols=['*']):
+		colvalues['performer_id'] = performer_id
+		return [PerformerCustomFieldsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_field(self, field, colvalues={}, selectcols=['*']):
+		colvalues['field'] = field
+		return [PerformerCustomFieldsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def select_value(self, value, colvalues={}, selectcols=['*']):
+		colvalues['value'] = value
+		return [PerformerCustomFieldsRow().from_sqliterow(x) for x in self.select(colvalues, selectcols)]
+
+	def selectone_performer_id(self, performer_id, colvalues={}, selectcols=['*']):
+		colvalues['performer_id'] = performer_id
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformerCustomFieldsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_field(self, field, colvalues={}, selectcols=['*']):
+		colvalues['field'] = field
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformerCustomFieldsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def selectone_value(self, value, colvalues={}, selectcols=['*']):
+		colvalues['value'] = value
+		row = self.selectone(colvalues, selectcols)
+		if row:
+			return PerformerCustomFieldsRow().from_sqliterow(row)
+		else:
+			return None
+
+	def insert(self, performer_id, field, value, commit=True):
+		return self.execute("INSERT INTO performer_custom_fields (performer_id, field, value) VALUES (?, ?, ?)", [performer_id, field, value], commit)
+
+	def insert_model(self, model: PerformerCustomFieldsRow, commit=True):
+		return self.execute("INSERT INTO performer_custom_fields (performer_id, field, value) VALUES (?, ?, ?)", model.values_list(False), commit)
+
+	def delete_by_performer_id(self, performer_id, commit=True):
+		return self.execute("DELETE FROM performer_custom_fields WHERE performer_id = ?", [performer_id, ], commit)
+
+	def update_field_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_custom_fields SET field = ? WHERE performer_id = ?", [value, performer_id], commit)
+
+	def update_empty_field_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_custom_fields SET field = ? WHERE performer_id = ? AND (field IS NULL OR field = '' OR field = 0)", [value, performer_id], commit)
+
+	def update_value_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_custom_fields SET value = ? WHERE performer_id = ?", [value, performer_id], commit)
+
+	def update_empty_value_by_performer_id(self, performer_id, value, commit=True):
+		return self.execute("UPDATE performer_custom_fields SET value = ? WHERE performer_id = ? AND (value IS NULL OR value = '' OR value = 0)", [value, performer_id], commit)
 
 class SqliteStat1(Table):
 	def __init__(self, conn: sqlite3.Connection):

@@ -46,6 +46,7 @@ class TagsRow(TableRow):
 		self._description = None
 		self._image_blob = None
 		self._favorite = None
+		self._sort_name = None
 
 	@property
 	def table_name(self):
@@ -115,14 +116,22 @@ class TagsRow(TableRow):
 	def favorite(self, favorite):
 		self._favorite = favorite
 
+	@property
+	def sort_name(self):
+		return self._sort_name
+
+	@sort_name.setter
+	def sort_name(self, sort_name):
+		self._sort_name = sort_name
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description, self.image_blob, self.favorite]
+			return [self.id, self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description, self.image_blob, self.favorite, self.sort_name]
 		else:
-			return [self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description, self.image_blob, self.favorite]
+			return [self.name, self.created_at, self.updated_at, self.ignore_auto_tag, self.description, self.image_blob, self.favorite, self.sort_name]
 
 class SqliteSequenceRow(TableRow):
 	def __init__(self):
@@ -165,6 +174,7 @@ class PerformerStashIdsRow(TableRow):
 		self._performer_id = None
 		self._endpoint = None
 		self._stash_id = None
+		self._updated_at = None
 
 	@property
 	def table_name(self):
@@ -194,14 +204,22 @@ class PerformerStashIdsRow(TableRow):
 	def stash_id(self, stash_id):
 		self._stash_id = stash_id
 
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.performer_id, self.endpoint, self.stash_id]
+			return [self.performer_id, self.endpoint, self.stash_id, self.updated_at]
 		else:
-			return [self.performer_id, self.endpoint, self.stash_id]
+			return [self.performer_id, self.endpoint, self.stash_id, self.updated_at]
 
 class StudioStashIdsRow(TableRow):
 	def __init__(self):
@@ -209,6 +227,7 @@ class StudioStashIdsRow(TableRow):
 		self._studio_id = None
 		self._endpoint = None
 		self._stash_id = None
+		self._updated_at = None
 
 	@property
 	def table_name(self):
@@ -238,14 +257,22 @@ class StudioStashIdsRow(TableRow):
 	def stash_id(self, stash_id):
 		self._stash_id = stash_id
 
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.studio_id, self.endpoint, self.stash_id]
+			return [self.studio_id, self.endpoint, self.stash_id, self.updated_at]
 		else:
-			return [self.studio_id, self.endpoint, self.stash_id]
+			return [self.studio_id, self.endpoint, self.stash_id, self.updated_at]
 
 class TagsRelationsRow(TableRow):
 	def __init__(self):
@@ -1074,6 +1101,7 @@ class SceneStashIdsRow(TableRow):
 		self._scene_id = None
 		self._endpoint = None
 		self._stash_id = None
+		self._updated_at = None
 
 	@property
 	def table_name(self):
@@ -1103,14 +1131,22 @@ class SceneStashIdsRow(TableRow):
 	def stash_id(self, stash_id):
 		self._stash_id = stash_id
 
+	@property
+	def updated_at(self):
+		return self._updated_at
+
+	@updated_at.setter
+	def updated_at(self, updated_at):
+		self._updated_at = updated_at
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.scene_id, self.endpoint, self.stash_id]
+			return [self.scene_id, self.endpoint, self.stash_id, self.updated_at]
 		else:
-			return [self.scene_id, self.endpoint, self.stash_id]
+			return [self.scene_id, self.endpoint, self.stash_id, self.updated_at]
 
 class ScenesGalleriesRow(TableRow):
 	def __init__(self):
@@ -1561,6 +1597,7 @@ class SceneMarkersRow(TableRow):
 		self._scene_id = None
 		self._created_at = None
 		self._updated_at = None
+		self._end_seconds = None
 
 	@property
 	def table_name(self):
@@ -1622,14 +1659,22 @@ class SceneMarkersRow(TableRow):
 	def updated_at(self, updated_at):
 		self._updated_at = updated_at
 
+	@property
+	def end_seconds(self):
+		return self._end_seconds
+
+	@end_seconds.setter
+	def end_seconds(self, end_seconds):
+		self._end_seconds = end_seconds
+
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def values_list(self, include_id=False):
 		if include_id:
-			return [self.id, self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at]
+			return [self.id, self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at, self.end_seconds]
 		else:
-			return [self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at]
+			return [self.title, self.seconds, self.primary_tag_id, self.scene_id, self.created_at, self.updated_at, self.end_seconds]
 
 class StudiosRow(TableRow):
 	def __init__(self):
@@ -2964,6 +3009,50 @@ class GroupsRelationsRow(TableRow):
 			return [self.containing_id, self.sub_id, self.order_index, self.description]
 		else:
 			return [self.containing_id, self.sub_id, self.order_index, self.description]
+
+class PerformerCustomFieldsRow(TableRow):
+	def __init__(self):
+		super().__init__('performer_custom_fields')
+		self._performer_id = None
+		self._field = None
+		self._value = None
+
+	@property
+	def table_name(self):
+		return self._table_name
+
+	@property
+	def performer_id(self):
+		return self._performer_id
+
+	@performer_id.setter
+	def performer_id(self, performer_id):
+		self._performer_id = performer_id
+
+	@property
+	def field(self):
+		return self._field
+
+	@field.setter
+	def field(self, field):
+		self._field = field
+
+	@property
+	def value(self):
+		return self._value
+
+	@value.setter
+	def value(self, value):
+		self._value = value
+
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
+	def values_list(self, include_id=False):
+		if include_id:
+			return [self.performer_id, self.field, self.value]
+		else:
+			return [self.performer_id, self.field, self.value]
 
 class SqliteStat1Row(TableRow):
 	def __init__(self):
